@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import Head from 'next/head';
-import { Form, Input, Checkbox, Button } from "antd";
+// import Head from 'next/head';
+
+import { Form, Input, Checkbox, Button, Row, Col } from "antd";
+import { PhoneOutlined } from '@ant-design/icons';
+import './shopSign.css'
+
 
 const ShopSignup = () => {
     const [company, setCompany] = useState('');
@@ -71,16 +75,162 @@ const ShopSignup = () => {
     };
     return (
         <>
-       <Head>
+       {/* <Head>
             <title>NodeBird</title>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.18.1/antd.css" />
             <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/3.18.1/antd.js"></script>
-        </Head>
+        </Head> */}
+            <div style={{maxWidth: '700px', margin: '0 auto'}}>
+                <div style={{textAlign: 'center'}}>
+                <h2 htmlFor="company-name">가맹등록</h2>
+
         <Form onSubmit={onSubmit}>
-            <div>
-                <label htmlFor="company-name">가맹점명</label>
-            </div>
+                <div style={{textAlign: 'center', margin: '0 auto'}}>
+                    <Row gutter={[16, 48]} justify="center" >
+                        <Col span={4}>
+                            <label>가맹점명&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16, 48]}>
+                        <Col span={4}>
+                            <label>대표자명&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>비밀번호&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input prefix={<PhoneOutlined />} />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>휴대폰번호&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input prefix={<PhoneOutlined />} />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>전화번호&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>사업자번호&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>생년월일&nbsp;:</label>
+                        </Col>
+                        <Col span={4}>
+                            <Input />
+                        </Col>
+                        <Col span={4}>
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>가맹점주소&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Button type="primary" style={{width: '100%'}}>
+                                주소검색
+                            </Button>
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>상세주소&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input placeholder="상세 주소를 입력하세요" />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>배차특이사항&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>가맹특이사항&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>담당관리자&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={4}>
+                            <label>관리자연락처&nbsp;:</label>
+                        </Col>
+                        <Col span={8}>
+                            <Input prefix={<PhoneOutlined />} />
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={6}>
+                            <label>기본료&nbsp;:</label>
+                        </Col>
+                        <Col span={10}>
+                            <Row gutter={[48]}>
+                                <Col span={12}>
+                                    <Input addonAfter="m"/>
+                                </Col>
+                                <Col span={12}>
+                                    <Input addonAfter="m"/>
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                    <Row justify="center" gutter={[16], [16]}>
+                        <Col span={6}>
+                            <label>거리할증&nbsp;:</label>
+                        </Col>
+                        <Col span={10}>
+                            <Row gutter={[48]}>
+                                <Col span={12}>
+                                    <Input addonAfter="원"/>
+                                </Col>
+                                <Col span={12}>
+                                    <Input addonAfter="원"/>
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                    <Button type="primary" style={{width:"100%"}}>
+                        가맹등록
+                    </Button>
+                </div>
         </Form>
+                </div>
+            </div>
         </>
     );
 };
