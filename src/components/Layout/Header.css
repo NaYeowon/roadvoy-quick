@@ -1,0 +1,24 @@
+.header {
+  height: 48px;
+  background: white;
+  line-height: 48px;
+  padding: 0px
+  }
+.item {
+   display: inline-block; 
+   background: white;
+   padding: 10px;
+   text-decoration: none; color:black;
+  }
+.menu {
+  line-height: 48px;
+  float: left;
+  border-bottom: none;
+  margin-left: 24px;}
+.subMenu {
+  line-height: 48px;
+  float: right;
+  border-bottom: none;
+  margin-left: 24px;}
+.item:hover { color: red; }
+.item:active, .item.active { color: red; }
