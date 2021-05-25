@@ -4,35 +4,45 @@ import { NavLink } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import { Menu, Dropdown } from 'antd';
 import RiderSignupModal from '../rider/RiderSignupModal';
-import shopSignupModal from '../shop/shopSignupModal';
+import ShopSignupModal from '../shop/shopSignupModal';
 
 class Header extends Component {
     
     constructor(props) {
         super(props)
 
-        this.state = { isModalVisible: false };
+        this.state = { 
+          isModalRiderVisible: false,
+          isModalShopVisible: false,
+        };
+      
     }
 
-    showModalRider = () => {
-      this.setState( {isModalVisible: true})
+    ShowModalRider = () => {
+      this.setState( {isModalRiderVisible: true})
     };
-    showModalShop = () => {
-      this.setState( {isModalVisible: true})
+    
+    ShowModalShop = () => {
+      console.log("여기왔냐");
+      this.setState( {isModalShopVisible: true})
     };
 
-    ChildToParentCancelData = (data) => {
-      console.log(data, '자식에서 부모')
-      this.setState({ isModalVisible:data })
+    RiderCancelData = (data) => {
+      this.setState({ isModalRiderVisible:data })
+    }
+    ShopCancelData = (data) => {
+      this.setState({ isModalShopVisible:data })
     }
 
-    ChildToParentOkData = (data) => {
-      console.log(data, '자식에서 부모')
-      this.setState({ isModalVisible: data })
+    RiderOkData = (data) => {
+      this.setState({ isModalRiderVisible: data })
+    }
+    ShopOkData = (data) => {
+      this.setState({ isModalShopVisible: data })
     }
 
     OnCallRegister() {
-        window.open("/popup","_blank", "콜등록", "top=300, left=300, width=300, height=400")
+        window.open("/Popup","", "콜등록", "width=100, heigh=100")
     }
 
     Logout = () => {
@@ -42,6 +52,11 @@ class Header extends Component {
            console.log('로그아웃 취소');
        }
     }
+
+    // componentDidMount() {
+    //   alert(this.state.isModalShopVisible, "이거 맞냐")
+    // }
+
     render() {
         const shopManagement = (
           <Menu>
@@ -55,7 +70,7 @@ class Header extends Component {
               <NavLink to="/shop">구역설정</NavLink>
             </Menu.Item>
             <Menu.Item key="3">
-              <a onClick={this.showModalShop}>상점등록</a>
+              <a onClick={this.ShowModalShop}>상점등록</a>
             </Menu.Item>
         </Menu>
       );
@@ -68,7 +83,7 @@ class Header extends Component {
               <NavLink to="#">기사별정산</NavLink>
             </Menu.Item>
             <Menu.Item key="2">
-              <a onClick={this.showModalRider}>기사등록</a>
+              <a onClick={this.ShowModalRider}>기사등록</a>
             </Menu.Item>
         </Menu>
       );
@@ -102,8 +117,8 @@ class Header extends Component {
                     <NavLink to="/CallListComponent" className="item" activeClassName="active" onClick={this.OnCallRegister} style={{color:'black'}}>콜등록</NavLink>
                     <navLink to="/" className="item" onClick={this.Logout}>로그아웃</navLink>
                 </div>
-                <RiderSignupModal visible={this.state.isModalVisible} onOk={this.ChildToParentOkData} onCancel={this.ChildToParentCancelData}/>
-                <shopSignupModal visible={this.state.isModalVisible} onOk={this.ChildToParentOkData} onCancel={this.ChildToParentCancelData}/>
+                <RiderSignupModal visible={this.state.isModalRiderVisible} onOk={this.RiderOkData} onCancel={this.RiderCancelData}/>
+                <ShopSignupModal visible={this.state.isModalShopVisible} onOk={this.ShopOkData} onCancel={this.ShopCancelData}/>
         </header>
     )
     }
