@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import { Input, Col, Row, Button, Card, message } from "antd";
 
-//import './Login.css'
-// import { Link } from 'react-router-dom';
-
-
 class Login extends Component {
 
     constructor(props) {
@@ -69,6 +65,11 @@ class Login extends Component {
         }
     }
 
+    onKeyPress = (e) => {
+      if(e.key ==='Enter') {
+        this.onViewData();
+      }
+    }
 
     render() {
         const {
@@ -80,7 +81,7 @@ class Login extends Component {
         } = this.state;
 
         return(
-          <Row type="flex" justify="center" align="middle" style={{ height: "100%", paddingTop:'20%' }}>
+          <Row type="flex" justify="center" align="middle" style={{ height: "100%", paddingTop:'300px' }}>
             <Card style={{ width: "360px" }}>
               <Row style={{ marginBottom: "12px" }}>
                 <Col span={24}>
@@ -99,6 +100,7 @@ class Login extends Component {
                     name="areaNo"
                     value={this.state.areaNo}
                     onChange={this.onAreaNo}
+                    onKeyPress={this.onKeyPress}
                   />
                 </Col>
                 <Col span={6} style={{ paddingRight: "4px" }}>
@@ -107,6 +109,7 @@ class Login extends Component {
                     name="distribId"
                     value={this.state.distribId}
                     onChange={this.onDistripId}
+                    onKeyPress={this.onKeyPress}
                   />
                 </Col>
                 <Col span={6} style={{ paddingRight: "4px" }}>
@@ -115,6 +118,7 @@ class Login extends Component {
                     name="agencyId"
                     value={this.state.agencyId}
                     onChange={this.onAgencyId}
+                    onKeyPress={this.onKeyPress}
                   />
                 </Col>
                 <Col span={6}>
@@ -123,6 +127,7 @@ class Login extends Component {
                     name="memCourId"
                     value={this.state.memCourId}
                     onChange={this.onMemCourId}
+                    onKeyPress={this.onKeyPress}
                   />
                 </Col>
               </Row>
@@ -133,6 +138,7 @@ class Login extends Component {
                   value={this.state.password}
                   placeholder="비밀번호"
                   onChange={this.onPassword}
+                  onKeyPress={this.onKeyPress}
                 />
               </Row>
               <Row style={{ marginBottom: "12px" }}>
