@@ -4,4 +4,19 @@
 
 .ant-col {
     text-align: right;
+} 
+.shop-signup-wrapper {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.shop-signup-form {
+    width: 480px;
+    margin: 0 auto;
+    padding: 16px 0px;
+}
+
+#sign-up-submit {
+    margin: 24px 0;
 }

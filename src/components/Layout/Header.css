@@ -7,7 +7,7 @@
 .item {
    display: inline-block; 
    background: white;
-   padding: 10px;
+   padding: 13px ;
    text-decoration: none; color:black;
   }
 .menu {
@@ -22,3 +22,7 @@
   margin-left: 24px;}
 .item:hover { color: red; }
 .item:active, .item.active { color: red; }
+
+ul.ant-dropdown-menu {
+  top: -20px;
+}

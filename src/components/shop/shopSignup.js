@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 // import Head from 'next/head';
 
-import { Form, Input, Checkbox, Button, Row, Col } from "antd";
+import { Form, Input, Button, Row, Col } from "antd";
 import { PhoneOutlined } from '@ant-design/icons';
 import './shopSign.css'
-
 
 const ShopSignup = () => {
     const [company, setCompany] = useState('');
@@ -73,6 +72,7 @@ const ShopSignup = () => {
     const onChangeExtraFare = e => {
         setExtraFare(e.target.value);
     };
+
     return (
         <>
        {/* <Head>
@@ -80,11 +80,10 @@ const ShopSignup = () => {
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.18.1/antd.css" />
             <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/3.18.1/antd.js"></script>
         </Head> */}
-            <div style={{maxWidth: '700px', margin: '0 auto'}}>
+            <div style={{maxWidth: '700px', margin: '0 auto', paddingTop:'100px'}}>
                 <div style={{textAlign: 'center'}}>
                 <h2 htmlFor="company-name">가맹등록</h2>
-
-        <Form onSubmit={onSubmit}>
+                <Form onSubmit={onSubmit}>
                 <div style={{textAlign: 'center', margin: '0 auto'}}>
                     <Row gutter={[16, 48]} justify="center" >
                         <Col span={4}>
@@ -224,11 +223,13 @@ const ShopSignup = () => {
                             </Row>
                         </Col>
                     </Row>
-                    <Button type="primary" style={{width:"100%"}}>
+                    <Row id="sign-up-submit">
+                    <Button type="primary" htmlType="submit" block>
                         가맹등록
                     </Button>
-                </div>
-        </Form>
+                    </Row>
+                    </div>
+                    </Form>
                 </div>
             </div>
         </>

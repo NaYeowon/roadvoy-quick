@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Header from '../Layout/Header';
 import { Link } from 'react-router-dom';
-import { Button, Table } from "antd";
+import { Button, PageHeader, Table } from "antd";
 import 'antd/dist/antd.css';
 
 class shop extends Component {
@@ -120,31 +120,25 @@ class shop extends Component {
                 <div>
                 <Header />
                 </div>
-                <div>
+                <PageHeader>
                   <span>
                       <b>0</b>개의 가맹점이 등록 되어있습니다.
                   </span>
-                  <span>
-                    <Link to='#'>
-                        <Button>가맹별정산</Button>
-                    </Link>
-                    <Link to='#'>
-                        <Button>구역설정</Button>
-                    </Link>
-                    <Link to='#'>
-                        <Button>가맹등록</Button>
-                    </Link>
+                  <span style={{float:'right'}}>
+                    
                   </span>
-                </div>
+                </PageHeader>
                 <Table
     columns={columns}
     dataSource={data}
     bordered
+    //pagination={false} 페이징 삭제
+    pagination={{pageSize:'50'}}
     size="middle"
-    //scroll={{ x: 'calc(700px + 50%)', y: 500 }}
+    scroll={{ x: 'calc(700px + 50%)', y: 650 }}
   />,
             </div>
         )
     }
 }
-export default shop
+export default shop;

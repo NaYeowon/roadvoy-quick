@@ -22,7 +22,7 @@ class Header extends Component {
        }
     }
     render() {
-        const menu = (
+        const shopManagement = (
           <Menu>
             <Menu.Item key="0">
               <NavLink to="/shop">상점(고객)관리</NavLink>
@@ -38,6 +38,19 @@ class Header extends Component {
             </Menu.Item>
         </Menu>
       );
+        const riderManagement = (
+          <Menu>
+            <Menu.Item key="0">
+              <NavLink to="/rider">기사관리</NavLink>
+            </Menu.Item>
+            <Menu.Item key="1">
+              <NavLink to="#">기사별정산</NavLink>
+            </Menu.Item>
+            <Menu.Item key="2">
+              <NavLink to="/riderSignup">기사등록</NavLink>
+            </Menu.Item>
+        </Menu>
+      );
           
     return (
         <header className="header">
@@ -48,12 +61,16 @@ class Header extends Component {
                     />
                     <NavLink exact to="/CallListComponent" className="item" activceClassName="active">콜 현황</NavLink>
                     <NavLink to="/map" className="item" activeClassName="active">지도관제</NavLink>
-                    <Dropdown overlay={menu} trigger={['hover']}>
+                    <Dropdown overlay={shopManagement} trigger={['hover']}>
                       <a className="ant-dropdown-link" onClick={e => e.preventDefault()} className='item' activeClassName="active">
                         상점(고객) 관리 
                       </a>
                     </Dropdown>
-                    <NavLink to="/rider" className="item" activeClassName="active">기사관리</NavLink>
+                    <Dropdown overlay={riderManagement} trigger={['hover']}>
+                      <a className="ant-dropdown-link" onClick={e => e.preventDefault()} className='item' activeClassName="active">
+                        기사관리
+                      </a>
+                    </Dropdown>
                     <NavLink to="/settlement" className="item" activeClassName="active">대행관리</NavLink>
                     <NavLink to="#" className="item" activeClassName="active">총판관리</NavLink>
                 </div>
