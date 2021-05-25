@@ -3,6 +3,7 @@ import './Header.css';
 import { NavLink } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import { Menu, Dropdown, message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
 
 class Header extends Component {
     
@@ -12,6 +13,10 @@ class Header extends Component {
 
     OnCallRegister() {
         window.open("/popup","_blank", "콜등록", "top=300, left=300, width=300, height=400")
+    }
+
+    OnRigerRegister() {
+      <Modal />
     }
 
     Logout = () => {
@@ -25,29 +30,29 @@ class Header extends Component {
         const shopManagement = (
           <Menu>
             <Menu.Item key="0">
-              <NavLink to="/shop">상점(고객)관리</NavLink>
+              <NavLink to="/shop">상점(고객)조회</NavLink>
             </Menu.Item>
             <Menu.Item key="1">
-              <NavLink to="/shop">가맹별정산</NavLink>
+              <NavLink to="/shop">상점정산</NavLink>
             </Menu.Item>
             <Menu.Item key="2">
               <NavLink to="/shop">구역설정</NavLink>
             </Menu.Item>
             <Menu.Item key="3">
-              <NavLink to="/shopSignup">가맹등록</NavLink>
+              <NavLink to="/shopSignup">상점등록</NavLink>
             </Menu.Item>
         </Menu>
       );
         const riderManagement = (
           <Menu>
             <Menu.Item key="0">
-              <NavLink to="/rider">기사관리</NavLink>
+              <NavLink to="/rider">기사조회</NavLink>
             </Menu.Item>
             <Menu.Item key="1">
               <NavLink to="#">기사별정산</NavLink>
             </Menu.Item>
             <Menu.Item key="2">
-              <NavLink to="/riderSignup">기사등록</NavLink>
+              <NavLink to="/rider" onClick={this.OnRigerRegister}>기사등록</NavLink>
             </Menu.Item>
         </Menu>
       );
