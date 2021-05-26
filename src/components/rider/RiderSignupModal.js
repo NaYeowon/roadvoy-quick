@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Modal } from 'antd'; 
 import { Form, Input, Button, Row, Col, Select } from 'antd';
 import { PhoneOutlined } from '@ant-design/icons';
+import { Checkbox } from '@material-ui/core';
 
 
 const { Option } = Select;
@@ -15,7 +16,6 @@ class RigerSignupModal extends Component {
     }
 
     handleOk = (e) => {
-        console.log(this.state.isModalVisible,": 모달");
         this.setState({ isModalVisible : false});
         e.preventDefault();
         
@@ -23,7 +23,6 @@ class RigerSignupModal extends Component {
     };
 
     handleCancel = (e) => {
-        console.log(this.props.isModalVisible, ": 취소");
         this.setState({ isModalVisible : false });
         e.preventDefault();
 
@@ -36,8 +35,8 @@ class RigerSignupModal extends Component {
     render() {
         return (
             <>
-            <Modal visible={this.props.visible} onOk={this.handleOk} onCancel={this.handleCancel}>
-            <div style={{maxWidth: '700px', margin: '0 auto', paddingTop:'100px'}}>
+            <Modal width="700px" visible={this.props.visible} onOk={this.handleOk} onCancel={this.handleCancel}>
+            <div style={{maxWidth: '700px', margin: '0 auto', paddingTop:'50px'}}>
             <div style={{textAlign: 'center'}}>
             <h2 htmlFor="company-name">기사등록</h2>
             <Form onSubmit=''>
@@ -63,7 +62,7 @@ class RigerSignupModal extends Component {
                         <label>비밀번호&nbsp;:</label>
                     </Col>
                     <Col span={8}>
-                        <Input prefix={<PhoneOutlined />} />
+                        <Input />
                     </Col>
                 </Row>
                 <Row justify="center" gutter={[16], [16]}>
@@ -85,7 +84,6 @@ class RigerSignupModal extends Component {
                 <Row justify="center" gutter={[16], [16]}>
                     <Col span={4}>
                         <label>출금은행&nbsp;:</label>
-                        <Option>신한은행</Option>
                     </Col>
                     <Col span={8}>
                     <Select
@@ -117,35 +115,7 @@ class RigerSignupModal extends Component {
                 </Row>
                 <Row justify="center" gutter={[16], [16]}>
                     <Col span={4}>
-                        <label>계좌번호&nbsp;:</label>
-                    </Col>
-                    <Col span={4}>
-                        <Input />
-                    </Col>
-                    <Col span={4}>
-                    </Col>
-                </Row>
-                <Row justify="center" gutter={[16], [16]}>
-                    <Col span={4}>
-                        <label>가맹점주소&nbsp;:</label>
-                    </Col>
-                    <Col span={8}>
-                        <Button type="primary" style={{width: '100%'}}>
-                            주소검색
-                        </Button>
-                    </Col>
-                </Row>
-                <Row justify="center" gutter={[16], [16]}>
-                    <Col span={4}>
-                        <label>상세주소&nbsp;:</label>
-                    </Col>
-                    <Col span={8}>
-                        <Input placeholder="상세 주소를 입력하세요" />
-                    </Col>
-                </Row>
-                <Row justify="center" gutter={[16], [16]}>
-                    <Col span={4}>
-                        <label>배차특이사항&nbsp;:</label>
+                        <label>출금비밀번호&nbsp;:</label>
                     </Col>
                     <Col span={8}>
                         <Input />
@@ -153,62 +123,76 @@ class RigerSignupModal extends Component {
                 </Row>
                 <Row justify="center" gutter={[16], [16]}>
                     <Col span={4}>
-                        <label>가맹특이사항&nbsp;:</label>
+                        <label>기사구분&nbsp;:</label>
                     </Col>
-                    <Col span={8}>
-                        <Input />
-                    </Col>
-                </Row>
-                <Row justify="center" gutter={[16], [16]}>
                     <Col span={4}>
-                        <label>담당관리자&nbsp;:</label>
+                        <Select
+                          name=""
+                          value=''
+                          onChange=''
+                          style={{ width: "100%" }}>
+                            <Option>지입</Option>
+                            <Option>리스</Option>
+                        </Select>
                     </Col>
-                    <Col span={8}>
-                        <Input />
-                    </Col>
-                </Row>
-                <Row justify="center" gutter={[16], [16]}>
                     <Col span={4}>
-                        <label>관리자연락처&nbsp;:</label>
-                    </Col>
-                    <Col span={8}>
-                        <Input prefix={<PhoneOutlined />} />
                     </Col>
                 </Row>
                 <Row justify="center" gutter={[16], [16]}>
-                    <Col span={6}>
-                        <label>기본료&nbsp;:</label>
+                    <Col span={5}>
+                        <label>1일 리스료&nbsp;:</label>
                     </Col>
-                    <Col span={10}>
-                        <Row gutter={[48]}>
-                            <Col span={12}>
-                                <Input addonAfter="m"/>
-                            </Col>
-                            <Col span={12}>
-                                <Input addonAfter="m"/>
-                            </Col>
-                        </Row>
+                    <Col span={5}>
+                        <Input 
+                          name=""
+                          value=""
+                        />
+                    </Col> 원&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Col span={3}></Col>
+                </Row><Row justify="center" gutter={[16], [16]}>
+                    <Col span={5}>
+                        <label>보증금&nbsp;:</label>
                     </Col>
+                    <Col span={5}>
+                        <Input 
+                          name=""
+                          value=""
+                        />
+                    </Col> 원&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Col span={3}></Col>
                 </Row>
                 <Row justify="center" gutter={[16], [16]}>
-                    <Col span={6}>
-                        <label>거리할증&nbsp;:</label>
+                    <Col span={5}>
+                        <label>콜수수료&nbsp;:</label>
                     </Col>
-                    <Col span={10}>
-                        <Row gutter={[48]}>
-                            <Col span={12}>
-                                <Input addonAfter="원"/>
-                            </Col>
-                            <Col span={12}>
-                                <Input addonAfter="원"/>
-                            </Col>
-                        </Row>
-                    </Col>
+                    <Col span={5}>
+                        <Input 
+                          name=""
+                          value=""
+                        />
+                    </Col> 원&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Col span={3}></Col>
                 </Row>
-                <Row id="sign-up-submit">
-                <Button type="primary" htmlType="submit" block>
-                    가맹등록
-                </Button>
+                <Row justify="center">
+                <Col span={4}>
+                        <label>관리자모드&nbsp;:</label>
+                    <Checkbox
+                    
+                    />
+                </Col>
+
+                </Row>
+                <Row justify="center" gutter={[16], [16]}>
+                    <Col span={5}>
+                        <label>콜 동시 접수 제한&nbsp;:</label>
+                    </Col>
+                    <Col span={5}>
+                        <Input 
+                          name=""
+                          value=""
+                        />
+                    </Col>건&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Col span={3}></Col>
                 </Row>
                 </div>
                 </Form>

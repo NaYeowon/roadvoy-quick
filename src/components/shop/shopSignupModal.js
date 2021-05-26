@@ -33,7 +33,7 @@ class shopSignupModal extends Component {
     render() {
         return (
             <>
-                <Modal visible={this.props.visible} onOk={this.handleOk} onCancel={this.handleCancel}>
+                <Modal width="700px" visible={this.props.visible} onOk={this.handleOk} onCancel={this.handleCancel}>
                 <div style={{maxWidth: '700px', margin: '0 auto', paddingTop:'100px'}}>
                 <div style={{textAlign: 'center'}}>
                 <h2 htmlFor="company-name">가맹등록</h2>
@@ -178,9 +178,9 @@ class shopSignupModal extends Component {
                         </Col>
                     </Row>
                     <Row id="sign-up-submit">
-                    <Button type="primary" htmlType="submit" block>
+                    {/* <Button type="primary" htmlType="submit" block>
                         가맹등록
-                    </Button>
+                    </Button> */}
                     </Row>
                     </div>
                     </Form>
