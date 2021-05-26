@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Input, Col, Row, Button, Card, message } from "antd";
+import axios from 'axios';
 
 class Login extends Component {
 
@@ -53,7 +54,7 @@ class Login extends Component {
         })
     }
 
-    onViewData(event) {
+    onViewData(e) {
         const CompreData = `${this.state.areaNo}-${this.state.distripId}-${this.state.agencyId}-${this.state.memCourId}`
         const pw = `${this.state.password}`
         if(pw === '1234' && CompreData === '88-A1-1-0') {

@@ -23,7 +23,6 @@ class Header extends Component {
     };
     
     ShowModalShop = () => {
-      console.log("여기왔냐");
       this.setState( {isModalShopVisible: true})
     };
 
