@@ -3,7 +3,7 @@ import Header from '../Layout/Header';
 import { PageHeader, Table } from "antd";
 import 'antd/dist/antd.css';
 
-class shop extends Component {
+class Distributor extends Component {
     render() {
         const columns = [
             {
@@ -12,33 +12,63 @@ class shop extends Component {
                 {
                   title: '아이디',
                   dataIndex: 'ucMemCourId',
-                  width: 120,
+                  width: 70,
                 },
                 {
-                  title: '가맹명',
+                  title: '총판명',
                   dataIndex: 'acCompany',
                   key: 'acCompany',
-                  width: 160,
+                  width: 70,
+                },
+                {
+                  title: '사업자등록번호',
+                  dataIndex: 'acCompany',
+                  key: 'acCompany',
+                  width: 70,
+                },
+                {
+                  title: '대표자명',
+                  dataIndex: 'acCompany',
+                  key: 'acCompany',
+                  width: 50,
+                },
+                {
+                  title: '가입일자',
+                  dataIndex: 'acCompany',
+                  key: 'acCompany',
+                  width: 50,
+                },
+                {
+                  title: '세금계산서발행',
+                  dataIndex: 'acCompany',
+                  key: 'acCompany',
+                  width: 80,
+                },
+                {
+                  title: '구분',
+                  dataIndex: 'acCompany',
+                  key: 'acCompany',
+                  width: 30,
                 },
               ],
             },
             {
-              title: '관리정보',
+              title: '연락처',
               children: [
                 {
-                  title: '콜수',
+                  title: '(업체)전화번호',
                   dataIndex: 'ulCustCallCnt',
                   key: 'ulCustCallCnt',
-                  width: 100,
+                  width: 80,
                 },
                 {
-                  title: '관리비',
+                  title: '(휴대)전화번호',
                   dataIndex: 'companyName',
                   key: 'companyName',
-                  width:100,
+                  width:80,
                 },
                 {
-                  title: '충전예정일',
+                  title: '주소',
                   dataIndex: 'companyName',
                   key: 'companyName',
                   width:100,
@@ -46,21 +76,19 @@ class shop extends Component {
               ],
             },
             {
-              title: '콜수',
+              title: 'Platform사용',
               children: [
                 {
-                  title: '당일',
+                  title: '경고',
                   dataIndex: 'usDeliDoneCntSum',
                   key: 'usDeliDoneCntSum',
-                  width: 80,
-                  sorter: (a, b) => a.usDeliDoneCntSum - b.usDeliDoneCntSum,
+                  width: 30,
                 },
                 {
-                  title: '당월',
+                  title: '제한',
                   dataIndex: 'usMonthDeliDoneCntSum',
                   key: 'usMonthDeliDoneCntSum',
-                  width:80,
-                  sorter: (a, b) => a.usMonthDeliDoneCntSum - b.usMonthDeliDoneCntSum,
+                  width:30,
                 },
               ],
             },
@@ -68,42 +96,20 @@ class shop extends Component {
               title: '가상계좌',
               children: [
                 {
-                  title: '잔액',
+                  title: '거래은행',
                   dataIndex: 'ulCurrentVirAccBalance',
                   key: 'ulCurrentVirAccBalance',
-                  width: 120,
+                  width: 50,
                 },
                 {
-                  title: '가상계좌',
+                  title: '계좌번호',
                   dataIndex: 'acVirtualAccount',
                   key: 'acVirtualAccount',
-                  width:200,
+                  width:100,
                 },
               ],
             },
-            {
-              title: '할증',
-              children: [
-                {
-                  title: '시간',
-                  dataIndex: 'ucTimeExtraFareType',
-                  key: 'ucTimeExtraFareType',
-                  width: 30,
-                },
-                {
-                  title: '심야',
-                  dataIndex: 'ucNightExtraFare',
-                  key: 'ucNightExtraFare',
-                  width:30,
-                },
-                {
-                  title: '우천',
-                  dataIndex: 'ucRainyExtraFare',
-                  key: 'ucRainyExtraFare',
-                  width:30,
-                },
-              ],
-            },
+            
           ];
           
           const data = [];
@@ -128,16 +134,16 @@ class shop extends Component {
                   </span>
                 </PageHeader>
                 <Table
-    columns={columns}
-    dataSource={data}
-    bordered
-    //pagination={false} 페이징 삭제
-    pagination={{pageSize:'50'}}
-    size="middle"
-    scroll={{ x: 'calc(700px + 50%)', y: 650 }}
-  />,
+                    columns={columns}
+                    dataSource={data}
+                    bordered
+                    //pagination={false} 페이징 삭제
+                    pagination={{pageSize:'50'}}
+                    size="middle"
+                    scroll={{ x: 'calc(700px + 50%)', y: 650 }}
+                />,
             </div>
         )
     }
 }
-export default shop;
+export default Distributor;

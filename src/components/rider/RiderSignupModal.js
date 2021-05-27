@@ -174,8 +174,8 @@ class RigerSignupModal extends Component {
                     <Col span={3}></Col>
                 </Row>
                 <Row justify="center">
-                <Col span={4}>
-                        <label>관리자모드&nbsp;:</label>
+                <Col pull={3}>
+                &nbsp;&nbsp;<label>관리자모드&nbsp;:</label>&nbsp;&nbsp;
                     <Checkbox
                     
                     />
@@ -183,7 +183,7 @@ class RigerSignupModal extends Component {
 
                 </Row>
                 <Row justify="center" gutter={[16], [16]}>
-                    <Col span={5}>
+                    <Col span={5} >
                         <label>콜 동시 접수 제한&nbsp;:</label>
                     </Col>
                     <Col span={5}>

@@ -118,12 +118,12 @@ class rider extends Component {
                       <b>0</b>개의 가맹점이 등록 되어있습니다.
                   </span>
                   <span style={{float:'right'}}>
-                    <Link to='#'>
+                    {/* <Link to='#'>
                         <Button>기사별정산</Button>
                     </Link>
                     <Link to='#'>
                         <Button>기사등록</Button>
-                    </Link>
+                    </Link> */}
                   </span>
                 </PageHeader>
                 <Table
