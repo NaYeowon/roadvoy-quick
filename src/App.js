@@ -8,8 +8,8 @@ import rider from './components/rider/rider';
 import Popup from './components/Popup/Popup';
 import Login from './pages/shared/Login';
 import file from './components/file/file';
-import shopSignup from './components/shop/shopSignup';
-import riderSignup from './components/rider/riderSignup';
+import shopSignupModal from './components/shop/shopSignupModal';
+import riderSignupModal from './components/rider/RiderSignupModal';
 import Agency from './components/AgencySettlement/Agency';
 import AgencySettlement from './components/AgencySettlement/AgencySettlement';
 import HeadOffice from './components/HeadOffice/HeadOffice';
@@ -27,8 +27,8 @@ class App extends Component {
             <Route path="/rider" component={rider}/>
             <Route path="/Popup" component={Popup}/>
             <Route path="/file" component={file}/>
-            <Route path="/shopSignup" component={shopSignup}/>
-            <Route path="/riderSignup" component={riderSignup}/>
+            <Route path="/shopSignupModal" component={shopSignupModal}/>
+            <Route path="/riderSignupModal" component={riderSignupModal}/>
             <Route path="/Agency" component={Agency}/>
             <Route path="/AgencySettlement" component={AgencySettlement}/>
             <Route path="/HeadOffice" component={HeadOffice}/>

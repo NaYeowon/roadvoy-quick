@@ -1,5 +1,5 @@
-import React, { Component, useEffect } from 'react';
-import { Input, Col, Row, Button, Card, message } from "antd";
+import React, { Component } from 'react';
+import { Input, Col, Row, Button, Card } from "antd";
 import axios from 'axios';
 import LoginHelper from './LoginHelper';
 

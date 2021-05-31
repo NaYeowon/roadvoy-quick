@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Modal } from 'antd'; 
-import { Form, Input, Button, Row, Col, Select } from 'antd';
+import { Modal, Form, Input, Row, Col, Select } from 'antd';
 import { PhoneOutlined } from '@ant-design/icons';
 import { Checkbox } from '@material-ui/core';
-
+import axios from 'axios';
 
 const { Option } = Select;
 
@@ -13,6 +12,74 @@ class RigerSignupModal extends Component {
         super(props);
 
         this.state = { isModalVisible : false };
+
+        this.state = {
+            userId: '',
+            president: '',
+            password: '',
+            cellNo: '',
+            teamName: '',
+            bankCode: '',
+            withdrawPassword: '',
+            courierTag: '',
+            courierLease: '',
+            courierDeposit: '',
+            callUnitPrice: '',
+            conCallLimit: '',
+            managerFlag: '',
+        }
+    }
+
+    onUserId = (e) => {
+        this.setState({ userId: e.target.value })
+    }
+
+    onPresident = (e) => {
+        this.setState({ president: e.target.value })
+    }
+
+    onPassword = (e) => {
+        this.setState({ password: e.target.value })
+    }
+
+    onCellNo = (e) => {
+        this.setState({ cellNo: e.target.value })
+    }
+
+    onTeamName = (e) => {
+        this.setState({ teamName: e.target.value })
+    }
+
+    onBankCode = (e) => {
+        this.setState({ bankCode: e.target.value })
+    }
+
+    onWithdrawPassword = (e) => {
+        this.setState({ withdrawPassword: e.target.value })
+    }
+
+    onCourierTag = (e) => {
+        this.setState({ courierTag: e.target.value })
+    }
+
+    onCourierLease = (e) => {
+        this.setState({ courierLease: e.target.value })
+    }
+
+    onCourierDeposit = (e) => {
+        this.setState({ courierDeposit: e.target.value })
+    }
+   
+    onCallUnitPrice = (e) => {
+        this.setState({ callUnitPrice: e.target.value })
+    }
+   
+    onConCallLimit = (e) => {
+        this.setState({ conCallLimit: e.target.value })
+    }
+   
+    onManagerFlag = (e) => {
+        this.setState({ managerFlag: e.target.value })
     }
 
     handleOk = (e) => {
@@ -30,23 +97,88 @@ class RigerSignupModal extends Component {
     };
 
     componentDidMount() {
-        console.log(this.props.visible, "ddd");
+        //console.log(this.props.visible, "ddd");
+    }
+
+    async onSignData(e)
+    {
+        try 
+        {
+            const form = new FormData();
+            const { userId, president , password, cellNo, teamName, bankCode, withdrawPassword, courierTag, courierLease, courierDeposit, callUnitPrice, conCallLimit, managerFlag } = this.state
+
+            form.append("userId", userId);
+            form.append("president", president);
+            form.append("password", password);
+            form.append("cellNo", cellNo);
+            form.append("teamName", teamName);
+            form.append("bankCode", bankCode);
+            form.append("withdrawPassword", withdrawPassword);
+            form.append("courierTag", courierTag);
+            form.append("courierLease", courierLease);
+            form.append("courierDeposit", courierDeposit);
+            form.append("callUnitPrice", callUnitPrice);
+            form.append("conCallLimit", conCallLimit);
+            form.append("managerFlag", managerFlag);
+
+            const response = await axios (
+                {
+                    method: 'post',
+                    url: 'https://api.roadvoy.net/agency/rider/signup.v2.php',
+                    data: form,
+                    headers:
+                    {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }
+            );
+        } 
+        catch(error)
+        {
+            if(error.response && error.response.data && error.response.data.msg)
+            {
+                throw new Error(error.response.data.msg);
+            }
+            else
+            {
+                throw new Error('서버에서 응답을 받지 못했습니다.');
+            }
+        }
     }
     render() {
+        const { 
+            userId, 
+            president , 
+            password, 
+            cellNo, 
+            teamName,
+            bankCode, 
+            withdrawPassword, 
+            courierTag, 
+            courierLease, 
+            courierDeposit, 
+            callUnitPrice, 
+            conCallLimit,
+             managerFlag } = this.state
         return (
             <>
             <Modal width="700px" visible={this.props.visible} onOk={this.handleOk} onCancel={this.handleCancel}>
             <div style={{maxWidth: '700px', margin: '0 auto', paddingTop:'50px'}}>
             <div style={{textAlign: 'center'}}>
             <h2 htmlFor="company-name">기사등록</h2>
-            <Form onSubmit=''>
+            <Form onSubmit={(e)=> {
+                const data = new FormData(e.target);
+            }}>
             <div style={{textAlign: 'center', margin: '0 auto'}}>
                 <Row gutter={[16, 48]} justify="center" >
                     <Col span={4}>
                         <label>로그인아이디&nbsp;:</label>
                     </Col>
                     <Col span={8}>
-                        <Input />
+                        <Input
+                            name="userId"
+                            value={userId}
+                            onChange={this.onUserId}/>
                     </Col>
                 </Row>
                 <Row justify="center" gutter={[16, 48]}>
@@ -54,7 +186,10 @@ class RigerSignupModal extends Component {
                         <label>이름&nbsp;:</label>
                     </Col>
                     <Col span={8}>
-                        <Input />
+                        <Input 
+                            name="president"
+                            value={president}
+                            onChange={this.onPresident}/>
                     </Col>
                 </Row>
                 <Row justify="center" gutter={[16], [16]}>
@@ -62,7 +197,10 @@ class RigerSignupModal extends Component {
                         <label>비밀번호&nbsp;:</label>
                     </Col>
                     <Col span={8}>
-                        <Input />
+                        <Input 
+                            name="password"
+                            value={password}
+                            onChange={this.onPassword}/>
                     </Col>
                 </Row>
                 <Row justify="center" gutter={[16], [16]}>
@@ -70,7 +208,10 @@ class RigerSignupModal extends Component {
                         <label>휴대폰번호&nbsp;:</label>
                     </Col>
                     <Col span={8}>
-                        <Input prefix={<PhoneOutlined />} />
+                        <Input prefix={<PhoneOutlined />} 
+                            name="cellNo"
+                            value={cellNo}
+                            onChange={this.onCellNo}/>
                     </Col>
                 </Row>
                 <Row justify="center" gutter={[16], [16]}>
@@ -78,7 +219,10 @@ class RigerSignupModal extends Component {
                         <label>소속&nbsp;:</label>
                     </Col>
                     <Col span={8}>
-                        <Input />
+                        <Input
+                            name="teamName"
+                            value={teamName}
+                            onChange={this.onTeamName} />
                     </Col>
                 </Row>
                 <Row justify="center" gutter={[16], [16]}>
@@ -88,8 +232,8 @@ class RigerSignupModal extends Component {
                     <Col span={8}>
                     <Select
                         name="bankCode"
-                        value=''
-                        onChange=''
+                        value={bankCode}
+                        onChange={this.onBankCode}
                         style={{ width: "100%" }}
                     >
                         <Option value="88">신한은행</Option>

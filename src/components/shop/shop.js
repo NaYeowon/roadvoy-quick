@@ -187,7 +187,7 @@ class shop extends Component
                     bordered
                     //pagination={false} 페이징 삭제
                     pagination={{pageSize:'50'}}
-                    size="middle"
+                    size="small"
                     scroll={{ x: 'calc(700px + 50%)', y: 650 }}
                 />,
             </div>

@@ -1,77 +1,168 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 // import Head from 'next/head';
-
+import axios from 'axios';
 import { Form, Input, Button, Row, Col } from "antd";
 import { PhoneOutlined } from '@ant-design/icons';
 import './shopSign.css'
 
-const ShopSignup = () => {
-    const [company, setCompany] = useState('');
-    const [president, setPresident] = useState('');
-    const [password, setPassword] = useState('');
-    const [cellNo, setCellNo] = useState('');
-    const [phoneNo, setPhoneNo] = useState('');
-    const [bizRegNo, setBizRegNo] = useState('');
-    const [resRegNo, setResRegNo] = useState('');
-    const [addrDesc, setAddrDesc] = useState('');
-    const [allocRemark, setAllocRemark] = useState('');
-    const [remark, setRemark] = useState('');
-    const [cpPresident, setCpPresident] = useState('');
-    const [cpCellNo, setCpCellNo] = useState('');
-    const [baseDist, setBaseDist] = useState('');
-    const [baseFare, setBaseFare] = useState('');
-    const [extraDist, setExtraDist] = useState('');
-    const [extraFare, setExtraFare] = useState('');
+class ShopSignup extends Component {
+    constructor(props) {
+        super(props);
 
-    const onSubmit = () => {};
-    const onChangeCompany = e => {
-        setCompany(e.target.value);
-    };
-    const onChangePresident = e => {
-        setPresident(e.target.value);
-    };
-    const onChangePassword = e => {
-        setPassword(e.target.value);
-    };
-    const onChangeCellNo = e => {
-        setCellNo(e.target.value);
-    };
-    const onChangePhoneNo = e => {
-        setPhoneNo(e.target.value);
-    };
-    const onChangeBizRegNo = e => {
-        setBizRegNo(e.target.value);
-    };
-    const onChangeResRegNo = e => {
-        setResRegNo(e.target.value);
-    };
-    const onChangeAddrDesc = e => {
-        setAddrDesc(e.target.value);
-    };
-    const onChangeAllocRemark = e => {
-        setAllocRemark(e.target.value);
-    };
-    const onChangeRemark = e => {
-        setRemark(e.target.value);
-    };
-    const onChangeCpPresident = e => {
-        setCpPresident(e.target.value);
-    };
-    const onChangeCpCellNo = e => {
-        setCpCellNo(e.target.value);
-    };
-    const onChangeBaseDist = e => {
-        setBaseDist(e.target.value);
-    };
-    const onChangeBaseFare= e => {
-        setBaseFare(e.target.value);
-    };
-    const onChangeExtraDist = e => {
-        setExtraDist(e.target.value);
-    };
-    const onChangeExtraFare = e => {
-        setExtraFare(e.target.value);
-    };
+        this.state={
+            company: '',
+            president: '',
+            password: '',
+            cellNo: '',
+            phoneNo: '',
+            bizRegNo: '',
+            resRegNo: '',
+            addrDesc: '',
+            allocRemark: '',
+            remark: '',
+            cpPresident: '',
+            cpCellNo: '',
+            baseDist: '',
+            baseFare: '',
+            extraDist: '',
+            extraFare: ''
+        }
+    }
+        
+
+        onCompany = (e) => {
+            this.setState({ company: e.target.value })
+        }
+
+        onPresident = (e) => {
+            this.setState({ president: e.target.value })
+        }
+
+        onPassword = (e) => {
+            this.setState({ password: e.target.value })
+        }
+
+        onCellNo = (e) => {
+            this.setState({ cellNo: e.target.value })
+        }
+
+        onPhoneNo = (e) => {
+            this.setState({ phoneNo: e.target.value })
+        }
+
+        onBizRegNo = (e) => {
+            this.setState({ bizRegNo: e.target.value })
+        }
+
+        onResRegNo = (e) => {
+            this.setState({ resRegNo: e.target.value })
+        }
+
+        onAddrDesc = (e) => {
+            this.setState({ addrDesc: e.target.value })
+        }
+
+        onAllocRemark = (e) => {
+            this.setState({ allocRemark: e.target.value })
+        }
+
+        onRemark = (e) => {
+            this.setState({ remark: e.target.value })
+        }
+
+        onCpPresident = (e) => {
+            this.setState({ cpPresident: e.target.value })
+        }
+
+        onCpCellNo = (e) => {
+            this.setState({ cpCellNo: e.target.value })
+        }
+
+        onBaseDist = (e) => {
+            this.setState({ baseDist: e.target.value })
+        }
+
+        onBaseFare = (e) => {
+            this.setState({ baseFare: e.target.value })
+        }
+
+        onExtraDist = (e) => {
+            this.setState({ extraDist: e.target.value })
+        }
+
+        onExtraFare = (e) => {
+            this.setState({ extraFare: e.target.value })
+        }
+    
+
+    async onViewData(e)
+    {
+        try 
+        {
+            const form = new FormData();
+            const { company, president, password, cellNo, phoneNo, bizRegNo, resRegNo, addrDesc, allocRemark, remark, cpPresident, cpCellNo, baseDist, baseFare, extraDist, extraFare } = this.state
+            
+            form.append("company", company);
+            form.append("president", president);
+            form.append("password", password);
+            form.append("cellNo", cellNo);
+            form.append("phoneNo", phoneNo);
+            form.append("bizRegNo", bizRegNo);
+            form.append("resRegNo", resRegNo);
+            form.append("addrDesc", addrDesc);
+            form.append("allocRemark", allocRemark);
+            form.append("remark", remark);
+            form.append("cpPresident", cpPresident);
+            form.append("cpCellNo", cpCellNo);
+            form.append("baseDist", baseDist);
+            form.append("baseFare", baseFare);
+            form.append("extraDist", extraDist);
+            form.append("extraFare", extraFare);
+
+            const response = await axios (
+                {
+                    method: 'post',
+                    url: 'https://api.roadvoy.net/agency/shop/signup.php',
+                    data: form,
+                    headers: 
+                    {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }
+            );
+        } catch(error)
+        {
+            if(error.response && error.response.data && error.response.data.msg)
+            {
+                throw new Error(error.response.data.msg);
+            }
+            else 
+            {
+                throw new Error("서버에서 응답을 받지 못했습니다.");
+            }
+        }
+    }
+    render() 
+    {
+        const
+        {
+            company, 
+            president, 
+            password, 
+            cellNo, 
+            phoneNo, 
+            bizRegNo, 
+            resRegNo, 
+            addrDesc, 
+            allocRemark, 
+            remark, 
+            cpPresident,
+            cpCellNo, 
+            baseDist,
+            baseFare, 
+            extraDist, 
+            extraFare
+        } = this.state;
 
     return (
         <>
@@ -83,14 +174,17 @@ const ShopSignup = () => {
             <div style={{maxWidth: '700px', margin: '0 auto', paddingTop:'100px'}}>
                 <div style={{textAlign: 'center'}}>
                 <h2 htmlFor="company-name">가맹등록</h2>
-                <Form onSubmit={onSubmit}>
+                <Form>
                 <div style={{textAlign: 'center', margin: '0 auto'}}>
                     <Row gutter={[16, 48]} justify="center" >
                         <Col span={4}>
                             <label>가맹점명&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input />
+                            <Input
+                                name="company"
+                                value={company}
+                                onChange={this.onCompany}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16, 48]}>
@@ -98,7 +192,10 @@ const ShopSignup = () => {
                             <label>대표자명&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input />
+                            <Input 
+                                name="president"
+                                value={president}
+                                onChange={this.onPresident}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -106,7 +203,10 @@ const ShopSignup = () => {
                             <label>비밀번호&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input prefix={<PhoneOutlined />} />
+                            <Input 
+                                name="password"
+                                value={password}
+                                onChange={this.onPassword}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -114,7 +214,11 @@ const ShopSignup = () => {
                             <label>휴대폰번호&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input prefix={<PhoneOutlined />} />
+                            <Input 
+                                prefix={<PhoneOutlined />} 
+                                name="CellNo"
+                                value={cellNo}
+                                onChange={this.onCellNo}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -122,7 +226,11 @@ const ShopSignup = () => {
                             <label>전화번호&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input />
+                            <Input
+                                prefix={<PhoneOutlined />} 
+                                name="phoneNo" 
+                                value={phoneNo}
+                                onChange={this.onPhoneNo}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -130,7 +238,10 @@ const ShopSignup = () => {
                             <label>사업자번호&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input />
+                            <Input 
+                                name="bizRegNo"
+                                value={bizRegNo}
+                                onChange={this.onBizRegNo}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -138,7 +249,10 @@ const ShopSignup = () => {
                             <label>생년월일&nbsp;:</label>
                         </Col>
                         <Col span={4}>
-                            <Input />
+                            <Input 
+                                name="resRegNo"
+                                value={resRegNo}
+                                onChange={this.onResRegNo}/>
                         </Col>
                         <Col span={4}>
                         </Col>
@@ -158,7 +272,11 @@ const ShopSignup = () => {
                             <label>상세주소&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input placeholder="상세 주소를 입력하세요" />
+                            <Input 
+                                placeholder="상세 주소를 입력하세요"
+                                name="addrDesc"
+                                value={addrDesc}
+                                onChange={this.onAddrDesc} />
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -166,7 +284,10 @@ const ShopSignup = () => {
                             <label>배차특이사항&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input />
+                            <Input
+                                name="allocRemark" 
+                                value={allocRemark}
+                                onChange={this.onAllocRemark}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -174,7 +295,10 @@ const ShopSignup = () => {
                             <label>가맹특이사항&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input />
+                            <Input 
+                                name="remark"
+                                value={remark}
+                                onChange={this.onRemark}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -182,7 +306,10 @@ const ShopSignup = () => {
                             <label>담당관리자&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input />
+                            <Input 
+                                name="cpPresident"
+                                value={cpPresident}
+                                onChange={this.onCpPresident}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -190,7 +317,11 @@ const ShopSignup = () => {
                             <label>관리자연락처&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Input prefix={<PhoneOutlined />} />
+                            <Input 
+                                prefix={<PhoneOutlined />}
+                                name="cpCellNo"
+                                value={cpCellNo}
+                                onChange={this.onCpCellNo} />
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -200,10 +331,18 @@ const ShopSignup = () => {
                         <Col span={10}>
                             <Row gutter={[48]}>
                                 <Col span={12}>
-                                    <Input addonAfter="m"/>
+                                    <Input 
+                                        addonAfter="m"
+                                        name="baseDist"
+                                        value={baseDist}
+                                        onChange={this.onBaseDist}/>
                                 </Col>
                                 <Col span={12}>
-                                    <Input addonAfter="m"/>
+                                    <Input 
+                                        addonAfter="m"
+                                        name="baseFare"
+                                        value={baseFare}
+                                        onChange={this.onBaseFare}/>
                                 </Col>
                             </Row>
                         </Col>
@@ -215,10 +354,18 @@ const ShopSignup = () => {
                         <Col span={10}>
                             <Row gutter={[48]}>
                                 <Col span={12}>
-                                    <Input addonAfter="원"/>
+                                    <Input 
+                                        addonAfter="원"
+                                        name="extraDist"
+                                        value={extraDist}
+                                        onChange={this.onExtraDist}/>
                                 </Col>
                                 <Col span={12}>
-                                    <Input addonAfter="원"/>
+                                    <Input 
+                                        addonAfter="원"
+                                        name="extraFare"
+                                        value={extraFare}
+                                        onChange={this.extraFare}/>
                                 </Col>
                             </Row>
                         </Col>
@@ -235,5 +382,5 @@ const ShopSignup = () => {
         </>
     );
 };
-
+}
 export default ShopSignup;
