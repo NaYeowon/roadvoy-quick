@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Header from '../Layout/Header';
 import { message, PageHeader, Table } from "antd";
 import 'antd/dist/antd.css';
+import axios from 'axios'; 
+import LoginHelper from '../../pages/shared/LoginHelper';
 
 const columns = [
     {
@@ -15,13 +17,11 @@ const columns = [
         {
           title: '이름',
           dataIndex: 'acPresident',
-          key: 'acPresident',
           width: 80,
         },
         {
           title: '상태메세지',
           dataIndex: 'acStatusMessage',
-          key: 'acStatusMessage',
           width: 80,
         },
       ],
@@ -98,6 +98,40 @@ const columns = [
     ];
 class rider extends Component {
     
+  state = {
+    astManageRider: []
+  }
+  async fetchRiderList() 
+  {
+      try 
+      {
+          const response = await axios(
+          {
+              method: 'get',
+              url: 'https://api.roadvoy.net/agency/rider/manage/list.php',
+              headers: 
+              {
+                'Authorization': `Bearer ${LoginHelper.getToken()}`
+              }
+          }); 
+
+          this.setState({
+              astManageShop: response.data.astManageShop
+          })
+      } 
+      catch(e) 
+      {
+          message.error(e.message);
+      }
+  }
+
+  componentDidMount()
+  {
+    this.fetchRiderList = this.fetchRiderList.bind(this);
+    //setInterval(this.fetchRiderList, 1000);
+    this.fetchRiderList();
+  }
+
     render() {
           const data = [];
           for (let i = 0; i < 100; i++) {
@@ -114,7 +148,7 @@ class rider extends Component {
                 </div>
                 <PageHeader>
                   <span>
-                      <b>0</b>개의 가맹점이 등록 되어있습니다.
+                      <b>{this.state.astManageRider?.length}</b>개의 가맹점이 등록 되어있습니다.
                   </span>
                   <span style={{float:'right'}}>
                     {/* <Link to='#'>
