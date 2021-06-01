@@ -21,7 +21,7 @@ class Header extends Component {
     componentDidMount() {
       window.onkeydown = e => {
         if(e.key === 'F2') {
-        window.open('/Popup', '팝업', 'width=1000, height=700')
+        window.open('/Popup/', '_blank', 'top=100, left=500, width=1000, height=700')
       } else if(e.key === 'F3') {
         document.location.href="#"
       } else if(e.key === 'F4') {
@@ -53,7 +53,7 @@ class Header extends Component {
     }
 
     OnCallRegister() {
-      window.open('/Popup', '팝업', 'width=1000, height=700')
+      window.open('/Popup/', '_blank', 'top=100, left=500, width=1000, height=700')
     }
 
     Logout = () => {

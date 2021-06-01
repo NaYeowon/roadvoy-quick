@@ -21,7 +21,7 @@
   border-bottom: none;
   margin-left: 24px;}
 .item:hover { color: red; }
-.item:active, .item.active { color: red; }
+.item-active { color: red }
 
 ul.ant-dropdown-menu {
   top: -20px;

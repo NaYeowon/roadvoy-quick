@@ -12,14 +12,14 @@ class shopSignupModal extends Component {
         this.state = { isModalVisible : false };
 
         this.state = {
-            company: '',
-            president: '',
-            password: '',
-            cellNo: '',
-            phoneNo: '',
-            bizRegNo: '',
-            resRegNo: '',
-            addrDesc: '',
+            acCompany: '',
+            acPresident: '',
+            acPassword: '',
+            acCellNo: '',
+            acPhoneNo: '',
+            acBizRegNo: '',
+            acResRegNo: '',
+            acAddressDesc: '',
             allocRemark: '',
             remark: '',
             cpPresident: '',
@@ -33,36 +33,36 @@ class shopSignupModal extends Component {
         this.onSingupData = this.onSingupData.bind(this)
     }
 
-    onCompany = (e) => {
-        this.setState({ company: e.target.value })
+    onAcCompany = (e) => {
+        this.setState({ acCompany: e.target.value })
     }
 
-    onPresident = (e) => {
-        this.setState({ president: e.target.value })
+    onAcpresident = (e) => {
+        this.setState({ acPresident: e.target.value })
     }
 
-    onPassword = (e) => {
+    onAcpassword = (e) => {
         this.setState({ password: e.target.value })
     }
 
-    onCellNo = (e) => {
-        this.setState({ cellNo: e.target.value })
+    onAccellNo = (e) => {
+        this.setState({ acCellNo: e.target.value })
     }
 
-    onPhoneNo = (e) => {
-        this.setState({ phoneNo: e.target.value })
+    onAcphoneNo = (e) => {
+        this.setState({ acPhoneNo: e.target.value })
     }
 
-    onBizRegNo = (e) => {
-        this.setState({ bizRegNo: e.target.value })
+    onAcbizRegNo = (e) => {
+        this.setState({ acBizRegNo: e.target.value })
     }
 
-    onResRegNo = (e) => {
-        this.setState({ resRegNo: e.target.value })
+    onAcresRegNo = (e) => {
+        this.setState({ acResRegNo: e.target.value })
     }
 
-    onAddrDesc = (e) => {
-        this.setState({ addrDesc: e.target.value })
+    onAcAddressDesc = (e) => {
+        this.setState({ acAddressDesc: e.target.value })
     }
 
     onAllocRemark = (e) => {
@@ -119,16 +119,16 @@ class shopSignupModal extends Component {
         try 
         {
             const form = new FormData();
-            const { company, president, password, cellNo, phoneNo, bizRegNo, resRegNo, addrDesc, allocRemark, remark, cpPresident, cpCellNo, baseDist, baseFare, extraDist, extraFare } = this.state
+            const { acCompany, acPresident, acPassword, acCellNo, acPhoneNo, acBizRegNo, acResRegNo, acAddressDesc, allocRemark, remark, cpPresident, cpCellNo, baseDist, baseFare, extraDist, extraFare } = this.state
             
-            form.append("company", company);
-            form.append("president", president);
-            form.append("password", password);
-            form.append("cellNo", cellNo);
-            form.append("phoneNo", phoneNo);
-            form.append("bizRegNo", bizRegNo);
-            form.append("resRegNo", resRegNo);
-            form.append("addrDesc", addrDesc);
+            form.append("acCompany", acCompany);
+            form.append("acPresident", acPresident);
+            form.append("acPassword", acPassword);
+            form.append("acCellNo", acCellNo);
+            form.append("acPhoneNo", acPhoneNo);
+            form.append("acBizRegNo", acBizRegNo);
+            form.append("acResRegNo", acResRegNo);
+            form.append("acAddressDesc", acAddressDesc);
             form.append("allocRemark", allocRemark);
             form.append("remark", remark);
             form.append("cpPresident", cpPresident);
@@ -164,14 +164,14 @@ class shopSignupModal extends Component {
     render() {
         const
         {
-            company, 
-            president, 
-            password, 
-            cellNo, 
-            phoneNo, 
-            bizRegNo, 
-            resRegNo, 
-            addrDesc, 
+            acCompany, 
+            acPresident, 
+            acPassword, 
+            acCellNo, 
+            acPhoneNo, 
+            acBizRegNo, 
+            acResRegNo, 
+            acAddressDesc, 
             allocRemark, 
             remark, 
             cpPresident,
@@ -187,7 +187,7 @@ class shopSignupModal extends Component {
                 <div style={{maxWidth: '700px', margin: '0 auto', paddingTop:'100px'}}>
                 <div style={{textAlign: 'center'}}>
                 <h2 htmlFor="company-name">가맹등록</h2>
-                <Form onSubmit='handleOk' onSubmit={this.onSingupData}>
+                <Form onSubmit='handleOk'>
                 <div style={{textAlign: 'center', margin: '0 auto'}}>
                     <Row gutter={[16, 48]} justify="center" >
                         <Col span={4}>
@@ -195,9 +195,9 @@ class shopSignupModal extends Component {
                         </Col>
                         <Col span={8}>
                             <Input
-                                name="company"
-                                value={company}
-                                onChange={this.onCompany}/>
+                                name="acCompany"
+                                value={acCompany}
+                                onChange={this.onAcCompany}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16, 48]}>
@@ -206,9 +206,9 @@ class shopSignupModal extends Component {
                         </Col>
                         <Col span={8}>
                             <Input 
-                                name="president"
-                                value={president}
-                                onChange={this.onPresident}/>
+                                name="acPresident"
+                                value={acPresident}
+                                onChange={this.onAcpresident}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -217,9 +217,9 @@ class shopSignupModal extends Component {
                         </Col>
                         <Col span={8}>
                             <Input 
-                                name="password"
-                                value={password}
-                                onChange={this.onPassword}/>
+                                name="acPassword"
+                                value={acPassword}
+                                onChange={this.onAcpassword}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -229,8 +229,8 @@ class shopSignupModal extends Component {
                         <Col span={8}>
                             <Input 
                                 prefix={<PhoneOutlined />} 
-                                name="CellNo"
-                                value={cellNo}
+                                name="acCellNo"
+                                value={acCellNo}
                                 onChange={this.onCellNo}/>
                         </Col>
                     </Row>
@@ -241,9 +241,9 @@ class shopSignupModal extends Component {
                         <Col span={8}>
                             <Input
                                 prefix={<PhoneOutlined />} 
-                                name="phoneNo" 
-                                value={phoneNo}
-                                onChange={this.onPhoneNo}/>
+                                name="acPhoneNo" 
+                                value={acPhoneNo}
+                                onChange={this.onAcphoneNo}/>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>
@@ -252,8 +252,8 @@ class shopSignupModal extends Component {
                         </Col>
                         <Col span={8}>
                             <Input 
-                                name="bizRegNo"
-                                value={bizRegNo}
+                                name="acBizRegNo"
+                                value={acBizRegNo}
                                 onChange={this.onBizRegNo}/>
                         </Col>
                     </Row>
@@ -263,9 +263,9 @@ class shopSignupModal extends Component {
                         </Col>
                         <Col span={4}>
                             <Input 
-                                name="resRegNo"
-                                value={resRegNo}
-                                onChange={this.onResRegNo}/>
+                                name="acResRegNo"
+                                value={acResRegNo}
+                                onChange={this.onAcresRegNo}/>
                         </Col>
                         <Col span={4}>
                         </Col>
@@ -287,9 +287,9 @@ class shopSignupModal extends Component {
                         <Col span={8}>
                             <Input 
                                 placeholder="상세 주소를 입력하세요"
-                                name="addrDesc"
-                                value={addrDesc}
-                                onChange={this.onAddrDesc} />
+                                name="acAddressDesc"
+                                value={acAddressDesc}
+                                onChange={this.onAcAddressDesc} />
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>

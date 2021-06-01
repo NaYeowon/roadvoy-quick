@@ -96,11 +96,10 @@ const columns = [
         ],
       },
     ];
-class rider extends Component {
-    
-  state = {
-    astManageRider: []
-  }
+class rider extends Component 
+{   
+  state = { astManageRider: [] }
+
   async fetchRiderList() 
   {
       try 
@@ -116,7 +115,7 @@ class rider extends Component {
           }); 
 
           this.setState({
-              astManageShop: response.data.astManageShop
+              astManageRider: response.data.astManageRider
           })
       } 
       catch(e) 
@@ -128,8 +127,7 @@ class rider extends Component {
   componentDidMount()
   {
     this.fetchRiderList = this.fetchRiderList.bind(this);
-    //setInterval(this.fetchRiderList, 1000);
-    this.fetchRiderList();
+    setInterval(this.fetchRiderList, 1000);
   }
 
     render() {
@@ -160,14 +158,14 @@ class rider extends Component {
                   </span>
                 </PageHeader>
                 <Table
-    columns={columns}
-    dataSource={data}
-    bordered
-    //pagination={false} 페이징 삭제
-    pagination={{pageSize:'50'}}
-    size="small"
-    scroll={{ x: 'calc(700px + 50%)', y: 650 }}
-  />,
+                  columns={columns}
+                  dataSource={this.state.astManageRider}
+                  bordered
+                  //pagination={false} 페이징 삭제
+                  pagination={{pageSize:'50'}}
+                  size="small"
+                  scroll={{ x: 'calc(700px + 50%)', y: 650 }}
+                />,
             </div>
         )
     }
