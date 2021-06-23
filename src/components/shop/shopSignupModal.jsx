@@ -3,7 +3,10 @@ import { Modal } from 'antd';
 import axios from 'axios';
 import { Form, Input, Button, Row, Col } from 'antd';
 import { PhoneOutlined } from '@ant-design/icons';
+import DaumPostCode from "react-daum-postcode";
 import './shopSign.css'
+
+
 class shopSignupModal extends Component {
 
     constructor(props) {
@@ -27,11 +30,44 @@ class shopSignupModal extends Component {
             baseDist: '',
             baseFare: '',
             extraDist: '',
-            extraFare: ''
+            extraFare: '',
+            address: "",
+            zoneCode : "",
+            fullAddress : "",
+            isDaumPost : false,
+            isRegister : false,
+            register: [],
         }
+        
 
         this.onSingupData = this.onSingupData.bind(this)
     }
+
+    handleOpenPost = () => {
+        this.setState({
+            isDaumPost : true
+        })
+    }
+
+    handleAddress = (data) => {
+        let AllAddress = data.address;
+        let extraAddress = ''; 
+        let zoneCodes = data.zonecode;
+        
+        if (data.addressType === 'R') {
+          if (data.bname !== '') {
+            extraAddress += data.bname;
+          }
+          if (data.buildingName !== '') {
+            extraAddress += (extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName);
+          }
+          AllAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
+        }
+        this.setState ({
+            fullAddress: AllAddress,
+            zoneCode : zoneCodes
+        })
+      }
 
     onAcCompany = (e) => {
         this.setState({ acCompany: e.target.value })
@@ -60,6 +96,8 @@ class shopSignupModal extends Component {
     onAcresRegNo = (e) => {
         this.setState({ acResRegNo: e.target.value })
     }
+
+
 
     onAcAddressDesc = (e) => {
         this.setState({ acAddressDesc: e.target.value })
@@ -119,7 +157,7 @@ class shopSignupModal extends Component {
         try 
         {
             const form = new FormData();
-            const { acCompany, acPresident, acPassword, acCellNo, acPhoneNo, acBizRegNo, acResRegNo, acAddressDesc, allocRemark, remark, cpPresident, cpCellNo, baseDist, baseFare, extraDist, extraFare } = this.state
+            const { acCompany, acPresident, acPassword, acCellNo, acPhoneNo, acBizRegNo, acResRegNo, acAddressDesc, allocRemark, remark, cpPresident, cpCellNo, baseDist, baseFare, extraDist, extraFare, } = this.state
             
             form.append("acCompany", acCompany);
             form.append("acPresident", acPresident);
@@ -162,6 +200,7 @@ class shopSignupModal extends Component {
         }
     }
     render() {
+        const { isModalShow, isModalClose } = this.props;
         const
         {
             acCompany, 
@@ -179,8 +218,20 @@ class shopSignupModal extends Component {
             baseDist,
             baseFare, 
             extraDist, 
-            extraFare
+            extraFare,address, isDaumPost, fullAddress, zoneCode, isRegister
         } = this.state;
+
+        const width = 595;
+        const height = 450;
+        const modalStyle = {
+            position: "absolute",
+            top: 0,
+            left: "-178px",
+            zIndex: "100",
+            border: "1px solid #000000",
+            overflow: "hidden"
+        }
+
         return (
             <>
                 <Modal width="700px" visible={this.props.visible} onOk={this.handleOk} onCancel={this.handleCancel}>
@@ -275,9 +326,26 @@ class shopSignupModal extends Component {
                             <label>가맹점주소&nbsp;:</label>
                         </Col>
                         <Col span={8}>
-                            <Button type="primary" style={{width: '100%'}}>
+                            <Button 
+                                type="primary" 
+                                onClick={this.handleOpenPost}
+                                style={{width: '100%'}}>
                                 주소검색
                             </Button>
+                            {
+                                isDaumPost ?
+                                <DaumPostCode
+                                    onComplete={this.handleAddress}
+                                    autoClose
+                                    width={width}
+                                    height={height}
+                                    style={modalStyle}
+                                    isDaumPost={isDaumPost}
+                                />
+                                : null
+                            }
+                            
+                            <div className="address">{fullAddress}</div>
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>

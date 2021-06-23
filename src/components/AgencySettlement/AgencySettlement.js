@@ -1,152 +1,60 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { DatePicker, Space, Descriptions } from 'antd';
 import Header from '../Layout/Header';
-import { PageHeader, Table } from "antd";
-import 'antd/dist/antd.css';
 
-class AgencySettlement extends Component {
-    render() {
-        const columns = [
-            {
-              title: '계정정보',
-              children: [
-                {
-                  title: '아이디',
-                  dataIndex: 'ucMemCourId',
-                  width: 70,
-                },
-                {
-                  title: '총판명',
-                  dataIndex: 'acCompany',
-                  key: 'acCompany',
-                  width: 70,
-                },
-              ],
-            },
-            {
-              title: '콜 수',
-              children: [
-                {
-                  title: '당일',
-                  dataIndex: 'ulCustCallCnt',
-                  key: 'ulCustCallCnt',
-                  width: 50,
-                },
-                {
-                  title: '당일(누적)',
-                  dataIndex: 'companyName',
-                  key: 'companyName',
-                  width:50,
-                },
-              ],
-            },
-            {
-              title: '콜 수익',
-              children: [
-                {
-                  title: '선/착불',
-                  dataIndex: 'usDeliDoneCntSum',
-                  key: 'usDeliDoneCntSum',
-                  width: 50,
-                },
-                {
-                  title: '신용',
-                  dataIndex: 'usMonthDeliDoneCntSum',
-                  key: 'usMonthDeliDoneCntSum',
-                  width:50,
-                },
-                {
-                  title: '입금',
-                  dataIndex: 'usMonthDeliDoneCntSum',
-                  key: 'usMonthDeliDoneCntSum',
-                  width:50,
-                },
-              ],
-            },
-            {
-              title: '매출 정산',
-              children: [
-                {
-                  title: '매출액',
-                  dataIndex: '',
-                  key: '',
-                  width: 50,
-                },
-                {
-                  title: '선결제',
-                  dataIndex: '',
-                  key: '',
-                  width:50,
-                },
-                {
-                  title: '후결제',
-                  dataIndex: '',
-                  key: '',
-                  width:50,
-                },
-              ],
-            },
-            {
-              title: '수익 정산',
-              children: [
-                {
-                  title: '기사수익',
-                  dataIndex: '',
-                  key: '',
-                  width: 50,
-                },
-                {
-                  title: '퀵수익',
-                  dataIndex: '',
-                  key: '',
-                  width:50,
-                },
-                {
-                  title: '비용',
-                  dataIndex: '',
-                  key: '',
-                  width:50,
-                },
-                {
-                  title: '실수익',
-                  dataIndex: '',
-                  key: '',
-                  width:50,
-                },
-                {
-                  title: '로드보이 수익 (30%)',
-                  dataIndex: '',
-                  key: '',
-                  width:70,
-                },
-              ],
-            },
-          ];
-          
-          const data = [];
-          for (let i = 0; i < 100; i++) {
-            data.push({
-             key: i,
-             //ucMemCourId: '값',
-             //ex) age: i+1
-            });
-          }
-        return (
-            <div>
-                <div>
-                <Header />
-                </div>
-                
-                <Table
-                    columns={columns}
-                    dataSource={data}
-                    bordered
-                    //pagination={false} 페이징 삭제
-                    pagination={{pageSize:'50'}}
-                    size="middle"
-                    scroll={{ x: 'calc(700px + 50%)', y: 650 }}
-                />,
-            </div>
-        )
-    }
-}
+
+const { RangePicker } = DatePicker;
+
+const AgencySettlement = () => {
+  return (
+    <div>
+      <Header />
+      <div style={{padding:'50px'}}>
+        <Space direction="vertical" size={12} style={{ width: 'auto', display:'table', marginRight:'auto', marginLeft:'auto' }}>
+          <RangePicker />
+        </Space>
+        
+        <Descriptions bordered size='small' column={1} style={{ width: '400px', marginTop:'8px', display:'table', marginRight:'auto', marginLeft:'auto' }}>
+          <Descriptions.Item label='가맹콜수'>
+            <a href='/ShopSettlement'>0</a>
+          </Descriptions.Item>
+          <Descriptions.Item label='기사 수행콜수'>
+            <a href='/RiderSettlement'>0</a>
+          </Descriptions.Item>
+        </Descriptions>
+
+        <Descriptions bordered size='small' column={1} style={{ width: '400px', marginTop:'8px', display:'table', marginRight:'auto', marginLeft:'auto' }}>
+          <Descriptions.Item label='콜 수수료'>0</Descriptions.Item>
+          <Descriptions.Item label='심부름 접수 대행수수료'>0</Descriptions.Item>
+          <Descriptions.Item label='기사소속 대행수수료'>0</Descriptions.Item>
+          <Descriptions.Item label='관리비'>0</Descriptions.Item>
+          <Descriptions.Item label='콜 당 수수료'>0</Descriptions.Item>
+          <Descriptions.Item label='기사 일차감 총액'>0</Descriptions.Item>
+          <Descriptions.Item label='기사 일차감 실수입'>0</Descriptions.Item>
+        </Descriptions>
+        
+        <Descriptions bordered size='small' column={1} style={{ width: '400px', marginTop:'8px', display:'table', marginRight:'auto', marginLeft:'auto' }}>
+          <Descriptions.Item label='탈퇴 가맹 환불액'>0</Descriptions.Item>
+          <Descriptions.Item label='탈퇴 기사 환불액'>0</Descriptions.Item>
+        </Descriptions>
+
+        <Descriptions bordered size='small' column={1} style={{ width: '400px', marginTop:'8px', display:'table', marginRight:'auto', marginLeft:'auto' }}>
+          <Descriptions.Item label='기사→대행 캐시송금'>0</Descriptions.Item>
+          <Descriptions.Item label='가상계좌 입금'>0</Descriptions.Item>
+          <Descriptions.Item label='가상계좌 수수료'>0</Descriptions.Item>
+        </Descriptions>
+
+        <Descriptions bordered size='small' column={1} style={{ width: '400px', marginTop:'8px', display:'table', marginRight:'auto', marginLeft:'auto' }}>
+          <Descriptions.Item label='프로그램 사용료'>0</Descriptions.Item>
+          <Descriptions.Item label='본사직권 출금'>0</Descriptions.Item>
+          <Descriptions.Item label='출금'>0</Descriptions.Item>
+          <Descriptions.Item label='출금수수료'>0</Descriptions.Item>
+          <Descriptions.Item label='관리자가 회수한 캐시'>0</Descriptions.Item>
+        </Descriptions>
+      </div>
+    </div>
+
+  );
+};
+
 export default AgencySettlement;

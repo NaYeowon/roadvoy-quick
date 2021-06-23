@@ -1,11 +1,19 @@
-import React, { Component } from 'react';
+import * as React from 'react';
+import { useState, useEffect } from 'react'
 import Header from '../Layout/Header';
 import { message, PageHeader, Table } from "antd";
 import 'antd/dist/antd.css';
 import axios from 'axios'; 
 import LoginHelper from '../../pages/shared/LoginHelper';
+import { ColumnsType } from 'antd/lib/table';
 
-const columns = [
+
+interface Rider {
+  title: string;
+  dataIndex: string;
+  width: number;
+}
+const columns: ColumnsType<Rider> = [
     {
       title: '계정정보',
       children: [
@@ -96,11 +104,10 @@ const columns = [
         ],
       },
     ];
-class rider extends Component 
-{   
-  state = { astManageRider: [] }
-
-  async fetchRiderList() 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const Rider = () => {  
+  const [astManageRider, setAstManageRider] = useState<Rider[]>([])
+  const fetchRiderList = async () =>
   {
       try 
       {
@@ -114,60 +121,61 @@ class rider extends Component
               }
           }); 
 
-          this.setState({
-              astManageRider: response.data.astManageRider
-          })
+          setAstManageRider(response.data.astManageRider)
       } 
       catch(e) 
       {
           message.error(e.message);
       }
   }
+  
 
-  componentDidMount()
-  {
-    this.fetchRiderList = this.fetchRiderList.bind(this);
-    setInterval(this.fetchRiderList, 1000);
-  }
 
-    render() {
-          const data = [];
-          for (let i = 0; i < 100; i++) {
-            data.push({
-             key: i,
-             //ucMemCourId: '값',
-             //ex) age: i+1
-            });
-          }
-        return (
+//   const [value,setVale] = useState(1);
+// const [isIncrease,setIsIncrease] = useState(false);
+// useEffect(()=>{
+//   const tick = () => {
+//        return setTimeOut(()=>setValue(value+1),1000);
+//     }
+//   if(!isIncrease) return undefined;
+//   tick();
+//   return ()=>clearTimeiout(tick);
+// },[value,isIncrease])
+  
+  useEffect(() => {
+    const delay = window.setInterval(fetchRiderList, 1000)
+    return () => clearInterval(delay)
+  }, [])
+      
+
+    return (
+        <div>
             <div>
-                <div>
-                <Header />
-                </div>
-                <PageHeader>
-                  <span>
-                      <b>{this.state.astManageRider?.length}</b>개의 가맹점이 등록 되어있습니다.
-                  </span>
-                  <span style={{float:'right'}}>
-                    {/* <Link to='#'>
-                        <Button>기사별정산</Button>
-                    </Link>
-                    <Link to='#'>
-                        <Button>기사등록</Button>
-                    </Link> */}
-                  </span>
-                </PageHeader>
-                <Table
-                  columns={columns}
-                  dataSource={this.state.astManageRider}
-                  bordered
-                  //pagination={false} 페이징 삭제
-                  pagination={{pageSize:'50'}}
-                  size="small"
-                  scroll={{ x: 'calc(700px + 50%)', y: 650 }}
-                />,
+            <Header />
             </div>
-        )
-    }
+            <PageHeader>
+              <span>
+                  <b>{astManageRider?.length}</b>개의 가맹점이 등록 되어있습니다.
+              </span>
+              <span style={{float:'right'}}>
+                {/* <Link to='#'>
+                    <Button>기사별정산</Button>
+                </Link>
+                <Link to='#'>
+                    <Button>기사등록</Button>
+                </Link> */}
+              </span>
+            </PageHeader>
+            <Table
+              columns={columns}
+              dataSource={astManageRider}
+              bordered
+              pagination={false}
+              size="small"
+              scroll={{ x: 'calc(700px + 50%)', y: 650 }}
+            />,
+        </div>
+    )
+
 }
-export default rider;
+export default Rider;

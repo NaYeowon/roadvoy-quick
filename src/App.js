@@ -12,8 +12,14 @@ import shopSignupModal from './components/shop/shopSignupModal';
 import riderSignupModal from './components/rider/RiderSignupModal';
 import Agency from './components/AgencySettlement/Agency';
 import AgencySettlement from './components/AgencySettlement/AgencySettlement';
+import ShopSettlement from './components/shop/ShopSettlement';
 import HeadOffice from './components/HeadOffice/HeadOffice';
 import Distributor from './components/Distributor/Distributor';
+import ShopSettlementList from './components/shop/ShopSettlementList';
+import RiderSettlement from './components/rider/RiderSettlement';
+import RiderSettlementList from './components/rider/RiderSettlementList';
+import Board from './components/Board/Board';
+import Writing from './components/Board/Writing';
 
 class App extends Component {
   render() {
@@ -31,8 +37,14 @@ class App extends Component {
             <Route path="/riderSignupModal" component={riderSignupModal}/>
             <Route path="/Agency" component={Agency}/>
             <Route path="/AgencySettlement" component={AgencySettlement}/>
+            <Route path="/ShopSettlement" component={ShopSettlement}/>
             <Route path="/HeadOffice" component={HeadOffice}/>
             <Route path="/Distributor" component={Distributor}/>
+            <Route path="/ShopSettlementList" component={ShopSettlementList}/>
+            <Route path="/RiderSettlement" component={RiderSettlement}/>
+            <Route path="/RiderSettlementList" component={RiderSettlementList}/>
+            <Route path="/Board" component={Board}/>
+            <Route path="/Writing" component={Writing}/>
             <Redirect from="/" to="/CallListComponent" />
         </Switch>
       </Router>

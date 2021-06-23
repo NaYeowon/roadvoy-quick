@@ -82,7 +82,8 @@ class Login extends Component {
                     {
                         "Content-Type": "multipart/form-data"
                     }
-                }); 
+                  }); 
+                  console.log(response);
 
                 // ===============================.
                 // Server API 에서 보내준 Browser Token 정보를 저장하는 부분

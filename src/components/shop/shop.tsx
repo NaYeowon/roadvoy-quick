@@ -4,6 +4,8 @@ import { message, PageHeader, Table } from "antd";
 import 'antd/dist/antd.css';
 import LoginHelper from '../../pages/shared/LoginHelper';
 import axios from 'axios';
+import { ColumnsType } from 'antd/lib/table';
+import { useState, useEffect } from 'react';
 
 // ================================
 // react 는 props (property) 와 state 가 변경될 때 마다 render 가 호출되므로 
@@ -12,12 +14,19 @@ import axios from 'axios';
 // arr[0]['ucMemCourId'];
 // arr[1]['ucMemCourId']
 
-const columns = [
+interface IShop {
+  title: string;
+  dataIndex: string;
+  width: number;
+  usDeliDoneCntSum: number;
+  usMonthDeliDoneCntSum: number;
+}
+const columns: ColumnsType<IShop> = [
   {
     title: '계정정보',
     children: [
       {
-        title: '아이디',
+        title:'아이디',
         dataIndex: 'ucMemCourId',
         width: 120,
         // render: (model) => {
@@ -43,14 +52,14 @@ const columns = [
       },
       {
         title: '관리비',
-        dataIndex: 'companyName',
-        key: 'companyName',
+        dataIndex: 'ulCustCallAmt',
+        key: 'ulCustCallAmt',
         width:100,
       },
       {
         title: '충전예정일',
-        dataIndex: 'companyName',
-        key: 'companyName',
+        dataIndex: 'acCustCallDueDate',
+        key: 'acCustCallDueDate',
         width:100,
       },
     ],
@@ -120,16 +129,13 @@ const columns = [
 // render 밖에 정의해서 사용한다
 // ================================
 
-class shop extends Component 
+const Shop = () => {
+  const [astManageShop, setAstManageShop] = useState<IShop[]>([])
+  const fetchShopList = async () =>
 {
-    state = {
-        astManageShop: []
-    }
 
     // ================================
     // 이 부분이 1초마다 호출되는 Routine
-    async fetchShopList() 
-    {
         try 
         {
             const response = await axios(
@@ -142,9 +148,7 @@ class shop extends Component
                 }
             }); 
 
-            this.setState({
-                astManageShop: response.data.astManageShop
-            })
+            setAstManageShop(response.data.astManageShop)
         } 
         catch(e) 
         {
@@ -156,42 +160,40 @@ class shop extends Component
 
     // ================================
     // 이 부분이 Main Routine
-    componentDidMount() 
-    {
-        this.fetchShopList = this.fetchShopList.bind(this);
-        setInterval(this.fetchShopList, 1000);
-    }
+
+    useEffect(() => {
+      const delay = window.setInterval(fetchShopList, 1000)
+      return () => clearInterval(delay)
+    },[]);
+
     // 이 부분이 Main Routine
     // ================================
 
-    render() 
-    {
-        return (
+    return (
+        <div>
             <div>
-                <div>
-                <Header />
-                </div>
-
-                <PageHeader>
-                  <span>
-                      <b>{this.state.astManageShop?.length}</b>개의 가맹점이 등록 되어있습니다.
-                  </span>
-                  <span style={{float:'right'}}>
-                    
-                  </span>
-                </PageHeader>
-
-                <Table
-                    columns={columns}
-                    dataSource={this.state.astManageShop}
-                    bordered
-                    //pagination={false} 페이징 삭제
-                    pagination={{pageSize:'50'}}
-                    size="small"
-                    scroll={{ x: 'calc(700px + 50%)', y: 650 }}
-                />,
+            <Header />
             </div>
-        )
-    }
+
+            <PageHeader>
+              <span>
+                  <b>{astManageShop?.length}</b>개의 가맹점이 등록 되어있습니다.
+              </span>
+              <span style={{float:'right'}}>
+                
+              </span>
+            </PageHeader>
+
+            <Table
+                columns={columns}
+                dataSource={astManageShop}
+                bordered
+                pagination={false}
+                size="small"
+                scroll={{ x: 'calc(700px + 50%)', y: 650 }}
+            />,
+        </div>
+    )
+
 }
-export default shop;
+export default Shop;
