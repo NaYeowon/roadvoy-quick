@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import Header from '../Layout/Header';
 import ShopSettlementList from './ShopSettlementList';
 import { ColumnsType } from 'antd/lib/table';
+import { costFormat } from '../../util/FormatUtil'
 
 interface IShopSettlement{
   title: string;
@@ -20,11 +21,13 @@ const columns:ColumnsType<IShopSettlement> = [
   {
     title: '콜수',
     dataIndex: 'ulCustCallCnt',
-    width: 60
+    width: 100,
+    render: ((cost: number) => costFormat(cost))
   },
   {
     title: '가상계좌',
     dataIndex: 'ulCurrentVirAccBalance',
+    render: ((cost: number) => costFormat(cost))
   },
 ];
 

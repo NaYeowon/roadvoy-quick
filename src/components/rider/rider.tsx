@@ -7,6 +7,8 @@ import axios from 'axios';
 import LoginHelper from '../../pages/shared/LoginHelper';
 import { ColumnsType } from 'antd/lib/table';
 
+import { costFormat } from '../../util/FormatUtil'
+import MemberHelper from 'src/helpers/MemberHelper';
 
 interface Rider {
   title: string;
@@ -20,6 +22,9 @@ const columns: ColumnsType<Rider> = [
         {
           title: '아이디',
           dataIndex: 'ucMemCourId',
+          render:(text: string, record: Rider) => {
+            return `${MemberHelper.formatMemberId(record)}`;
+          },
           width: 120,
         },
         {
@@ -42,6 +47,7 @@ const columns: ColumnsType<Rider> = [
           dataIndex: 'lCallUnitPrice',
           key: 'lCallUnitPrice',
           width: 80,
+          render: ((cost: number) => costFormat(cost))
         },
         {
           title: '당일',
@@ -62,12 +68,14 @@ const columns: ColumnsType<Rider> = [
         dataIndex: "lAccountBalance",
         key: "lAccountBalance",
         width: 100,
+        render: ((cost: number) => costFormat(cost))
       },
       {
         title: "보증금",
         dataIndex: "lCourierDeposit",
         key: "lCourierDeposit",
         width: 100,
+        render: ((cost: number) => costFormat(cost))
       },
       {
         title: "리스료",
@@ -77,12 +85,20 @@ const columns: ColumnsType<Rider> = [
             dataIndex: "ucCourierTag",
             key: "ucCourierTag",
             width: 100,
+            render:(dataIndex) => {
+              if(dataIndex == 1) {
+                return '지입';
+              } else {
+                return '대여';
+              }
+            }
           },
           {
             title: "차감(매일)",
             dataIndex: "lCourierLease",
             key: "lCourierLease",
             width: 100,
+            render: ((cost: number) => costFormat(cost))
           },
         ],
       },
@@ -94,12 +110,18 @@ const columns: ColumnsType<Rider> = [
             dataIndex: "ucConCallLimit",
             key: "ucConCallLimit",
             width: 80,
+            render: (dataIndex) => {
+              return dataIndex + ' 콜'
+            }
             },
           {
             title: "지연",
             dataIndex: "ucCallRtrvTime",
             key: "ucCallRtrvTime",
             width: 80,
+            render: (dataIndex) => {
+              return dataIndex + '초'
+            }
           },
         ],
       },

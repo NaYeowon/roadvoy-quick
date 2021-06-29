@@ -14,7 +14,7 @@ const columns = [
       title: '글제목',
       dataIndex:'bb',
       key: 'bb',
-      render: text => <a href="#">{text}</a>,
+      render: text => <a href="/BoardDetail">{text}</a>,
     },
     {
       title: '작성일',

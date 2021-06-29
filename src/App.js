@@ -7,7 +7,7 @@ import shop from './components/shop/shop';
 import rider from './components/rider/rider';
 import Popup from './components/Popup/Popup';
 import Login from './pages/shared/Login';
-import file from './components/file/file';
+import FileUpload from './components/file/FileUpload';
 import shopSignupModal from './components/shop/shopSignupModal';
 import riderSignupModal from './components/rider/RiderSignupModal';
 import Agency from './components/AgencySettlement/Agency';
@@ -20,6 +20,7 @@ import RiderSettlement from './components/rider/RiderSettlement';
 import RiderSettlementList from './components/rider/RiderSettlementList';
 import Board from './components/Board/Board';
 import Writing from './components/Board/Writing';
+import BoardDetail from './components/Board/BoardDetail';
 
 class App extends Component {
   render() {
@@ -32,7 +33,7 @@ class App extends Component {
             <Route path="/shop" component={shop}/>
             <Route path="/rider" component={rider}/>
             <Route path="/Popup" component={Popup}/>
-            <Route path="/file" component={file}/>
+            <Route path="/fileUpload" component={FileUpload}/>
             <Route path="/shopSignupModal" component={shopSignupModal}/>
             <Route path="/riderSignupModal" component={riderSignupModal}/>
             <Route path="/Agency" component={Agency}/>
@@ -45,6 +46,7 @@ class App extends Component {
             <Route path="/RiderSettlementList" component={RiderSettlementList}/>
             <Route path="/Board" component={Board}/>
             <Route path="/Writing" component={Writing}/>
+            <Route path="/BoardDetail" component={BoardDetail}/>
             <Redirect from="/" to="/CallListComponent" />
         </Switch>
       </Router>

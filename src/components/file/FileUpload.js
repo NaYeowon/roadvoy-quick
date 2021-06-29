@@ -1,50 +1,45 @@
-import { Form, Button, Upload, } from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
+import React from 'react';
 import Header from '../Layout/Header';
+import { Upload, message } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
 
-const normFile = (e) => {
-  console.log('Upload event:', e);
+const { Dragger } = Upload;
 
-  if (Array.isArray(e)) {
-    return e;
-  }
-
-  return e && e.fileList;
+const props = {
+  name: 'file',
+  multiple: true,
+  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+  onChange(info) {
+    const { status } = info.file;
+    if (status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully.`);
+    } else if (status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+  onDrop(e) {
+    console.log('Dropped files', e.dataTransfer.files);
+  },
 };
 
 const FileUpload = () => {
- 
-
   return (
-    <>
-    <Header />
-    <Form >
-      <Form.Item>
-        <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={normFile} style={{padding:'100px'}}>
-          <Upload.Dragger name="files" action="/upload.do" >
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined
-                style={{ height:'150px'}}
-              />
-            </p>
-            <p className="ant-upload-text">Click or Drag File</p>
-            <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-          </Upload.Dragger>
-        </Form.Item>
-      </Form.Item>
-
-      <Form.Item
-        wrapperCol={{
-          span: 12,
-          offset: 7,
-        }}
-      >
-        <Button type="primary" htmlType="submit">
-          파일 업로드
-        </Button>
-      </Form.Item>
-    </Form>
-    </>
+    <div>
+      <Header />
+      <Dragger {...props} style={{ marginTop:'130px'}}>
+        <p className="ant-upload-drag-icon">
+          <InboxOutlined />
+        </p>
+        <p className="ant-upload-text">Click or drag file to this area to upload</p>
+        <p className="ant-upload-hint">
+          Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+          band files
+        </p>
+      </Dragger>,
+    </div>
   );
 };
 

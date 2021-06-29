@@ -29,6 +29,7 @@ const Writing = () => {
             </Descriptions>
             <div style={{ textAlign:'center', paddingTop:'10px' }}>
                 <Button onClick={onCancle}>취소</Button>
+                <Button>등록</Button>
             </div>
          </div>
         </>

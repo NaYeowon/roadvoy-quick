@@ -45,9 +45,17 @@ class shopSignupModal extends Component {
 
     handleOpenPost = () => {
         this.setState({
-            isDaumPost : true
+            isDaumPost : true,
         })
     }
+
+    handleCancel = (e) => {
+        this.setState({ isModalVisible : false, isDaumPost : false, fullAddress: ''  });
+        e.preventDefault();
+
+        this.props.onCancel(this.state.isModalVisible)
+    };
+
 
     handleAddress = (data) => {
         let AllAddress = data.address;
@@ -65,7 +73,8 @@ class shopSignupModal extends Component {
         }
         this.setState ({
             fullAddress: AllAddress,
-            zoneCode : zoneCodes
+            zoneCode : zoneCodes,
+            isDaumPost: false
         })
       }
 
@@ -135,19 +144,6 @@ class shopSignupModal extends Component {
         this.setState({ extraFare: e.target.value })
     }
 
-    handleOk = (e) => {
-        this.setState({ isModalVisible : false});
-        e.preventDefault();
-        this.props.onOk(this.state.isModalVisible)
-    };
-
-    handleCancel = (e) => {
-        this.setState({ isModalVisible : false });
-        e.preventDefault();
-
-        this.props.onCancel(this.state.isModalVisible)
-    };
-
     componentDidMount = () => {
         //console.log(this.props.visible, "ddd");
     }
@@ -201,6 +197,7 @@ class shopSignupModal extends Component {
     }
     render() {
         const { isModalShow, isModalClose } = this.props;
+        
         const
         {
             acCompany, 
@@ -234,7 +231,7 @@ class shopSignupModal extends Component {
 
         return (
             <>
-                <Modal width="700px" visible={this.props.visible} onOk={this.handleOk} onCancel={this.handleCancel}>
+                <Modal width="700px" visible={this.props.visible} onCancel={this.handleCancel}>
                 <div style={{maxWidth: '700px', margin: '0 auto', paddingTop:'100px'}}>
                 <div style={{textAlign: 'center'}}>
                 <h2 htmlFor="company-name">가맹등록</h2>
@@ -344,8 +341,7 @@ class shopSignupModal extends Component {
                                 />
                                 : null
                             }
-                            
-                            <div className="address">{fullAddress}</div>
+                            <div className="address">{fullAddress}</div> 
                         </Col>
                     </Row>
                     <Row justify="center" gutter={[16], [16]}>

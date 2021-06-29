@@ -7,6 +7,7 @@ import { Menu, Dropdown } from 'antd';
 import RiderSignupModal from '../rider/RiderSignupModal';
 import ShopSignupModal from '../shop/shopSignupModal';
 
+const { SubMenu } = Menu;
 const Header = () => {
     
     const [isModalRiderVisible, setIsModalRiderVisible] = useState(false)
@@ -183,7 +184,7 @@ const Header = () => {
                     <span className="item" style={{color:'black'}}>0 콜</span>
                     <span className="item" style={{color:'black'}}>0 원</span>
                     <NavLink exact to="Board" className="item">게시판</NavLink>
-                    <NavLink to="/file" className="item">파일관리</NavLink>
+                    <NavLink to="/FileUpload" className="item">파일관리</NavLink>
                     {/* <a href="void:0" className="item" onClick={OnCallRegister} >콜등록(F2)</a> */}
                     <NavLink to="/" className="item" onClick={Logout}>로그아웃</NavLink>
                 </div>

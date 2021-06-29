@@ -15,13 +15,14 @@ const columns = [
 {
     title: '이름',
     dataIndex: 'acPresident',
-    key: 'acPresident'
+    key: 'acPresident',
 },
 {
     title: '콜수',
-    dataIndex: 'usTotalDoneCallSum',
-    key: 'usTotalDoneCallSum'
-},
+    dataIndex: 'usMonthDoneCallSum',
+    key: 'usMonthDoneCallSum',
+    width: 80,
+  },
 ];
 
 const { RangePicker } = DatePicker;

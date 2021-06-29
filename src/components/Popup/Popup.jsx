@@ -1,6 +1,8 @@
 import { Checkbox } from '@material-ui/core';
 import { Form, Select, Radio, Button, Input, Col, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import DaumAddress from '../../util/AdressUtil'
+
   const formItemLayout = {
     labelCol: {
       span: 7,
@@ -75,7 +77,7 @@ import TextArea from 'antd/lib/input/TextArea';
 
             <Form.Item label="목적지 주소">
               <Button type="primary" block onClick=''>
-                주소검색
+                <DaumAddress />주소검색
               </Button>
             </Form.Item>
 

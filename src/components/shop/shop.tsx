@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Shop.css';
 import Header from '../Layout/Header';
 import { message, PageHeader, Table } from "antd";
 import 'antd/dist/antd.css';
@@ -6,6 +7,10 @@ import LoginHelper from '../../pages/shared/LoginHelper';
 import axios from 'axios';
 import { ColumnsType } from 'antd/lib/table';
 import { useState, useEffect } from 'react';
+
+import {costFormat} from '../../util/FormatUtil';
+import NumberUtil from '../../util/NumberUtil'
+import MemberHelper from 'src/helpers/MemberHelper';
 
 // ================================
 // react 는 props (property) 와 state 가 변경될 때 마다 render 가 호출되므로 
@@ -20,23 +25,33 @@ interface IShop {
   width: number;
   usDeliDoneCntSum: number;
   usMonthDeliDoneCntSum: number;
+  ulVirAccDeposit: number,
+  ulVirAccDeduct: number,
+  lVirAccBalance: number,
+  ucTimeExtraFareType:number,
+  ucNightExtraFareType: number,
+  ucRainyExtraFareType: number,
+  ucAreaNo: string;
+  ucDistribId: string;
+  ucAgencyId: string;
+  ucMemCourId: string
 }
+
 const columns: ColumnsType<IShop> = [
   {
     title: '계정정보',
     children: [
       {
-        title:'아이디',
+        title: '아이디',
         dataIndex: 'ucMemCourId',
         width: 120,
-        // render: (model) => {
-        //   return '3131231321'
-        // }
+        render:(text:string, record: IShop) => {
+          return `${MemberHelper.formatMemberId(record)}`
+        },
       },
       {
         title: '가맹명',
         dataIndex: 'acCompany',
-//        key: 'acCompany',
         width: 160,
       },
     ],
@@ -55,6 +70,7 @@ const columns: ColumnsType<IShop> = [
         dataIndex: 'ulCustCallAmt',
         key: 'ulCustCallAmt',
         width:100,
+        render: ((cost: number) => costFormat(cost))
       },
       {
         title: '충전예정일',
@@ -72,6 +88,7 @@ const columns: ColumnsType<IShop> = [
         dataIndex: 'usDeliDoneCntSum',
         key: 'usDeliDoneCntSum',
         width: 80,
+      
         sorter: (a, b) => a.usDeliDoneCntSum - b.usDeliDoneCntSum,
       },
       {
@@ -91,9 +108,16 @@ const columns: ColumnsType<IShop> = [
         dataIndex: 'ulCurrentVirAccBalance',
         key: 'ulCurrentVirAccBalance',
         width: 120,
+        // render: (data1: any, data2: IShop) => {
+        //   let format = (data2.ulVirAccDeposit + data2.lVirAccBalance - data2.ulVirAccDeduct)
+        //   return format.toLocaleString()+'원'
+        // }
+        render: (string: any, record: IShop) => {
+          return NumberUtil.formatNumberWithText(Number(record.ulVirAccDeposit)+Number(record.lVirAccBalance)-Number(record.ulVirAccDeduct))
+        }
       },
       {
-        title: '가상계좌',
+        title: '가상계좌(우리은행)',
         dataIndex: 'acVirtualAccount',
         key: 'acVirtualAccount',
         width:200,
@@ -107,18 +131,30 @@ const columns: ColumnsType<IShop> = [
         title: '시간',
         dataIndex: 'ucTimeExtraFareType',
         key: 'ucTimeExtraFareType',
+        className: 'time-extra-fare-column',
+        render: (text: string, record: IShop) => {
+          return '';
+        },
         width: 30,
       },
       {
         title: '심야',
-        dataIndex: 'ucNightExtraFare',
-        key: 'ucNightExtraFare',
+        dataIndex: 'ucNightExtraFareType',
+        key: 'ucNightExtraFareType',
+        className: 'night-extra-fare-column',
+        render: (text: string, record: IShop) => {
+          return '';
+        },
         width:30,
       },
       {
         title: '우천',
-        dataIndex: 'ucRainyExtraFare',
-        key: 'ucRainyExtraFare',
+        dataIndex: 'ucRainyExtraFareType',
+        key: 'ucRainyExtraFareType',
+        className: 'rainy-extra-fare-column',
+        render: (text: string, record: IShop) => {
+          return '';
+        },
         width:30,
       },
     ],
@@ -191,6 +227,19 @@ const Shop = () => {
                 pagination={false}
                 size="small"
                 scroll={{ x: 'calc(700px + 50%)', y: 650 }}
+                rowClassName={(record:IShop) => {
+                  const className:any = [];
+                  if(record.ucTimeExtraFareType === 1) {
+                    className.push('time-extra-fare-on');
+                  }
+                  if(record.ucNightExtraFareType === 1) {
+                    className.push('night-extra-fare-on')
+                  }
+                  if(record.ucRainyExtraFareType === 1) {
+                    className.push('rainy-extra-fare-on')
+                  }
+                  return className.join(' ')
+                }}
             />,
         </div>
     )

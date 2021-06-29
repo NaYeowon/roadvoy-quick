@@ -1,5 +1,6 @@
 import React from 'react';
 import { Col, Descriptions, Table , Button} from 'antd';
+import { costFormat } from  '../../util/FormatUtil'
 
 const dataSource = [
     {
@@ -110,18 +111,21 @@ const columns = [
                 dataIndex: 'usDayDoneCallSum',
                 key: 'usDayDoneCallSum',
                 width: 60,
+                render: ((cost: number) => costFormat(cost))
             },
             {
                 title: '배달비',
                 dataIndex: 'ulDayTotalDeliFee',
                 key: 'ulDayTotalDeliFee',
-                width: 100
+                width: 100,
+                render: ((cost: number) => costFormat(cost))
             },
             {
                 title: '콜당 수수료',
                 dataIndex: 'ulDayCallCntFee',
                 key: 'ulDayCallCntFee',
-                width:100
+                width:100,
+                render: ((cost: number) => costFormat(cost))
             },
         ],
     },
@@ -129,7 +133,8 @@ const columns = [
         title: '관리비 충전',
         dataIndex: '1DayReChargeAmount',
         key: '1DayReChargeAmount',
-        width: 100
+        width: 100,
+        render: ((cost: number) => costFormat(cost))
     },
     {
         title: '기사 가맹간 캐시',
@@ -138,25 +143,29 @@ const columns = [
                 title:'카드→현금 입금',
                 dataIndex: 'ulSubstituteInput',
                 key: 'ulSubstituteInput',
-                width: 100
+                width: 100,
+                render: ((cost: number) => costFormat(cost))
             },
             {
                 title: '현금→카드 송금',
                 dataIndex: 'ulSubstituteRefund',
                 key: 'ulSubstituteRefund',
-                width: 100
+                width: 100,
+                render: ((cost: number) => costFormat(cost))
             },
             {
                 title: '기사가 예치금 입금',
                 dataIndex: 'ulSubstituteDeposit',
                 key: 'ulSubstituteDeposit',
-                width: 100
+                width: 100,
+                render: ((cost: number) => costFormat(cost))
             },
             {
                 title: '현금건 완료시 자동송금',
                 dataIndex: 'ulCashPaymentAutoReansferAmount',
                 key: 'ulCashPaymentAutoReansferAmount',
-                width: 100
+                width: 100,
+                render: ((cost: number) => costFormat(cost))
             },
         ],
     },
@@ -164,7 +173,8 @@ const columns = [
         title: '캐시 관리자 직권회수',
         dataIndex: 'ulSubstituteCashMinusByManager',
         key: 'ulSubstituteCashMinusByManager',
-        width:100
+        width:100,
+        render: ((cost: number) => costFormat(cost))
     },
     {
         title: '가상계좌',
@@ -173,13 +183,15 @@ const columns = [
                 title: '입금',
                 dataIndex: 'ulVirBankDeposit',
                 key: 'ulVirBankDeposit',
-                width: 100
+                width: 100,
+                render: ((cost: number) => costFormat(cost))
             },
             {
                 title: '수수료',
                 dataIndex: 'ulVirBankFee',
                 key: 'ulVirBankFee',
-                width: 100
+                width: 100,
+                render: ((cost: number) => costFormat(cost))
             }
         ]
     }
