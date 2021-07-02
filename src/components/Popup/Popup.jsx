@@ -1,7 +1,10 @@
+import * as React from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Checkbox } from '@material-ui/core';
 import { Form, Select, Radio, Button, Input, Col, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import DaumAddress from '../../util/AdressUtil'
+import DaumPostcode from 'react-daum-postcode';
 
   const formItemLayout = {
     labelCol: {
@@ -11,13 +14,100 @@ import DaumAddress from '../../util/AdressUtil'
       span: 14,
     },
   };
+
+  const modalStyle = {
+    position: "absolute",
+    top: 0,
+    left: "-100px",
+    zIndex: "100",
+    border: "1px solid #000000",
+    overflow: "hidden"
+  }
   
    
   const Popup = () => {
+
+    const [fullAddress, setFullAddress] = useState('')
+    const [zoneCode, setZoneCode] = useState('')
+    const [isDaumPost, setIsDaumPost] = useState(false)
+   
+    const [fullAddress2, setFullAddress2] = useState('')
+    const [zoneCode2, setZoneCode2] = useState('')
+    const [isDaumPost2, setIsDaumPost2] = useState(false)
+
+    useEffect(() => {
+      console.log('useEffect')
+      window.onkeydown = e => {
+        console.log(e)
+        if (e.key === 'Escape') {
+          console.log(e.key)
+          setIsDaumPost(false)
+          setIsDaumPost2(false)
+        }
+      }
+
+    }, [])
+   
     const onFinish = (values) => {
       console.log('Received values of form: ', values);
     };
-  
+
+    const handleAddress = (data) => {
+      let AllAddress = data.address
+      let extraAddress = ''
+      let zoneCodes = data.zonecode
+
+      if (data.addressType === 'R') {
+        if (data.bname !== '') {
+          extraAddress += data.bname
+        }
+        if (data.buildingName !== '') {
+          extraAddress += (extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName)
+        }
+        AllAddress += (extraAddress !== '' ? `(${extraAddress})` : '')
+      }
+
+      setFullAddress(AllAddress)
+      setZoneCode(zoneCodes)
+      setIsDaumPost(false)
+
+    }
+
+    const handleAddress2 = (data) => {
+      let AllAddress2 = data.address
+      let extraAddress2 = ''
+      let zoneCodes2 = data.zonecode
+
+      if (data.addressType === 'R') {
+        if (data.bname !== '') {
+          extraAddress2 += data.bname
+        }
+        if (data.buildingName !== '') {
+          extraAddress2 += (extraAddress2 !== '' ? `, ${data.buildingName}` : data.buildingName)
+        }
+        AllAddress2 += (extraAddress2 !== '' ? `(${extraAddress2})` : '')
+      }
+
+      setFullAddress2(AllAddress2)
+      setZoneCode2(zoneCodes2)
+      setIsDaumPost2(false)
+
+    }
+
+    const handleOpenPost = useCallback(() => {
+      setIsDaumPost(true)
+      
+    }, [])
+
+    const handleOpenPost2 = useCallback(() => {
+      setIsDaumPost2(true)
+      
+    }, [])
+
+    const test = () => {
+      console.log('asd')
+    }
+
     return (
       <>
       <Row justify="center">
@@ -47,9 +137,23 @@ import DaumAddress from '../../util/AdressUtil'
             </Form.Item>
 
             <Form.Item label="픽업지 주소">
-              <Button type="primary" block onClick=''>
+              <Button type="primary" onClick={handleOpenPost} style={{width: '100%'}}>
                 주소검색
               </Button>
+              {
+                isDaumPost ?
+                <DaumPostcode 
+                  onComplete={handleAddress}
+                  autoClose
+                  width={595}
+                  height={450}
+                  style={modalStyle}
+                  isDaumPost={isDaumPost}
+                  key={test}
+                />
+                : null
+              }
+              <div>{fullAddress}</div>
             </Form.Item>
 
             <Form.Item label="픽업지 상세주소">
@@ -76,9 +180,23 @@ import DaumAddress from '../../util/AdressUtil'
             </Form.Item>
 
             <Form.Item label="목적지 주소">
-              <Button type="primary" block onClick=''>
-                <DaumAddress />주소검색
+            <Button type="primary" onClick={handleOpenPost2} style={{width: '100%'}}>
+                주소검색
               </Button>
+              {
+                isDaumPost2 ?
+                <DaumPostcode 
+                  onComplete={handleAddress2}
+                  autoClose
+                  width={595}
+                  height={450}
+                  style={modalStyle}
+                  isDaumPost2={isDaumPost2}
+                  key={test}
+                />
+                : null
+              }
+              <div>{fullAddress2}</div>
             </Form.Item>
 
             <Form.Item label="목적지 상세주소">

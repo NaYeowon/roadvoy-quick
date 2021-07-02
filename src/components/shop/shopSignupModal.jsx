@@ -56,6 +56,11 @@ class shopSignupModal extends Component {
         this.props.onCancel(this.state.isModalVisible)
     };
 
+    onkeydown = (e) => {
+        if(e.key === 'Escape') {
+           this.setState({ isDaumPost: false})
+        }
+    }
 
     handleAddress = (data) => {
         let AllAddress = data.address;
@@ -106,8 +111,6 @@ class shopSignupModal extends Component {
         this.setState({ acResRegNo: e.target.value })
     }
 
-
-
     onAcAddressDesc = (e) => {
         this.setState({ acAddressDesc: e.target.value })
     }
@@ -145,8 +148,13 @@ class shopSignupModal extends Component {
     }
 
     componentDidMount = () => {
-        //console.log(this.props.visible, "ddd");
+        onkeydown = (e) => {
+            if(e.key === 'Escape') {
+               this.setState({ isDaumPost: false })
+            }
+        }
     }
+
 
     async onSingupData(e) 
     {
@@ -195,9 +203,11 @@ class shopSignupModal extends Component {
             }
         }
     }
+
+    
     render() {
         const { isModalShow, isModalClose } = this.props;
-        
+        const { isDaumPost } = this.state;   
         const
         {
             acCompany, 
@@ -215,7 +225,7 @@ class shopSignupModal extends Component {
             baseDist,
             baseFare, 
             extraDist, 
-            extraFare,address, isDaumPost, fullAddress, zoneCode, isRegister
+            extraFare,address, fullAddress, zoneCode, isRegister
         } = this.state;
 
         const width = 595;
@@ -231,7 +241,7 @@ class shopSignupModal extends Component {
 
         return (
             <>
-                <Modal width="700px" visible={this.props.visible} onCancel={this.handleCancel}>
+                <Modal width="700px" visible={this.props.visible} onCancel={this.handleCancel} keyboard={false}>
                 <div style={{maxWidth: '700px', margin: '0 auto', paddingTop:'100px'}}>
                 <div style={{textAlign: 'center'}}>
                 <h2 htmlFor="company-name">가맹등록</h2>
@@ -328,6 +338,7 @@ class shopSignupModal extends Component {
                                 onClick={this.handleOpenPost}
                                 style={{width: '100%'}}>
                                 주소검색
+                                
                             </Button>
                             {
                                 isDaumPost ?

@@ -194,7 +194,7 @@ const Rider = () => {
               bordered
               pagination={false}
               size="small"
-              scroll={{ x: 'calc(700px + 50%)', y: 650 }}
+              scroll={{ y: 650 }}
             />,
         </div>
     )
