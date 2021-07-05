@@ -1,47 +1,52 @@
- .deli-status-temp .deli-status {
+ .deli-status-temp {
     background-color: #455A64
   }
   
-  .deli-status-wait .deli-status {
+  .deli-status-wait  {
     background-color: #00BCD4
   }
   
-  .deli-status-alloc .deli-status {
-    background-color: #FF8F00
+  .deli-status-alloc {
+    background-color: #FF8F00 !important;
   }
+
+
   
-  .deli-status-pkup .deli-status {
+  .deli-status-pkup {
     background-color: #AA00FF;
   }
   
-  .deli-status-done .deli-status {
+  .deli-status-done {
     background-color: #4CAF50;
   }
   
-  .deli-status-cancel .deli-status {
+  .deli-status-cancel {
     background-color: #F44336;
-  }
-
-  table tbody {
-    color: white;
-    font-size: 10pt;
-  }
-  
-  .ant-table-scroll {
-    overflow-y: hidden;
-  }
-  .ant-table-row {
-    cursor: pointer;
-  }
-
-  .ant-table th {
-    text-align: center !important;
   }
 
   .ant-table tr:hover td {
     background-color: transparent !important;
   }
 
+  .deli-status-alloc:hover {
+    opacity: 0.8;
+  }
+
+  table tbody {
+    font-size: 10pt;
+  }
+  
+  .ant-table-scroll {
+    overflow-y: hidden;
+  }
+    
   .ant-table-row td {
     padding: 2px 6px !important;
   }
+  .box-checked-show {
+    display: none;
+}
+
+.test tbody {
+  color: white;
+}
