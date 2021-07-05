@@ -7,12 +7,18 @@ import { ColumnsType } from "antd/lib/table";
 import LoginHelper from "../../pages/shared/LoginHelper";
 import Header from "../Layout/Header";
 import ShopSettlementList from "./ShopSettlementList";
-import { costFormat } from "../../util/FormatUtil";
+import { callFormat, costFormat } from "../../util/FormatUtil";
+import XLSX from "xlsx";
 
 interface IShopSettlement {
   title: string;
   dataIndex: string;
+  acStartDate: Date;
+  acEndDate: Date;
+  acCompany: string;
+  usMonthDeliDoneCntSum: number;
 }
+
 const columns: ColumnsType<IShopSettlement> = [
   {
     title: "가맹",
@@ -20,21 +26,22 @@ const columns: ColumnsType<IShopSettlement> = [
   },
   {
     title: "콜수",
-    dataIndex: "ulCustCallCnt",
+    dataIndex: "usMonthDeliDoneCntSum",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (call: number) => callFormat(call)
   },
   {
     title: "가상계좌",
-    dataIndex: "ulCurrentVirAccBalance",
+    dataIndex: "ulPaygoRoadvoyCardFee",
     render: (cost: number) => costFormat(cost)
   }
 ];
 
 const { RangePicker } = DatePicker;
 
-const ShopSettlement = () => {
+const ShopSettlement = (props: IShopSettlement) => {
   const [astManageShop, setAstManageShop] = useState<IShopSettlement[]>([]);
+  const { acStartDate, acEndDate } = props;
   const fetchShopList = async () => {
     try {
       const response = await axios({
@@ -69,7 +76,19 @@ const ShopSettlement = () => {
               <b>조회기간</b>
             </div>
             <RangePicker style={{ width: "100%" }} />
-            <Button style={{ width: "100%" }}>다운로드</Button>
+            <Button
+              style={{ width: "100%" }}
+              onClick={() => {
+                const fileName = `상점정산 ${acStartDate} ~ ${acEndDate}` + ".xlsx"; //날짜 undefined
+                const dataSheet = [`${astManageShop}`]; //안뜸
+                const dataWS = XLSX.utils.json_to_sheet(dataSheet);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, dataWS, "nameData");
+                XLSX.writeFile(wb, fileName);
+              }}
+            >
+              다운로드
+            </Button>
           </Space>
           <Table
             columns={columns}
