@@ -106,6 +106,7 @@ const columns: ColumnsType<CallInfo> = [
 ];
 
 const CallListComponent = () => {
+  //수정한 부분
   const [astErrand, setAstManageCall] = useState<CallInfo[]>([]);
   const [isCheckedTemp, setIsCheckedTemp] = useState(false);
   const [isCheckedWait, setIsCheckedWait] = useState(false);
@@ -182,6 +183,16 @@ const CallListComponent = () => {
     return className.join("");
   };
 
+  const temp = (e: React.ChangeEvent) => {
+    console.log(e);
+    setIsCheckedTemp(!isCheckedTemp);
+  };
+
+  const wait = (e: React.ChangeEvent) => {
+    console.log(e);
+    setIsCheckedWait(!isCheckedWait);
+  };
+
   const alloc = (e: React.ChangeEvent) => {
     console.log(e);
     setIsCheckedAlloc(!isCheckedAlloc);
@@ -197,6 +208,11 @@ const CallListComponent = () => {
     setIsCheckedDone(!isCheckedDone);
   };
 
+  const cancle = (e: React.ChangeEvent) => {
+    console.log(e);
+    setIsCheckedCancel(!isCheckedCancel);
+  };
+
   return (
     <>
       <Header />
@@ -205,6 +221,7 @@ const CallListComponent = () => {
           value="대기"
           style={{ backgroundColor: "#00BCD4", width: "20%", padding: "5px", margin: "0px" }}
           checked={isCheckedWait}
+          onChange={temp}
         >
           대기 0콜
         </CustomCheckbox>
@@ -237,6 +254,7 @@ const CallListComponent = () => {
           value="취소"
           style={{ backgroundColor: "#F44336", width: "20%", padding: "5px", margin: "0px" }}
           checked={isCheckedCancel}
+          onChange={cancle}
         >
           취소 0콜
         </CustomCheckbox>
