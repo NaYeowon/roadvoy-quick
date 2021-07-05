@@ -1,3 +1,4 @@
+/* eslint-disable */
 import moment from "moment";
 
 export const monthFirstDateFormat = "YYYY-MM-01";
@@ -23,9 +24,8 @@ class DateUtil {
   public static getTodayMoment(): moment.Moment {
     if (parseInt(moment().format("H")) < 6) {
       return moment().subtract(1, "days");
-    } else {
-      return moment();
     }
+    return moment();
   }
 }
 

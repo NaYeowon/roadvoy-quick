@@ -1,12 +1,12 @@
-import React from 'react';
-import Header from '../Layout/Header';
+/* eslint-disable */
+import React from "react";
 
-const map = () => {
-    return (
-        <div>
-            <Header />
-        </div>
-    );
-};
+import Header from "../Layout/Header";
+
+const map = () => (
+  <div>
+    <Header />
+  </div>
+);
 
 export default map;

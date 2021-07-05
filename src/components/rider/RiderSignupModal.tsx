@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from "react";
 import { useState, FunctionComponent, useRef } from "react";
 import { Modal, Form, Input, Row, Col, Select, Button } from "antd";
@@ -14,10 +15,10 @@ interface Props {
   onCancel: boolean | any;
 }
 
-const RiderSignupModal: FunctionComponent<Props> = (props) => {
+const RiderSignupModal: FunctionComponent<Props> = props => {
   const [visible, setVisible] = useState(true);
 
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState("");
   const [president, setPresident] = useState("");
   const [password, setPassword] = useState("");
   const [cellNo, setCellNo] = useState("");
@@ -47,15 +48,8 @@ const RiderSignupModal: FunctionComponent<Props> = (props) => {
 
   return (
     <>
-      <Modal
-        width="700px"
-        visible={props.visible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <div
-          style={{ maxWidth: "700px", margin: "0 auto", paddingTop: "50px" }}
-        >
+      <Modal width="700px" visible={props.visible} onOk={handleOk} onCancel={handleCancel}>
+        <div style={{ maxWidth: "700px", margin: "0 auto", paddingTop: "50px" }}>
           <div style={{ textAlign: "center" }}>
             <h2>기사등록</h2>
             <form action="">
@@ -68,11 +62,13 @@ const RiderSignupModal: FunctionComponent<Props> = (props) => {
                     <Input
                       name="userId"
                       value={userId}
-                      onChange={(e) => {setUserId(e.target.value)}}
+                      onChange={e => {
+                        setUserId(e.target.value);
+                      }}
                     />
                   </Col>
                 </Row>
-                
+
                 <Row justify="center" gutter={[16, 48]}>
                   <Col span={4}>
                     <label>이름&nbsp;:</label>
@@ -81,11 +77,13 @@ const RiderSignupModal: FunctionComponent<Props> = (props) => {
                     <Input
                       name="president"
                       value={president}
-                      onChange={(e) => {setPresident(e.target.value)}}
+                      onChange={e => {
+                        setPresident(e.target.value);
+                      }}
                     />
                   </Col>
                 </Row>
-                <Row justify="center" gutter={([16, 16])}>
+                <Row justify="center" gutter={[16, 16]}>
                   <Col span={4}>
                     <label>비밀번호&nbsp;:</label>
                   </Col>
@@ -93,11 +91,13 @@ const RiderSignupModal: FunctionComponent<Props> = (props) => {
                     <Input
                       name="password"
                       value={password}
-                      onChange={(e) => {setPassword(e.target.value)} }
+                      onChange={e => {
+                        setPassword(e.target.value);
+                      }}
                     />
                   </Col>
                 </Row>
-                <Row justify="center" gutter={([16, 16])}>
+                <Row justify="center" gutter={[16, 16]}>
                   <Col span={4}>
                     <label>휴대폰번호&nbsp;:</label>
                   </Col>
@@ -106,11 +106,13 @@ const RiderSignupModal: FunctionComponent<Props> = (props) => {
                       prefix={<PhoneOutlined />}
                       name="cellNo"
                       value={cellNo}
-                      onChange={(e) => {setCellNo(e.target.value)}}
+                      onChange={e => {
+                        setCellNo(e.target.value);
+                      }}
                     />
                   </Col>
                 </Row>
-                <Row justify="center" gutter={([16, 16])}>
+                <Row justify="center" gutter={[16, 16]}>
                   <Col span={4}>
                     <label>소속&nbsp;:</label>
                   </Col>
@@ -118,19 +120,23 @@ const RiderSignupModal: FunctionComponent<Props> = (props) => {
                     <Input
                       name="teamName"
                       value={teamName}
-                      onChange={(e) => {setTeamName(e.target.value)}}
+                      onChange={e => {
+                        setTeamName(e.target.value);
+                      }}
                     />
                   </Col>
                 </Row>
-                <Row justify="center" gutter={([16, 16])}>
+                <Row justify="center" gutter={[16, 16]}>
                   <Col span={4}>
                     <label>출금은행&nbsp;:</label>
                   </Col>
                   <Col span={8}>
                     <Select
-                      //name="bankCode"
+                      // name="bankCode"
                       value={bankCode}
-                      onChange={(e:any) => {setBankCode(e.target.value)}}
+                      onChange={(e: any) => {
+                        setBankCode(e.target.value);
+                      }}
                       style={{ width: "100%" }}
                     >
                       <Option value="88">신한은행</Option>
@@ -154,71 +160,86 @@ const RiderSignupModal: FunctionComponent<Props> = (props) => {
                     </Select>
                   </Col>
                 </Row>
-                <Row justify="center" gutter={([16, 16])}>
+                <Row justify="center" gutter={[16, 16]}>
                   <Col span={4}>
                     <label>출금비밀번호&nbsp;:</label>
                   </Col>
                   <Col span={8}>
-                    <Input 
+                    <Input
                       name="withdrawPassword"
                       value={withdrawPassword}
-                      onChange={(e) => {setWithdrawPassword(e.target.value)}}/>
+                      onChange={e => {
+                        setWithdrawPassword(e.target.value);
+                      }}
+                    />
                   </Col>
                 </Row>
-                <Row justify="center" gutter={([16, 16])}>
+                <Row justify="center" gutter={[16, 16]}>
                   <Col span={4}>
                     <label>기사구분&nbsp;:</label>
                   </Col>
                   <Col span={4}>
                     <Select
-                      //name="courierTag"
+                      // name="courierTag"
                       value={courierTag}
-                      onChange={(e:any) => {setCourierTag(e.target.value)}}
+                      onChange={(e: any) => {
+                        setCourierTag(e.target.value);
+                      }}
                       style={{ width: "100%" }}
                     >
-                      <Option value=''>지입</Option>
-                      <Option value=''>리스</Option>
+                      <Option value="">지입</Option>
+                      <Option value="">리스</Option>
                     </Select>
                   </Col>
-                  <Col span={4}></Col>
+                  <Col span={4} />
                 </Row>
-                <Row justify="center" gutter={([16, 16])}>
+                <Row justify="center" gutter={[16, 16]}>
                   <Col span={5}>
                     <label>1일 리스료&nbsp;:</label>
                   </Col>
                   <Col span={5}>
-                    <Input 
-                      name="courierLease" 
+                    <Input
+                      name="courierLease"
                       value={courierLease}
-                      onChange={(e) => {setCourierLease(e.target.value)}} />
-                  </Col>{" "}원&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Col span={3}></Col>
+                      onChange={e => {
+                        setCourierLease(e.target.value);
+                      }}
+                    />
+                  </Col>{" "}
+                  원&nbsp;&nbsp;&nbsp;&nbsp;
+                  <Col span={3} />
                 </Row>
-                <Row justify="center" gutter={([16, 16])}>
+                <Row justify="center" gutter={[16, 16]}>
                   <Col span={5}>
                     <label>보증금&nbsp;:</label>
                   </Col>
                   <Col span={5}>
-                    <Input 
-                      name="courierDeposit" 
+                    <Input
+                      name="courierDeposit"
                       value={courierDeposit}
-                      onChange={(e) => {setCourierDeposit(e.target.value)}} />
+                      onChange={e => {
+                        setCourierDeposit(e.target.value);
+                      }}
+                    />
                   </Col>{" "}
                   원&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Col span={3}></Col>
+                  <Col span={3} />
                 </Row>
-                <Row justify="center" gutter={([16, 16])}>
+                <Row justify="center" gutter={[16, 16]}>
                   <Col span={5}>
                     <label>콜수수료&nbsp;:</label>
                   </Col>
                   <Col span={5}>
-                    <Input 
-                      name="callUnitPrice" 
+                    <Input
+                      name="callUnitPrice"
                       value={callUnitPrice}
-                      onChange={(e) => {setCallUnitPrice(e.target.value)}}/>
-                  </Col>
-                  {" "}원&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Col span={3}></Col>
+                      onChange={e => {
+                        setCallUnitPrice(e.target.value);
+                      }}
+                    />
+                  </Col>{" "}
+                  원&nbsp;&nbsp;&nbsp;&nbsp;
+                  <Col span={3} />
                 </Row>
                 <Row justify="center">
                   <Col pull={3}>
@@ -226,18 +247,19 @@ const RiderSignupModal: FunctionComponent<Props> = (props) => {
                     <Checkbox />
                   </Col>
                 </Row>
-                <Row justify="center" gutter={([16, 16])}>
+                <Row justify="center" gutter={[16, 16]}>
                   <Col span={5}>
                     <label>콜 동시 접수 제한&nbsp;:</label>
                   </Col>
                   <Col span={5}>
-                    <Input 
-                      name="conCallLimit" 
+                    <Input
+                      name="conCallLimit"
                       value={conCallLimit}
-                      onChange={(e) => setConCallLimit(e.target.value)} />
+                      onChange={e => setConCallLimit(e.target.value)}
+                    />
                   </Col>
                   건&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Col span={3}></Col>
+                  <Col span={3} />
                 </Row>
               </div>
             </form>
