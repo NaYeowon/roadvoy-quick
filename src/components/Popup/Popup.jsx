@@ -118,7 +118,9 @@ const Popup = () => {
             }}
           >
             <Form.Item label="심부름 종류">
-              <Checkbox /> 바로목적지로
+              <Col style={{ textAlign: "left" }}>
+                <Checkbox /> 바로목적지로
+              </Col>
             </Form.Item>
 
             <Form.Item label="픽업지 업체명">
@@ -159,46 +161,46 @@ const Popup = () => {
                 // value=''
               />
             </Form.Item>
+            <div style={{ backgroundColor: "#fff280" }}>
+              <Form.Item label="목적지 업체명">
+                <Input placeholder="업체명을 입력하세요" />
+              </Form.Item>
 
-            <Form.Item label="목적지 업체명">
-              <Input placeholder="업체명을 입력하세요" />
-            </Form.Item>
+              <Form.Item label="목적지 연락처">
+                <Input placeholder="연락처를 입력하세요" />
+              </Form.Item>
 
-            <Form.Item label="목적지 연락처">
-              <Input placeholder="연락처를 입력하세요" />
-            </Form.Item>
+              <Form.Item label="목적지 주소">
+                <Button type="primary" onClick={handleOpenPost2} style={{ width: "100%" }}>
+                  주소검색
+                </Button>
+                {isDaumPost2 ? (
+                  <DaumPostcode
+                    onComplete={handleAddress2}
+                    autoClose
+                    width={595}
+                    height={450}
+                    style={modalStyle}
+                    isDaumPost2={isDaumPost2}
+                    key={test}
+                  />
+                ) : null}
+                <div>{fullAddress2}</div>
+              </Form.Item>
 
-            <Form.Item label="목적지 주소">
-              <Button type="primary" onClick={handleOpenPost2} style={{ width: "100%" }}>
-                주소검색
-              </Button>
-              {isDaumPost2 ? (
-                <DaumPostcode
-                  onComplete={handleAddress2}
-                  autoClose
-                  width={595}
-                  height={450}
-                  style={modalStyle}
-                  isDaumPost2={isDaumPost2}
-                  key={test}
+              <Form.Item label="목적지 상세주소">
+                <Input placeholder="상세주소를 입력하세요" />
+              </Form.Item>
+
+              <Form.Item label="목적지 요청사항">
+                <TextArea
+                  rows={2}
+                  name="acClientMemo"
+                  // onChange=''
+                  // value=''
                 />
-              ) : null}
-              <div>{fullAddress2}</div>
-            </Form.Item>
-
-            <Form.Item label="목적지 상세주소">
-              <Input placeholder="상세주소를 입력하세요" />
-            </Form.Item>
-
-            <Form.Item label="목적지 요청사항">
-              <TextArea
-                rows={2}
-                name="acClientMemo"
-                // onChange=''
-                // value=''
-              />
-            </Form.Item>
-
+              </Form.Item>
+            </div>
             <Form.Item label="픽업 ↔ 목적지">
               <span>
                 <b />
