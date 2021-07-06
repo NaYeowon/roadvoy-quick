@@ -105,7 +105,7 @@ const Popup = () => {
 
   return (
     <>
-      <Row justify="center">
+      <Row>
         <Col span={12}>
           <Form
             name="validate_other"
@@ -226,8 +226,8 @@ const Popup = () => {
           >
             <Form.Item name="" label="제한시간">
               <Radio.Group style={{ float: "left" }}>
-                <Radio value="a">즉시</Radio>
-                <Radio value="a">5분&nbsp;&nbsp;&nbsp;</Radio>
+                {/* <Radio value="a">즉시</Radio>
+                <Radio value="a">5분</Radio>
                 <Radio value="b">10분</Radio>
                 <Radio value="c">15분</Radio>
                 <Radio value="d">20분</Radio>
@@ -236,7 +236,42 @@ const Popup = () => {
                 <Radio value="g">50분</Radio>
                 <Radio value="h">60분</Radio>
                 <Radio value="i">90분</Radio>
-                <Radio value="j">120분</Radio>
+                <Radio value="j">120분</Radio> */}
+                <Row>
+                  <Col tabIndex={12} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={0}>즉시</Radio>
+                  </Col>
+                  <Col tabIndex={13} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={5}>5분</Radio>
+                  </Col>
+                  <Col tabIndex={14} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={10}>10분</Radio>
+                  </Col>
+                  <Col tabIndex={15} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={15}>15분</Radio>
+                  </Col>
+                  <Col tabIndex={16} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={20}>20분</Radio>
+                  </Col>
+                  <Col tabIndex={18} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={30}>30분</Radio>
+                  </Col>
+                  <Col tabIndex={20} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={40}>40분</Radio>
+                  </Col>
+                  <Col tabIndex={21} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={50}>50분</Radio>
+                  </Col>
+                  <Col tabIndex={22} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={60}>60분</Radio>
+                  </Col>
+                  <Col tabIndex={19} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={90}>90분</Radio>
+                  </Col>
+                  <Col tabIndex={17} span={8} style={{ textAlign: "left" }}>
+                    <Radio value={120}>120분</Radio>
+                  </Col>
+                </Row>
               </Radio.Group>
             </Form.Item>
 
