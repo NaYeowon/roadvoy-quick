@@ -103,7 +103,6 @@ const Popup = () => {
     console.log("asd");
   };
 
-  //수정
   const LimitTime = ({ time }) => (
     <LeftAlignedCol span={8}>
       <Radio value={time}>{time}</Radio>
