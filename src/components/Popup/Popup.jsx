@@ -6,7 +6,7 @@ import { Form, Select, Radio, Button, Input, Col, Row } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import DaumPostcode from "react-daum-postcode";
 
-import DaumAddress from "../../util/AdressUtil";
+import styled from "styled-components";
 
 const formItemLayout = {
   labelCol: {
@@ -102,6 +102,27 @@ const Popup = () => {
   const test = () => {
     console.log("asd");
   };
+
+  //수정
+  const LimitTime = ({ time }) => (
+    <LeftAlignedCol span={8}>
+      <Radio value={time}>{time}</Radio>
+    </LeftAlignedCol>
+  );
+
+  const LimitTimes = [
+    "즉시",
+    "5분",
+    "15분",
+    "10분",
+    "20분",
+    "30분",
+    "40분",
+    "50분",
+    "60분",
+    "90분",
+    "120분"
+  ];
 
   return (
     <>
@@ -206,13 +227,6 @@ const Popup = () => {
                 <b />
               </span>
             </Form.Item>
-
-            {/* <Form.Item label="결제금액">
-              <Form.Item name="input-number" noStyle>
-                <InputNumber min={0} max={1000000} type="number"/>
-              </Form.Item>
-              <span className="ant-form-text"> 원</span>
-            </Form.Item> */}
           </Form>
         </Col>
         <Col span={12} pull={1}>
@@ -228,51 +242,10 @@ const Popup = () => {
           >
             <Form.Item name="" label="제한시간">
               <Radio.Group style={{ float: "left" }}>
-                {/* <Radio value="a">즉시</Radio>
-                <Radio value="a">5분</Radio>
-                <Radio value="b">10분</Radio>
-                <Radio value="c">15분</Radio>
-                <Radio value="d">20분</Radio>
-                <Radio value="e">30분</Radio>
-                <Radio value="f">40분</Radio>
-                <Radio value="g">50분</Radio>
-                <Radio value="h">60분</Radio>
-                <Radio value="i">90분</Radio>
-                <Radio value="j">120분</Radio> */}
                 <Row>
-                  <Col tabIndex={12} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={0}>즉시</Radio>
-                  </Col>
-                  <Col tabIndex={13} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={5}>5분</Radio>
-                  </Col>
-                  <Col tabIndex={14} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={10}>10분</Radio>
-                  </Col>
-                  <Col tabIndex={15} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={15}>15분</Radio>
-                  </Col>
-                  <Col tabIndex={16} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={20}>20분</Radio>
-                  </Col>
-                  <Col tabIndex={18} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={30}>30분</Radio>
-                  </Col>
-                  <Col tabIndex={20} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={40}>40분</Radio>
-                  </Col>
-                  <Col tabIndex={21} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={50}>50분</Radio>
-                  </Col>
-                  <Col tabIndex={22} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={60}>60분</Radio>
-                  </Col>
-                  <Col tabIndex={19} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={90}>90분</Radio>
-                  </Col>
-                  <Col tabIndex={17} span={8} style={{ textAlign: "left" }}>
-                    <Radio value={120}>120분</Radio>
-                  </Col>
+                  {LimitTimes.map((limitTime, index) => (
+                    <LimitTime key={index} time={limitTime} />
+                  ))}
                 </Row>
               </Radio.Group>
             </Form.Item>
@@ -374,3 +347,6 @@ const Popup = () => {
 };
 
 export default Popup;
+const LeftAlignedCol = styled(Col)`
+  text-align: left;
+`;
