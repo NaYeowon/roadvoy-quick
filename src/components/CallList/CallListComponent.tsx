@@ -11,6 +11,7 @@ import { ColumnsType } from "antd/lib/table";
 import Header from "../Layout/Header";
 import LoginHelper from "../../pages/shared/LoginHelper";
 import { costFormat, getCellNoFormat, getDateFormat } from "../../util/FormatUtil";
+import moment from "moment";
 
 interface CallInfo {
   title: string;
@@ -21,6 +22,11 @@ interface CallInfo {
   ucLimitTime: number;
   ucDeliStatus: number;
   acDestCompany: string;
+  checked: boolean;
+  usOrderCnt: number;
+  acOrderDateTime: string;
+  acDoneDateTime: string;
+  acCanCelDateTime: string;
 }
 
 const columns: ColumnsType<CallInfo> = [
@@ -44,7 +50,10 @@ const columns: ColumnsType<CallInfo> = [
     dataIndex: "ucLimitTime",
     className: "deli-status",
     width: 50,
-    render: (dataIndex: number, record) => `분/${record.ucLimitTime}분`
+    render: (text: string, call: CallInfo) => {
+      const diff = Math.abs(moment().valueOf() - moment(call.acOrderDateTime).valueOf());
+      return Math.floor(diff / 1000 / 60) + "분/" + `${call.ucLimitTime}` + "분";
+    }
   },
   {
     title: "주소",
@@ -70,7 +79,8 @@ const columns: ColumnsType<CallInfo> = [
         case 2:
           return (
             <>
-              <Tag color="#2db7f5">카드</Tag>ㅇ<span>{charge}원</span>
+              <Tag color="#2db7f5">카드</Tag>
+              <span>{charge}원</span>
             </>
           );
         case 3:
@@ -105,15 +115,15 @@ const columns: ColumnsType<CallInfo> = [
   }
 ];
 
-const CallListComponent = () => {
-  //수정한 부분
+const CallListComponent = (callInfo: CallInfo) => {
   const [astErrand, setAstManageCall] = useState<CallInfo[]>([]);
-  const [isCheckedTemp, setIsCheckedTemp] = useState(false);
-  const [isCheckedWait, setIsCheckedWait] = useState(false);
-  const [isCheckedAlloc, setIsCheckedAlloc] = useState(false);
-  const [isCheckedPkup, setIsCheckedPkup] = useState(false);
-  const [isCheckedDone, setIsCheckedDone] = useState(false);
-  const [isCheckedCancel, setIsCheckedCancel] = useState(false);
+  const [count, setCount] = useState(0);
+  const [isCheckedTemp, setIsCheckedTemp] = useState(true);
+  const [isCheckedWait, setIsCheckedWait] = useState(true);
+  const [isCheckedAlloc, setIsCheckedAlloc] = useState(true);
+  const [isCheckedPkup, setIsCheckedPkup] = useState(true);
+  const [isCheckedDone, setIsCheckedDone] = useState(true);
+  const [isCheckedCancel, setIsCheckedCancel] = useState(true);
 
   useEffect(() => {
     const delay = window.setInterval(fetchCallList, 1000);
@@ -129,11 +139,15 @@ const CallListComponent = () => {
           Authorization: `Bearer ${LoginHelper.getToken()}`
         },
         params: {
-          acErrandDate: "2021-06-30"
+          acErrandDate: "2021-07-09"
         }
       });
-      // console.log(response.data.astErrand)
-      setAstManageCall(response.data.astErrand);
+      const astErrand = response.data.astErrand as any[];
+      setAstManageCall(
+        astErrand.sort((a, b) => {
+          return b.ulErrandSeqNo - a.ulErrandSeqNo;
+        })
+      );
     } catch (e) {
       message.error(e.message);
     }
@@ -149,6 +163,10 @@ const CallListComponent = () => {
       }
     }
     if (Number(record.ucDeliStatus) === 4) {
+      //무한루프..
+      //setCount(count + 1);
+      //console.log(count);
+
       className.push("deli-status-wait");
       if (isCheckedWait === false) {
         className.push(" box-checked-show");
@@ -178,7 +196,6 @@ const CallListComponent = () => {
         className.push(" box-checked-show");
       }
     }
-    // console.log(typeof record.ucDeliStatus)
 
     return className.join("");
   };
@@ -216,14 +233,17 @@ const CallListComponent = () => {
   return (
     <>
       <Header />
-      <Checkbox.Group style={{ width: "100%", display: "flex" }}>
+      <Checkbox.Group
+        style={{ width: "100%", display: "flex" }}
+        defaultValue={["대기", "배차", "픽업", "완료", "취소"]}
+      >
         <CustomCheckbox
           value="대기"
           style={{ backgroundColor: "#00BCD4", width: "20%", padding: "5px", margin: "0px" }}
           checked={isCheckedWait}
-          onChange={temp}
+          onChange={wait}
         >
-          대기 0콜
+          대기 {count}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="배차"
@@ -231,8 +251,7 @@ const CallListComponent = () => {
           checked={isCheckedAlloc}
           onChange={alloc}
         >
-          {" "}
-          배차 0콜
+          배차 {count}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="픽업"
@@ -240,7 +259,7 @@ const CallListComponent = () => {
           checked={isCheckedPkup}
           onChange={pkup}
         >
-          픽업 0콜
+          픽업 {count}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="완료"
@@ -248,7 +267,7 @@ const CallListComponent = () => {
           checked={isCheckedDone}
           onChange={done}
         >
-          완료 0콜
+          완료 {count}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="취소"
@@ -256,7 +275,7 @@ const CallListComponent = () => {
           checked={isCheckedCancel}
           onChange={cancle}
         >
-          취소 0콜
+          취소 {count}콜
         </CustomCheckbox>
       </Checkbox.Group>
       <Table
