@@ -2,11 +2,15 @@
 import * as React from "react";
 import { useState, useCallback, useEffect } from "react";
 import { Checkbox } from "@material-ui/core";
-import { Form, Select, Radio, Button, Input, Col, Row } from "antd";
+import { Form, Select, Radio, Button, Input, Col, Row, message } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import DaumPostcode from "react-daum-postcode";
+import axios from "axios";
 
 import styled from "styled-components";
+import APIHelper from "src/helpers/APIHelper";
+import LoginHelper from "src/pages/shared/LoginHelper";
+import { transpileModule } from "typescript";
 
 const formItemLayout = {
   labelCol: {
@@ -36,11 +40,11 @@ const Popup = () => {
   const [isDaumPost2, setIsDaumPost2] = useState(false);
 
   useEffect(() => {
-    console.log("useEffect");
+    //console.log("useEffect");
     window.onkeydown = e => {
       console.log(e);
       if (e.key === "Escape") {
-        console.log(e.key);
+        //console.log(e.key);
         setIsDaumPost(false);
         setIsDaumPost2(false);
       }
@@ -48,7 +52,7 @@ const Popup = () => {
   }, []);
 
   const onFinish = values => {
-    console.log("Received values of form: ", values);
+    //console.log("Received values of form: ", values);
   };
 
   const handleAddress = data => {
@@ -123,6 +127,36 @@ const Popup = () => {
     "120분"
   ];
 
+  const [acOriginCompany, setAcOriginCompany] = useState("");
+  const [acOriginCellNo, setAcOriginCellNo] = useState("");
+  const [acClientMemo, setAcClientMemo] = useState("");
+  const CallSign = async () => {
+    const form = new FormData();
+
+    form.append("acAreaNo", acAreaNo);
+    form.append("acDistribId", acDistribId);
+    form.append("acAgencyId", acAgencyId);
+    form.append("ucMemCourId", ucMemCourId);
+
+    form.append("acOriginCompany", acOriginCompany);
+    form.append("acOriginCellNo", acOriginCellNo);
+    form.append("acClientMemo", acClientMemo);
+    try {
+      const response = await axios({
+        method: "post",
+        url: "https://api.roadvoy.net/franchise/trade.php",
+        data: form,
+        headers: {
+          //"Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${LoginHelper.getToken()}`
+        }
+      });
+      console.log(response);
+    } catch (e) {
+      message.error(e.message);
+    }
+  };
+
   return (
     <>
       <Row>
@@ -144,11 +178,25 @@ const Popup = () => {
             </Form.Item>
 
             <Form.Item label="픽업지 업체명">
-              <Input placeholder="업체명을 입력하세요" />
+              <Input
+                placeholder="업체명을 입력하세요"
+                name="acOriginCompany"
+                value={acOriginCompany}
+                onChange={e => {
+                  setAcOriginCompany(e.target.value);
+                }}
+              />
             </Form.Item>
 
             <Form.Item label="픽업지 연락처">
-              <Input placeholder="연락처를 입력하세요" />
+              <Input
+                placeholder="연락처를 입력하세요"
+                value={acOriginCellNo}
+                name="acOriginCellNo"
+                onChange={e => {
+                  setAcOriginCellNo(e.target.value);
+                }}
+              />
             </Form.Item>
 
             <Form.Item label="픽업지 주소">
@@ -176,9 +224,10 @@ const Popup = () => {
             <Form.Item label="픽업지 요청사항">
               <TextArea
                 rows={2}
-                name="acClientMemo"
-                // onChange=''
-                // value=''
+                value={acClientMemo}
+                onChange={e => {
+                  setAcClientMemo(e.target.value);
+                }}
               />
             </Form.Item>
             <div style={{ backgroundColor: "#fff280" }}>
@@ -334,9 +383,14 @@ const Popup = () => {
             </Form.Item>
 
             <Form.Item label="직권배차">
-              <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+              <Button type="primary" type="submit" style={{ width: "100%" }}>
                 기사선택
               </Button>
+              <Row style={{ float: "right" }}>
+                <Button style={{ marginTop: "30px" }} type="submit" onClick={CallSign}>
+                  접수
+                </Button>
+              </Row>
             </Form.Item>
           </Form>
         </Col>
@@ -344,7 +398,6 @@ const Popup = () => {
     </>
   );
 };
-
 export default Popup;
 const LeftAlignedCol = styled(Col)`
   text-align: left;
