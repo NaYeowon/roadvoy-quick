@@ -16,3 +16,8 @@ export const costFormat = (cost: number) => {
   const format = Number(cost);
   return `${format.toLocaleString()} 원`;
 };
+
+export const callFormat = (call: number) => {
+  const format = Number(call);
+  return `${format.toLocaleString()} 콜`;
+};

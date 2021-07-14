@@ -1,101 +1,12 @@
 /* eslint-disable */
-import React from "react";
+import * as React from "react";
+import { FC, useEffect, useState } from "react";
 import { Col, Descriptions, Table, Button } from "antd";
-
 import { costFormat } from "../../util/FormatUtil";
 
-const dataSource = [
-  {
-    key: "1",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "2",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "3",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "4",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "5",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "6",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  },
-  {
-    key: "7",
-    acBizDate: "dd",
-    usDayDoneCallSum: 1
-  }
-];
+interface Props {
+  shopInfo: any;
+}
 
 const columns = [
   {
@@ -111,6 +22,8 @@ const columns = [
         title: "콜수",
         dataIndex: "usDayDoneCallSum",
         key: "usDayDoneCallSum",
+        // dataIndex: 'usMonthDeliDoneCntSum',
+        // key: 'usMonthDeliDoneCntSum',
         width: 60,
         render: (cost: number) => costFormat(cost)
       },
@@ -198,38 +111,42 @@ const columns = [
   }
 ];
 
-const ShopSettlementList = () => (
-  <div>
-    <Col>
-      <div>
-        <span style={{ float: "left" }}>가맹명</span>
-        <Button>다운로드</Button>
-      </div>
-      <Descriptions bordered column={{ xxl: 5, xl: 4, lg: 4, md: 3, sm: 2, xs: 1 }} size="small">
-        <Descriptions.Item label="배달콜수">0콜</Descriptions.Item>
-        <Descriptions.Item label="배달비">0원</Descriptions.Item>
-        <Descriptions.Item label="콜당수수료">0원</Descriptions.Item>
-        <Descriptions.Item label="현금→카드 송금">0원</Descriptions.Item>
-        <Descriptions.Item label="카드→현금 입금">0원</Descriptions.Item>
-        <Descriptions.Item label="기사가 캐시입금">0원</Descriptions.Item>
-        <Descriptions.Item label="캐시 관리자 직권회수">0원</Descriptions.Item>
-        <Descriptions.Item label="가상계좌 입금">0원</Descriptions.Item>
-        <Descriptions.Item label="가상계좌 수수료">0원</Descriptions.Item>
-      </Descriptions>
-    </Col>
+const ShopSettlementList: FC<Props> = ({ shopInfo }) => {
+  useEffect(() => {});
 
-    <Col>
-      <Table
-        columns={columns}
-        dataSource={dataSource}
-        bordered
-        pagination={false}
-        size="small"
-        scroll={{ x: "calc(700px + 50%)", y: 580 }}
-      />
-      ,
-    </Col>
-  </div>
-);
+  return (
+    <div>
+      <Col>
+        <div>
+          <span style={{ float: "left" }}>가맹명</span>
+          <Button>다운로드</Button>
+        </div>
+        <Descriptions bordered column={{ xxl: 5, xl: 4, lg: 4, md: 3, sm: 2, xs: 1 }} size="small">
+          <Descriptions.Item label="배달콜수">0콜</Descriptions.Item>
+          <Descriptions.Item label="배달비">0원</Descriptions.Item>
+          <Descriptions.Item label="콜당수수료">0원</Descriptions.Item>
+          <Descriptions.Item label="현금→카드 송금 ">0원</Descriptions.Item>
+          <Descriptions.Item label="카드→현금 입금">0원</Descriptions.Item>
+          <Descriptions.Item label="기사가 캐시입금">0원</Descriptions.Item>
+          <Descriptions.Item label="캐시 관리자 직권회수">0원</Descriptions.Item>
+          <Descriptions.Item label="가상계좌 입금">0원</Descriptions.Item>
+          <Descriptions.Item label="가상계좌 수수료">0원</Descriptions.Item>
+        </Descriptions>
+      </Col>
+
+      <Col>
+        <Table
+          columns={columns}
+          dataSource={shopInfo}
+          bordered
+          pagination={false}
+          size="small"
+          scroll={{ y: 580 }}
+        />
+        ,
+      </Col>
+    </div>
+  );
+};
 
 export default ShopSettlementList;

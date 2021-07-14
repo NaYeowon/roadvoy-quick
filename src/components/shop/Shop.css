@@ -1,9 +1,20 @@
 .time-extra-fare-on .time-extra-fare-column {
-    background-color: gold;
+  background-color: gold;
 }
 .night-extra-fare-on .night-extra-fare-column {
-    background-color: gold;
+  background-color: gold;
 }
 .rainy-extra-fare-on .rainy-extra-fare-column {
-    background-color: gold;
+  background-color: gold;
+}
+.ant-table tr:hover td {
+  background-color: transparent !important;
+}
+
+table tbody {
+  font-size: 10pt;
+}
+
+.ant-table-scroll {
+  overflow-y: hidden;
 }
