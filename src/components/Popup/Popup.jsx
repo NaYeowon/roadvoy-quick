@@ -11,7 +11,10 @@ import styled from "styled-components";
 import APIHelper from "src/helpers/APIHelper";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import { transpileModule } from "typescript";
+import PaymentMode from "../../helpers/PaymentMode";
+import SearchAddressType from "../../helpers/SearchAddressType";
 
+const { Search } = Input;
 const formItemLayout = {
   labelCol: {
     span: 7
@@ -107,47 +110,105 @@ const Popup = () => {
     console.log("asd");
   };
 
-  const LimitTime = ({ time }) => (
-    <LeftAlignedCol span={8}>
-      <Radio value={time}>{time}</Radio>
-    </LeftAlignedCol>
-  );
+  // const LimitTime = ({ time }) => (
+  //   <LeftAlignedCol span={8}>
+  //     <Radio value={time}>{time}</Radio>
+  //   </LeftAlignedCol>
+  // );
 
-  const LimitTimes = [
-    "즉시",
-    "5분",
-    "15분",
-    "10분",
-    "20분",
-    "30분",
-    "40분",
-    "50분",
-    "60분",
-    "90분",
-    "120분"
-  ];
+  // const LimitTimes = [
+  //   "즉시",
+  //   "5분",
+  //   "15분",
+  //   "10분",
+  //   "20분",
+  //   "30분",
+  //   "40분",
+  //   "50분",
+  //   "60분",
+  //   "90분",
+  //   "120분"
+  // ];
 
   const [acOriginCompany, setAcOriginCompany] = useState("");
   const [acOriginCellNo, setAcOriginCellNo] = useState("");
-  const [acClientMemo, setAcClientMemo] = useState("");
+  const [acOriginMemo, setAcOriginMemo] = useState("");
+  const [ulOriginLatiPos, setUlOriginLatiPos] = useState("");
+  const [ulOriginLongPos, setUlOriginLongPos] = useState("");
+  const [acOriginOldAddr, setAcOriginOldAddr] = useState("");
+  const [acOriginNewAddr, setAcOriginNewAddr] = useState("");
+  const [acOriginAddrDesc, setAcOriginAddrDesc] = useState("");
+
+  const [ucAreaNo, setUcAreaNo] = useState("");
+  const [ucDistribId, setUcDistribId] = useState("");
+  const [ucAgencyId, setUcAgencyId] = useState("");
+  const [ucMemCourId, setUcMemCourId] = useState("");
+  const [ucErrandType, setUcErrandType] = useState(1);
+
+  const [acDestCompany, setAcDestCompany] = useState("");
+  const [acDestCellNo, setAcDestCellNo] = useState("");
+  const [acDestMemo, setDestMemo] = useState("");
+  const [ulDestLatiPos, setUlDestLatiPos] = useState("");
+  const [ulDestLongPos, setUlDestLongPos] = useState("");
+  const [acDestOldAddr, setAcDestOldAddr] = useState("");
+  const [acDestNewAddr, setAcDestNewAddr] = useState("");
+  const [acDestAddrDesc, setAcDestAddrDesc] = useState("");
+  const [ucLimitTime, setUcLimitTime] = useState("");
+  const [ucPaymentMode, setUcPaymentMode] = useState("");
+  const [ucErrandFeeType, setUcErrandFeeType] = useState(1);
+  const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState(1);
+  const [ucErrandFeeRate, setUcErrandFeeRate] = useState(0);
+  const [ulErrandCharge, setUlErrandCharge] = useState(0);
+  const [ulGoodsPrice, setUlGoodsPrice] = useState(1);
+  const [ucErrandSettlementType, setUcErrandSettlementType] = useState(1);
+  //const [ucAllocType, setUcAllocType] = useState(1);
+  const [ucTripType, setUcTripType] = useState("");
+
   const CallSign = async () => {
     const form = new FormData();
 
-    form.append("acAreaNo", acAreaNo);
-    form.append("acDistribId", acDistribId);
-    form.append("acAgencyId", acAgencyId);
-    form.append("ucMemCourId", ucMemCourId);
+    form.append("ucAreaNo", Number(ucAreaNo));
+    form.append("ucDistribId", Number(ucDistribId));
+    form.append("ucAgencyId", Number(ucAgencyId));
+    form.append("ucMemCourId", Number(ucMemCourId));
+    form.append("ucErrandType", Number(ucErrandType));
+    form.append("acDestCellNo", acDestCellNo);
+    form.append("acDestCompany", acDestCompany);
+    form.append("acDestMemo", acDestMemo);
 
     form.append("acOriginCompany", acOriginCompany);
     form.append("acOriginCellNo", acOriginCellNo);
-    form.append("acClientMemo", acClientMemo);
+    form.append("acOriginMemo", acOriginMemo);
+    form.append("ulOriginLatiPos", Number(ulOriginLatiPos));
+    form.append("ulOriginLongPos", Number(ulOriginLongPos));
+    form.append("acOriginOldAddr", acOriginOldAddr);
+    form.append("acOriginNewAddr", acOriginNewAddr);
+    form.append("acOriginAddrDesc", acOriginAddrDesc);
+
+    form.append("ulDestLatiPos", Number(ulDestLatiPos));
+    form.append("ulDestLongPos", Number(ulDestLongPos));
+    form.append("acDestOldAddr", acDestOldAddr);
+    form.append("acDestNewAddr", acDestNewAddr);
+    form.append("acDestAddrDesc", acDestAddrDesc);
+
+    form.append("ucLimitTime", Number(ucLimitTime));
+    form.append("ucPaymentMode", Number(ucPaymentMode));
+    form.append("ucErrandFeeType", Number(ucErrandFeeType));
+    form.append("ulErrandFeeAmount", Number(ulErrandFeeAmount));
+    form.append("ucErrandFeeRate", Number(ucErrandFeeRate));
+    form.append("ulErrandCharge", Number(ulErrandCharge));
+    form.append("ulGoodsPrice", Number(ulGoodsPrice));
+    form.append("ucErrandSettlementType", Number(ucErrandSettlementType));
+    //form.append("ucAllocType", Number(ucAllocType));
+    form.append("ucTripType", Number(ucTripType));
+
     try {
       const response = await axios({
         method: "post",
-        url: "https://api.roadvoy.net/franchise/trade.php",
+        url: "https://api.roadvoy.net/agency/errand/order.v3.php",
         data: form,
         headers: {
-          //"Content-Type": "multipart/form-data"
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${LoginHelper.getToken()}`
         }
       });
@@ -180,8 +241,8 @@ const Popup = () => {
             <Form.Item label="픽업지 업체명">
               <Input
                 placeholder="업체명을 입력하세요"
-                name="acOriginCompany"
                 value={acOriginCompany}
+                name="acOriginCompany"
                 onChange={e => {
                   setAcOriginCompany(e.target.value);
                 }}
@@ -200,7 +261,13 @@ const Popup = () => {
             </Form.Item>
 
             <Form.Item label="픽업지 주소">
-              <Button type="primary" onClick={handleOpenPost} style={{ width: "100%" }}>
+              <Button
+                type="primary"
+                onClick={() => handleOpenPost(SearchAddressType.ERRAND_ORIGIN)}
+                style={{ width: "100%" }}
+                name={acOriginNewAddr}
+                value={acOriginAddrDesc}
+              >
                 주소검색
               </Button>
               {isDaumPost ? (
@@ -218,29 +285,60 @@ const Popup = () => {
             </Form.Item>
 
             <Form.Item label="픽업지 상세주소">
-              <Input placeholder="상세주소를 입력하세요" />
+              <Input
+                placeholder="상세주소를 입력하세요"
+                value={acOriginAddrDesc}
+                name="acOriginAddrDesc"
+                onChange={e => {
+                  setAcOriginAddrDesc(e.target.value);
+                }}
+              />
             </Form.Item>
 
             <Form.Item label="픽업지 요청사항">
               <TextArea
                 rows={2}
-                value={acClientMemo}
+                value={acOriginMemo}
+                name="acOriginMemo"
                 onChange={e => {
-                  setAcClientMemo(e.target.value);
+                  setAcOriginMemo(e.target.value);
                 }}
               />
             </Form.Item>
             <div style={{ backgroundColor: "#fff280" }}>
               <Form.Item label="목적지 업체명">
-                <Input placeholder="업체명을 입력하세요" />
+                <Input
+                  placeholder="업체명을 입력하세요"
+                  name="acDestCompany"
+                  value={acDestCompany}
+                  onChange={e => {
+                    setAcDestCompany(e.target.value);
+                  }}
+                />
               </Form.Item>
 
               <Form.Item label="목적지 연락처">
-                <Input placeholder="연락처를 입력하세요" />
+                <Input
+                  placeholder="연락처를 입력하세요"
+                  name="acDestCellNo"
+                  value={acDestCellNo}
+                  onChange={e => {
+                    setAcDestCellNo(e.target.value);
+                  }}
+                />
               </Form.Item>
 
               <Form.Item label="목적지 주소">
-                <Button type="primary" onClick={handleOpenPost2} style={{ width: "100%" }}>
+                <Button
+                  type="primary"
+                  block
+                  onChange={e => {
+                    setAcDestOldAddr(e.target.value);
+                  }}
+                  style={{ width: "100%" }}
+                  name="acDestOldAddr"
+                  value={acDestOldAddr}
+                >
                   주소검색
                 </Button>
                 {isDaumPost2 ? (
@@ -258,15 +356,24 @@ const Popup = () => {
               </Form.Item>
 
               <Form.Item label="목적지 상세주소">
-                <Input placeholder="상세주소를 입력하세요" />
+                <Input
+                  placeholder="상세주소를 입력하세요"
+                  name="acDestAddrDesc"
+                  value={acDestAddrDesc}
+                  onChange={e => {
+                    setAcDestAddrDesc(e.target.value);
+                  }}
+                />
               </Form.Item>
 
               <Form.Item label="목적지 요청사항">
                 <TextArea
                   rows={2}
                   name="acClientMemo"
-                  // onChange=''
-                  // value=''
+                  onChange={e => {
+                    setDestMemo(e.target.value);
+                  }}
+                  value={acDestMemo}
                 />
               </Form.Item>
             </div>
@@ -288,36 +395,78 @@ const Popup = () => {
               rate: 3.5
             }}
           >
-            <Form.Item name="" label="제한시간">
-              <Radio.Group style={{ float: "left" }}>
+            <Form.Item label="제한시간">
+              <Radio.Group
+                style={{ float: "left" }}
+                value={ucLimitTime}
+                name="ucLimitTime"
+                onChange={e => setUcLimitTime(e.target.value)}
+              >
                 <Row>
+                  <Col span={8} style={{ textAlign: "left" }}>
+                    <Radio value={0}>즉시</Radio>
+                  </Col>
+                  <Col span={8} style={{ textAlign: "left" }}>
+                    <Radio value={10}>10분</Radio>
+                  </Col>
+                  <Col span={8} style={{ textAlign: "left" }}>
+                    <Radio value={15}>15분</Radio>
+                  </Col>
+                  <Col span={8} style={{ textAlign: "left" }}>
+                    <Radio value={20}>20분</Radio>
+                  </Col>
+                  <Col span={8} style={{ textAlign: "left" }}>
+                    <Radio value={30}>30분</Radio>
+                  </Col>
+                  <Col span={8} style={{ textAlign: "left" }}>
+                    <Radio value={40}>40분</Radio>
+                  </Col>
+                  <Col span={8} style={{ textAlign: "left" }}>
+                    <Radio value={50}>50분</Radio>
+                  </Col>
+                  <Col span={8} style={{ textAlign: "left" }}>
+                    <Radio value={60}>60분</Radio>
+                  </Col>
+                  <Col span={8} style={{ textAlign: "left" }}>
+                    <Radio value={90}>90분</Radio>
+                  </Col>
+                  <Col span={8} style={{ textAlign: "left" }}>
+                    <Radio value={120}>120분</Radio>
+                  </Col>
+                </Row>
+                {/* <Row>
                   {LimitTimes.map((limitTime, index) => (
                     <LimitTime key={index} time={limitTime} />
                   ))}
-                </Row>
+                </Row> */}
               </Radio.Group>
             </Form.Item>
 
             <Form.Item name="" label="주행유형">
               <Radio.Group
                 style={{ float: "left" }}
-                name="fareType"
-                defaultValue=""
+                name="ucTripType"
+                value={ucTripType}
                 buttonStyle="solid"
                 onChange=""
               >
-                <Radio value="11">편도</Radio>
-                <Radio value="21">왕복</Radio>
-                <Radio value="31">경유</Radio>
+                <Radio value={1}>편도</Radio>
+                <Radio value={2}>왕복</Radio>
+                <Radio value={3}>경유</Radio>
               </Radio.Group>
             </Form.Item>
 
-            <Form.Item name="" label="결제유형">
-              <Radio.Group style={{ float: "left" }}>
-                <Radio value="12">현금</Radio>
-                <Radio value="22">선결제</Radio>
-                <Radio value="32">후결제</Radio>
-                <Radio value="43">분할</Radio>
+            <Form.Item label="결제유형">
+              <Radio.Group
+                name="ucPaymentMode"
+                value={ucPaymentMode}
+                onChange={e => setUcPaymentMode(e.target.value)}
+                style={{ float: "left" }}
+              >
+                <Radio value={3}>현금</Radio>
+                <Radio value={4}>선결제</Radio>
+                <Radio value={5}>후결제</Radio>
+                <Radio value={6}>분할</Radio>
               </Radio.Group>
             </Form.Item>
 
@@ -326,27 +475,51 @@ const Popup = () => {
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
                 type="number"
-                value=""
-                onChange=""
-                disabled=""
+                name={ulGoodsPrice}
+                onChange={e => {
+                  setUlGoodsPrice(e.target.value);
+                }}
+                disabled={ucPaymentMode !== PaymentMode.CASH}
               />
             </Form.Item>
 
             <Form.Item label="배달비">
-              <Input style={{ width: "50%", float: "left" }} placeholder="0" type="number" />
+              <Input
+                style={{ width: "50%", float: "left" }}
+                placeholder="0"
+                type="number"
+                name={ulErrandCharge}
+                onChange={e => {
+                  setUlErrandCharge(e.target.value);
+                }}
+              />
             </Form.Item>
 
             <Form.Item name="" label="정산유형">
-              <Radio.Group style={{ float: "left" }}>
-                <Radio value="13">수기정산</Radio>
-                <Radio value="23">자동정산</Radio>
+              <Radio.Group
+                style={{ float: "left" }}
+                name="ucErrandSettlementType"
+                value={ucErrandSettlementType}
+                onChange={e => {
+                  setUcErrandSettlementType(e.target.value);
+                }}
+              >
+                <Radio value={1}>수기정산</Radio>
+                <Radio value={2}>자동정산</Radio>
               </Radio.Group>
             </Form.Item>
 
             <Form.Item name="" label="대행 수수료">
-              <Radio.Group style={{ float: "left" }}>
-                <Radio value="14">수수료 금액</Radio>
-                <Radio value="24">수수료 율(%)</Radio>
+              <Radio.Group
+                style={{ float: "left" }}
+                name="ucErrandFeeType"
+                value={ucErrandFeeType}
+                onChange={e => {
+                  setUcErrandFeeType(e.target.value);
+                }}
+              >
+                <Radio value={1}>수수료 금액</Radio>
+                <Radio value={2}>수수료 율(%)</Radio>
               </Radio.Group>
             </Form.Item>
 
