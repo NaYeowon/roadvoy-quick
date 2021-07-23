@@ -1,51 +1,108 @@
 /* eslint-disable */
 import * as React from "react";
-import { useState, FunctionComponent, useRef } from "react";
-import { Modal, Form, Input, Row, Col, Select, Button } from "antd";
+import { useState } from "react";
+import { Modal, Input, Row, Col, Select, Button, message } from "antd";
 import { PhoneOutlined } from "@ant-design/icons";
-import { Checkbox } from "@material-ui/core";
-
-// import axios from 'axios';
+import axios from "axios";
+import LoginHelper from "src/pages/shared/LoginHelper";
+import "./RiderSettlementList.css";
+import Checkbox from "antd/lib/checkbox/Checkbox";
 
 const { Option } = Select;
 
-interface Props {
-  visible: boolean | undefined;
-  onOk: boolean | any;
-  onCancel: boolean | any;
-}
-
-const RiderSignupModal: FunctionComponent<Props> = props => {
+const RiderSignupModal = props => {
   const [visible, setVisible] = useState(true);
 
-  const [userId, setUserId] = useState("");
-  const [president, setPresident] = useState("");
-  const [password, setPassword] = useState("");
-  const [cellNo, setCellNo] = useState("");
-  const [teamName, setTeamName] = useState("");
-  const [bankCode, setBankCode] = useState("");
-  const [withdrawPassword, setWithdrawPassword] = useState("");
-  const [courierTag, setCourierTag] = useState("");
-  const [courierLease, setCourierLease] = useState("");
-  const [courierDeposit, setCourierDeposit] = useState("");
-  const [callUnitPrice, setCallUnitPrice] = useState("");
+  const [acUserId, setAcUserId] = useState("");
+  const [acPresident, setAcPresident] = useState("");
+  const [acPassword, setAcPassword] = useState("");
+  const [acCellNo, setAcCellNo] = useState("");
+  const [acteamName, setAcTeamName] = useState("");
+  const [usBankCode, setUsBankCode] = useState("");
+  const [acBankAccount, setAcBankAccount] = useState("");
+  const [acWithdrawPassword, setAcWithdrawPassword] = useState("");
+  const [ucCourierTag, setUcCourierTag] = useState("");
+  const [lCourierLease, setLcourierLease] = useState("");
+  const [lCourierDeposit, setLcourierDeposit] = useState("");
+  const [lCallUnitPrice, setLCallUnitPrice] = useState("");
+  const [cManagerFlag, setCManagerFlag] = useState("");
   const [conCallLimit, setConCallLimit] = useState("");
-  const [managerFlag, setManagerFlag] = useState("");
+  const [acName, setAcName] = useState("");
+  const [acResRegNo, setAcResRegNo] = useState("");
 
-  const handleOk = (e: React.MouseEvent) => {
+  const handleOk = e => {
     setVisible(false);
     e.preventDefault();
+    onInitail();
 
     props.onOk(visible);
   };
 
-  const handleCancel = (e: React.MouseEvent) => {
+  const handleCancel = e => {
     setVisible(false);
     e.preventDefault();
+    onInitail();
 
     props.onOk(visible);
   };
 
+  const onInitail = () => {
+    setAcUserId("");
+    setAcPresident("");
+    setAcPassword("");
+    setAcCellNo("");
+    setAcTeamName("");
+    setUsBankCode("");
+    setAcBankAccount("");
+    setAcWithdrawPassword("");
+    setUcCourierTag("");
+    setLcourierLease("");
+    setLcourierDeposit("");
+    setLCallUnitPrice("");
+    setCManagerFlag("");
+    setAcName("");
+    setAcResRegNo("");
+    setConCallLimit("");
+  };
+
+  const RiderSign = async () => {
+    const form = new FormData();
+
+    form.append("acUserId", acUserId);
+    form.append("acPresident", acPresident);
+    form.append("acPassword", acPassword);
+    form.append("acCellNo", acCellNo);
+    form.append("acteamName", acteamName);
+    form.append("usBankCode", Number(usBankCode));
+    form.append("acBankAccount", Number(acBankAccount));
+    form.append("acWithdrawPassword", acWithdrawPassword);
+    form.append("ucCourierTag", Number(ucCourierTag));
+    form.append("lCourierLease", lCourierLease);
+    form.append("lCourierDeposit", Number(lCourierDeposit));
+    form.append("lCallUnitPrice", Number(lCallUnitPrice));
+    form.append("cManagerFlag", cManagerFlag ? "Y" : "N");
+    form.append("conCallLimit", conCallLimit);
+    form.append("acName", acName);
+    form.append("acResRegNo", acResRegNo);
+
+    try {
+      const response = await axios({
+        method: "post",
+        url: "https://api.roadvoy.net/agency/rider/signup.v2.php",
+        data: form,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${LoginHelper.getToken()}`
+        }
+      });
+      onInitail();
+      setVisible(false);
+      props.onOk(visible);
+      console.log(response);
+    } catch (e) {
+      message.error(e.message);
+    }
+  };
   return (
     <>
       <Modal width="700px" visible={props.visible} onOk={handleOk} onCancel={handleCancel}>
@@ -60,10 +117,10 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   </Col>
                   <Col span={8}>
                     <Input
-                      name="userId"
-                      value={userId}
+                      name="acUserId"
+                      value={acUserId}
                       onChange={e => {
-                        setUserId(e.target.value);
+                        setAcUserId(e.target.value);
                       }}
                     />
                   </Col>
@@ -75,10 +132,10 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   </Col>
                   <Col span={8}>
                     <Input
-                      name="president"
-                      value={president}
+                      name="acPresident"
+                      value={acPresident}
                       onChange={e => {
-                        setPresident(e.target.value);
+                        setAcPresident(e.target.value);
                       }}
                     />
                   </Col>
@@ -89,10 +146,11 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   </Col>
                   <Col span={8}>
                     <Input
-                      name="password"
-                      value={password}
+                      name="acPassword"
+                      value={acPassword}
+                      type="password"
                       onChange={e => {
-                        setPassword(e.target.value);
+                        setAcPassword(e.target.value);
                       }}
                     />
                   </Col>
@@ -104,10 +162,10 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   <Col span={8}>
                     <Input
                       prefix={<PhoneOutlined />}
-                      name="cellNo"
-                      value={cellNo}
+                      name="acCellNo"
+                      value={acCellNo}
                       onChange={e => {
-                        setCellNo(e.target.value);
+                        setAcCellNo(e.target.value);
                       }}
                     />
                   </Col>
@@ -118,10 +176,10 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   </Col>
                   <Col span={8}>
                     <Input
-                      name="teamName"
-                      value={teamName}
+                      name="acTeamName"
+                      value={acteamName}
                       onChange={e => {
-                        setTeamName(e.target.value);
+                        setAcTeamName(e.target.value);
                       }}
                     />
                   </Col>
@@ -132,11 +190,9 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   </Col>
                   <Col span={8}>
                     <Select
-                      // name="bankCode"
-                      value={bankCode}
-                      onChange={(e: any) => {
-                        setBankCode(e.target.value);
-                      }}
+                      name="acBankAccount"
+                      value={acBankAccount}
+                      onChange={e => setAcBankAccount(e)}
                       style={{ width: "100%" }}
                     >
                       <Option value="88">신한은행</Option>
@@ -166,10 +222,11 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   </Col>
                   <Col span={8}>
                     <Input
-                      name="withdrawPassword"
-                      value={withdrawPassword}
+                      name="acWithdrawPassword"
+                      value={acWithdrawPassword}
+                      type="password"
                       onChange={e => {
-                        setWithdrawPassword(e.target.value);
+                        setAcWithdrawPassword(e.target.value);
                       }}
                     />
                   </Col>
@@ -180,15 +237,15 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   </Col>
                   <Col span={4}>
                     <Select
-                      // name="courierTag"
-                      value={courierTag}
-                      onChange={(e: any) => {
-                        setCourierTag(e.target.value);
+                      name="ucCourierTag"
+                      value={ucCourierTag}
+                      onChange={e => {
+                        setUcCourierTag(e);
                       }}
                       style={{ width: "100%" }}
                     >
-                      <Option value="">지입</Option>
-                      <Option value="">리스</Option>
+                      <Option value={1}>지입</Option>
+                      <Option value={2}>리스</Option>
                     </Select>
                   </Col>
                   <Col span={4} />
@@ -199,10 +256,10 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   </Col>
                   <Col span={5}>
                     <Input
-                      name="courierLease"
-                      value={courierLease}
+                      name="lCourierLease"
+                      value={lCourierLease}
                       onChange={e => {
-                        setCourierLease(e.target.value);
+                        setLcourierLease(e.target.value);
                       }}
                     />
                   </Col>{" "}
@@ -215,10 +272,10 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   </Col>
                   <Col span={5}>
                     <Input
-                      name="courierDeposit"
-                      value={courierDeposit}
+                      name="lCourierDeposit"
+                      value={lCourierDeposit}
                       onChange={e => {
-                        setCourierDeposit(e.target.value);
+                        setLcourierDeposit(e.target.value);
                       }}
                     />
                   </Col>{" "}
@@ -231,10 +288,10 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   </Col>
                   <Col span={5}>
                     <Input
-                      name="callUnitPrice"
-                      value={callUnitPrice}
+                      name="lCallUnitPrice"
+                      value={lCallUnitPrice}
                       onChange={e => {
-                        setCallUnitPrice(e.target.value);
+                        setLCallUnitPrice(e.target.value);
                       }}
                     />
                   </Col>{" "}
@@ -244,7 +301,12 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                 <Row justify="center">
                   <Col pull={3}>
                     &nbsp;&nbsp;<label>관리자모드&nbsp;:</label>&nbsp;&nbsp;
-                    <Checkbox />
+                    <Checkbox
+                      name="cManagerFlag"
+                      onChange={e => setCManagerFlag(e.target.checked)}
+                      checked={cManagerFlag}
+                    />
+                    {/* antd Checkbox */}
                   </Col>
                 </Row>
                 <Row justify="center" gutter={[16, 16]}>
@@ -261,6 +323,9 @@ const RiderSignupModal: FunctionComponent<Props> = props => {
                   건&nbsp;&nbsp;&nbsp;&nbsp;
                   <Col span={3} />
                 </Row>
+                <Button block type="primary" onClick={RiderSign}>
+                  기사등록
+                </Button>
               </div>
             </form>
           </div>

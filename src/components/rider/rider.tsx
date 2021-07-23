@@ -164,7 +164,7 @@ const Rider = () => {
       </div>
       <PageHeader>
         <span>
-          <b>{astManageRider?.length}</b>개의 가맹점이 등록 되어있습니다.
+          <b>{astManageRider?.length}</b>개의 기사가 등록 되어있습니다.
         </span>
         <span style={{ float: "right" }}>
           {/* <Link to='#'>

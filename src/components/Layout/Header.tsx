@@ -9,11 +9,13 @@ import LoginHelper from "src/pages/shared/LoginHelper";
 
 import RiderSignupModal from "../rider/RiderSignupModal";
 import ShopSignupModal from "../shop/shopSignupModal";
+import DistributorSignUpModal from "../Distributor/DistributorSignUpModal";
 
 const { SubMenu } = Menu;
 const Header = () => {
   const [isModalRiderVisible, setIsModalRiderVisible] = useState(false);
   const [isModalShopVisible, setIsModalShopVisible] = useState(false);
+  const [isModalDistributorVisible, setIsModalDistributorVisible] = useState(false);
 
   window.onkeydown = e => {
     if (e.key === "F2") {
@@ -33,12 +35,19 @@ const Header = () => {
     setIsModalShopVisible(true);
   };
 
+  const ShowModalDistributor = () => {
+    setIsModalDistributorVisible(true);
+  };
+
   const RiderCancelData = (data: boolean) => {
     console.log(data);
     setIsModalRiderVisible(false);
   };
   const ShopCancelData = (data: boolean) => {
     setIsModalShopVisible(false);
+  };
+  const DistributorCancelData = (data: boolean) => {
+    setIsModalDistributorVisible(false);
   };
 
   const RiderOkData = (data: boolean) => {
@@ -47,6 +56,9 @@ const Header = () => {
   };
   const ShopOkData = (data: boolean) => {
     setIsModalShopVisible(false);
+  };
+  const DistributorOkData = (data: boolean) => {
+    setIsModalDistributorVisible(false);
   };
 
   const OnCallRegister = () => {
@@ -130,10 +142,15 @@ const Header = () => {
         <NavLink to="/Distributor">총판조회</NavLink>
       </Menu.Item>
       <Menu.Item key="1">
-        <NavLink to="#">총판정산</NavLink>
+        <NavLink to="/DistributorStatistics">총판통계</NavLink>
       </Menu.Item>
       <Menu.Item key="2">
-        <a href="void:0">총판등록</a>
+        <NavLink to="#">총판정산</NavLink>
+      </Menu.Item>
+      <Menu.Item key="3">
+        <a href="void:0" onClick={ShowModalDistributor}>
+          총판등록
+        </a>
       </Menu.Item>
     </Menu>
   );
@@ -215,6 +232,11 @@ const Header = () => {
         onCancel={RiderCancelData}
       />
       <ShopSignupModal visible={isModalShopVisible} onOk={ShopOkData} onCancel={ShopCancelData} />
+      <DistributorSignUpModal
+        visible={isModalDistributorVisible}
+        onOk={DistributorOkData}
+        onCancel={DistributorCancelData}
+      />
     </header>
   );
 };

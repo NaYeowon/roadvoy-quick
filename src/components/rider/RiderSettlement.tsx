@@ -6,25 +6,10 @@ import { message, PageHeader, Table, Row, Col, DatePicker, Space, Button } from 
 import Header from "../Layout/Header";
 import LoginHelper from "../../pages/shared/LoginHelper";
 import RiderSettlementList from "./RiderSettlementList";
-
+import { RiderInfo } from "../shop/types";
 import XLSX from "xlsx";
+import styled from "styled-components";
 
-interface Rider {
-  title: string;
-  dataIndex: string;
-  width: number;
-  acStartDate: Date;
-  acEndDate: Date;
-  acPresident: string;
-  ucAreaNo: string;
-  ucDistribId: string;
-  ucAgencyId: string;
-  ucMemCourId: string;
-  lDayErrandCharge: number;
-  ulCallCntFee: number;
-  ulDayTotalRevenue: number;
-  usMonthDoneCallSum: number;
-}
 const columns = [
   {
     title: "이름",
@@ -41,8 +26,10 @@ const columns = [
 
 const { RangePicker } = DatePicker;
 
-const RiderSettlement = (props: Rider) => {
-  const [astManageRider, setAstManageRider] = useState<Rider[]>([]);
+const RiderSettlement = (props: RiderInfo) => {
+  const [astManageRider, setAstManageRider] = useState<RiderInfo[]>([]);
+  const [selectedRider, setSelectedRider] = useState(false);
+  const [riderInfoData, setRiderInfoData] = useState("");
   const fetchRiderList = async () => {
     try {
       const response = await axios({
@@ -90,18 +77,39 @@ const RiderSettlement = (props: Rider) => {
   };
 
   useEffect(() => {
-    const delay = window.setInterval(fetchRiderList, 1000);
-    return () => clearInterval(delay);
+    // const delay = window.setInterval(fetchRiderList, 1000);
+    // return () => clearInterval(delay);
+    fetchRiderList();
   }, []);
+
+  const SettlementList = (record: any) => {
+    let content;
+    let riderInfo = new Array();
+    riderInfo = record;
+    console.log(riderInfo);
+    if (selectedRider === false) {
+      content = <Content>기사를 선택하세요.</Content>;
+    } else {
+      content = <RiderSettlementList riderInfo={riderInfo} />;
+    }
+
+    return (
+      <Col
+        span={20}
+        push={4}
+        style={{ paddingLeft: "20px", paddingRight: "20px", textAlign: "center" }}
+      >
+        {content}
+      </Col>
+    );
+  };
 
   return (
     <>
       <Header />
       <PageHeader />
       <Row>
-        <Col span={20} push={4} style={{ paddingLeft: "20px", paddingRight: "20px" }}>
-          <RiderSettlementList />
-        </Col>
+        {SettlementList(astManageRider)}
         <Col span={4} pull={20}>
           <Space direction="vertical" size={12} style={{ paddingBottom: "10px", width: "100%" }}>
             <div style={{ textAlign: "center" }}>
@@ -117,6 +125,14 @@ const RiderSettlement = (props: Rider) => {
             style={{ width: "100%", height: "100%", cursor: "pointer" }}
             dataSource={astManageRider}
             bordered
+            onRow={(record: RiderInfo) => {
+              return {
+                onClick: () => {
+                  setSelectedRider(true);
+                  setRiderInfoData(JSON.stringify(record));
+                }
+              };
+            }}
             size="small"
             pagination={false}
             scroll={{ y: 650 }}
@@ -127,3 +143,7 @@ const RiderSettlement = (props: Rider) => {
   );
 };
 export default RiderSettlement;
+const Content = styled.span`
+  font-size: 20pt;
+  color: grey;
+`;

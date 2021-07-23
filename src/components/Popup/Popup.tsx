@@ -1,19 +1,51 @@
 /* eslint-disable */
 import * as React from "react";
 import { useState, useCallback, useEffect } from "react";
-import { Checkbox } from "@material-ui/core";
-import { Form, Select, Radio, Button, Input, Col, Row, message } from "antd";
+import { Form, Radio, Button, Input, Col, Row, message, Checkbox } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import DaumPostcode from "react-daum-postcode";
 import axios from "axios";
 
 import styled from "styled-components";
-import APIHelper from "src/helpers/APIHelper";
 import LoginHelper from "src/pages/shared/LoginHelper";
-import { transpileModule } from "typescript";
 import PaymentMode from "../../helpers/PaymentMode";
 import SearchAddressType from "../../helpers/SearchAddressType";
+import ErrandFeeType from "src/helpers/ErrandFeeType";
+import ErrandType from "src/helpers/ErrandType";
 
+interface State {
+  acOriginCompany: string;
+  acOriginCellNo: string;
+  acOriginOldAddr: string;
+  acOriginNewAddr: string;
+  ulOriginLatiPos: number;
+  ulOriginLongPos: number;
+  acOriginAddrDesc: string;
+  acOriginMemo: string;
+
+  acDestCompany: string;
+  acDestCellNo: string;
+  acDestOldAddr: string;
+  acDestNewAddr: string;
+  ulDestLatiPos: number;
+  ulDestLongPos: number;
+  acDestAddrDesc: string;
+  acDestMemo: string;
+
+  ucErrandType: ErrandType;
+  ucLimitTime: number;
+  //ucTripType:
+  ucPaymentMode: PaymentMode;
+
+  ulErrandCharge: number;
+  ulGoodsPrice: number;
+  ucErrandFeeType: ErrandFeeType;
+  ucErrandFeeRate: number;
+  ulErrandFeeAmount: number;
+  ulErrandDispatchAgencyFee: number;
+
+  isDispatchListVisible: boolean;
+}
 const { Search } = Input;
 const formItemLayout = {
   labelCol: {
@@ -24,16 +56,16 @@ const formItemLayout = {
   }
 };
 
-const modalStyle = {
+const modalStyle: React.CSSProperties = {
   position: "absolute",
   top: 0,
   left: "-100px",
-  zIndex: "100",
+  zIndex: 100,
   border: "1px solid #000000",
   overflow: "hidden"
 };
 
-const Popup = () => {
+const Popup = (state: State) => {
   const [fullAddress, setFullAddress] = useState("");
   const [zoneCode, setZoneCode] = useState("");
   const [isDaumPost, setIsDaumPost] = useState(false);
@@ -41,6 +73,8 @@ const Popup = () => {
   const [fullAddress2, setFullAddress2] = useState("");
   const [zoneCode2, setZoneCode2] = useState("");
   const [isDaumPost2, setIsDaumPost2] = useState(false);
+
+  const [isDispatchListVisible, setIsDispatchListVisible] = useState(false);
 
   useEffect(() => {
     //console.log("useEffect");
@@ -75,6 +109,7 @@ const Popup = () => {
 
     setFullAddress(AllAddress);
     setZoneCode(zoneCodes);
+    setAcDestOldAddr(AllAddress);
     setIsDaumPost(false);
   };
 
@@ -95,20 +130,17 @@ const Popup = () => {
 
     setFullAddress2(AllAddress2);
     setZoneCode2(zoneCodes2);
+    setAcDestOldAddr(AllAddress2);
     setIsDaumPost2(false);
   };
 
-  const handleOpenPost = useCallback(() => {
+  const handleOpenPost = useCallback((SearchAddressType: SearchAddressType) => {
     setIsDaumPost(true);
   }, []);
 
-  const handleOpenPost2 = useCallback(() => {
+  const handleOpenPost2 = useCallback((SearchAddressType: SearchAddressType) => {
     setIsDaumPost2(true);
   }, []);
-
-  const test = () => {
-    console.log("asd");
-  };
 
   // const LimitTime = ({ time }) => (
   //   <LeftAlignedCol span={8}>
@@ -133,8 +165,8 @@ const Popup = () => {
   const [acOriginCompany, setAcOriginCompany] = useState("");
   const [acOriginCellNo, setAcOriginCellNo] = useState("");
   const [acOriginMemo, setAcOriginMemo] = useState("");
-  const [ulOriginLatiPos, setUlOriginLatiPos] = useState("");
-  const [ulOriginLongPos, setUlOriginLongPos] = useState("");
+  const [ulOriginLatiPos, setUlOriginLatiPos] = useState(0);
+  const [ulOriginLongPos, setUlOriginLongPos] = useState(0);
   const [acOriginOldAddr, setAcOriginOldAddr] = useState("");
   const [acOriginNewAddr, setAcOriginNewAddr] = useState("");
   const [acOriginAddrDesc, setAcOriginAddrDesc] = useState("");
@@ -143,35 +175,36 @@ const Popup = () => {
   const [ucDistribId, setUcDistribId] = useState("");
   const [ucAgencyId, setUcAgencyId] = useState("");
   const [ucMemCourId, setUcMemCourId] = useState("");
-  const [ucErrandType, setUcErrandType] = useState(1);
+  const [ucErrandType, setUcErrandType] = useState(ErrandType.DIFFERENT_DESTINATION);
 
   const [acDestCompany, setAcDestCompany] = useState("");
   const [acDestCellNo, setAcDestCellNo] = useState("");
   const [acDestMemo, setDestMemo] = useState("");
-  const [ulDestLatiPos, setUlDestLatiPos] = useState("");
-  const [ulDestLongPos, setUlDestLongPos] = useState("");
+  const [ulDestLatiPos, setUlDestLatiPos] = useState(0);
+  const [ulDestLongPos, setUlDestLongPos] = useState(0);
   const [acDestOldAddr, setAcDestOldAddr] = useState("");
   const [acDestNewAddr, setAcDestNewAddr] = useState("");
   const [acDestAddrDesc, setAcDestAddrDesc] = useState("");
-  const [ucLimitTime, setUcLimitTime] = useState("");
-  const [ucPaymentMode, setUcPaymentMode] = useState("");
-  const [ucErrandFeeType, setUcErrandFeeType] = useState(1);
-  const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState(1);
+  const [ucLimitTime, setUcLimitTime] = useState(0);
+  const [ucPaymentMode, setUcPaymentMode] = useState(0);
+  const [ucErrandFeeType, setUcErrandFeeType] = useState(0);
+  const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState(0);
   const [ucErrandFeeRate, setUcErrandFeeRate] = useState(0);
   const [ulErrandCharge, setUlErrandCharge] = useState(0);
-  const [ulGoodsPrice, setUlGoodsPrice] = useState(1);
-  const [ucErrandSettlementType, setUcErrandSettlementType] = useState(1);
-  //const [ucAllocType, setUcAllocType] = useState(1);
-  const [ucTripType, setUcTripType] = useState("");
+  const [ulGoodsPrice, setUlGoodsPrice] = useState(0);
+  const [ucErrandSettlementType, setUcErrandSettlementType] = useState(0);
+  const [ucAllocType, setUcAllocType] = useState(1);
+  const [ucTripType, setUcTripType] = useState(0);
+  const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState("");
 
   const CallSign = async () => {
     const form = new FormData();
 
-    form.append("ucAreaNo", Number(ucAreaNo));
-    form.append("ucDistribId", Number(ucDistribId));
-    form.append("ucAgencyId", Number(ucAgencyId));
-    form.append("ucMemCourId", Number(ucMemCourId));
-    form.append("ucErrandType", Number(ucErrandType));
+    form.append("ucAreaNo", String(ucAreaNo));
+    form.append("ucDistribId", String(ucDistribId));
+    form.append("ucAgencyId", String(ucAgencyId));
+    form.append("ucMemCourId", String(ucMemCourId));
+    form.append("ucErrandType", String(ucErrandType));
     form.append("acDestCellNo", acDestCellNo);
     form.append("acDestCompany", acDestCompany);
     form.append("acDestMemo", acDestMemo);
@@ -179,28 +212,29 @@ const Popup = () => {
     form.append("acOriginCompany", acOriginCompany);
     form.append("acOriginCellNo", acOriginCellNo);
     form.append("acOriginMemo", acOriginMemo);
-    form.append("ulOriginLatiPos", Number(ulOriginLatiPos));
-    form.append("ulOriginLongPos", Number(ulOriginLongPos));
+    form.append("ulOriginLatiPos", String(ulOriginLatiPos));
+    form.append("ulOriginLongPos", String(ulOriginLongPos));
     form.append("acOriginOldAddr", acOriginOldAddr);
     form.append("acOriginNewAddr", acOriginNewAddr);
     form.append("acOriginAddrDesc", acOriginAddrDesc);
 
-    form.append("ulDestLatiPos", Number(ulDestLatiPos));
-    form.append("ulDestLongPos", Number(ulDestLongPos));
+    form.append("ulDestLatiPos", String(ulDestLatiPos));
+    form.append("ulDestLongPos", String(ulDestLongPos));
     form.append("acDestOldAddr", acDestOldAddr);
     form.append("acDestNewAddr", acDestNewAddr);
     form.append("acDestAddrDesc", acDestAddrDesc);
 
-    form.append("ucLimitTime", Number(ucLimitTime));
-    form.append("ucPaymentMode", Number(ucPaymentMode));
-    form.append("ucErrandFeeType", Number(ucErrandFeeType));
-    form.append("ulErrandFeeAmount", Number(ulErrandFeeAmount));
-    form.append("ucErrandFeeRate", Number(ucErrandFeeRate));
-    form.append("ulErrandCharge", Number(ulErrandCharge));
-    form.append("ulGoodsPrice", Number(ulGoodsPrice));
-    form.append("ucErrandSettlementType", Number(ucErrandSettlementType));
-    //form.append("ucAllocType", Number(ucAllocType));
-    form.append("ucTripType", Number(ucTripType));
+    form.append("ucLimitTime", String(ucLimitTime));
+    form.append("ucPaymentMode", String(ucPaymentMode));
+    form.append("ucErrandFeeType", String(ucErrandFeeType));
+    form.append("ulErrandFeeAmount", String(ulErrandFeeAmount));
+    form.append("ucErrandFeeRate", String(ucErrandFeeRate));
+    form.append("ulErrandCharge", String(ulErrandCharge));
+    form.append("ulGoodsPrice", String(ulGoodsPrice));
+    form.append("ucErrandSettlementType", String(ucErrandSettlementType));
+    form.append("ucAllocType", String(ucAllocType));
+    form.append("ucTripType", String(ucTripType));
+    form.append("ulErrandFeeAgency", String(ulErrandFeeAgency));
 
     try {
       const response = await axios({
@@ -213,10 +247,15 @@ const Popup = () => {
         }
       });
       console.log(response);
+      window.close();
     } catch (e) {
       message.error(e.message);
     }
   };
+  // material-ui
+  // antd
+
+  // material-ui
 
   return (
     <>
@@ -234,7 +273,16 @@ const Popup = () => {
           >
             <Form.Item label="심부름 종류">
               <Col style={{ textAlign: "left" }}>
-                <Checkbox /> 바로목적지로
+                <Checkbox
+                  style={{ paddingRight: "10px" }}
+                  onChange={e => {
+                    setUcErrandType(
+                      e.target.checked ? ErrandType.SAME : ErrandType.DIFFERENT_DESTINATION
+                    );
+                  }}
+                  checked={ucErrandType === ErrandType.SAME}
+                />
+                바로목적지로
               </Col>
             </Form.Item>
 
@@ -246,6 +294,7 @@ const Popup = () => {
                 onChange={e => {
                   setAcOriginCompany(e.target.value);
                 }}
+                disabled={ucErrandType === ErrandType.SAME}
               />
             </Form.Item>
 
@@ -257,6 +306,7 @@ const Popup = () => {
                 onChange={e => {
                   setAcOriginCellNo(e.target.value);
                 }}
+                disabled={ucErrandType === ErrandType.SAME}
               />
             </Form.Item>
 
@@ -267,6 +317,7 @@ const Popup = () => {
                 style={{ width: "100%" }}
                 name={acOriginNewAddr}
                 value={acOriginAddrDesc}
+                disabled={ucErrandType === ErrandType.SAME}
               >
                 주소검색
               </Button>
@@ -277,8 +328,6 @@ const Popup = () => {
                   width={595}
                   height={450}
                   style={modalStyle}
-                  isDaumPost={isDaumPost}
-                  key={test}
                 />
               ) : null}
               <div>{fullAddress}</div>
@@ -292,6 +341,7 @@ const Popup = () => {
                 onChange={e => {
                   setAcOriginAddrDesc(e.target.value);
                 }}
+                disabled={ucErrandType === ErrandType.SAME}
               />
             </Form.Item>
 
@@ -303,6 +353,7 @@ const Popup = () => {
                 onChange={e => {
                   setAcOriginMemo(e.target.value);
                 }}
+                disabled={ucErrandType === ErrandType.SAME}
               />
             </Form.Item>
             <div style={{ backgroundColor: "#fff280" }}>
@@ -332,15 +383,14 @@ const Popup = () => {
                 <Button
                   type="primary"
                   block
-                  onChange={e => {
-                    setAcDestOldAddr(e.target.value);
-                  }}
+                  onClick={() => handleOpenPost2(SearchAddressType.ERRAND_DEST)}
                   style={{ width: "100%" }}
                   name="acDestOldAddr"
                   value={acDestOldAddr}
                 >
                   주소검색
                 </Button>
+
                 {isDaumPost2 ? (
                   <DaumPostcode
                     onComplete={handleAddress2}
@@ -348,8 +398,6 @@ const Popup = () => {
                     width={595}
                     height={450}
                     style={modalStyle}
-                    isDaumPost2={isDaumPost2}
-                    key={test}
                   />
                 ) : null}
                 <div>{fullAddress2}</div>
@@ -403,36 +451,36 @@ const Popup = () => {
                 onChange={e => setUcLimitTime(e.target.value)}
               >
                 <Row>
-                  <Col span={8} style={{ textAlign: "left" }}>
+                  <LeftAlignedCol span={8}>
                     <Radio value={0}>즉시</Radio>
-                  </Col>
-                  <Col span={8} style={{ textAlign: "left" }}>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
                     <Radio value={10}>10분</Radio>
-                  </Col>
-                  <Col span={8} style={{ textAlign: "left" }}>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
                     <Radio value={15}>15분</Radio>
-                  </Col>
-                  <Col span={8} style={{ textAlign: "left" }}>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
                     <Radio value={20}>20분</Radio>
-                  </Col>
-                  <Col span={8} style={{ textAlign: "left" }}>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
                     <Radio value={30}>30분</Radio>
-                  </Col>
-                  <Col span={8} style={{ textAlign: "left" }}>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
                     <Radio value={40}>40분</Radio>
-                  </Col>
-                  <Col span={8} style={{ textAlign: "left" }}>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
                     <Radio value={50}>50분</Radio>
-                  </Col>
-                  <Col span={8} style={{ textAlign: "left" }}>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
                     <Radio value={60}>60분</Radio>
-                  </Col>
-                  <Col span={8} style={{ textAlign: "left" }}>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
                     <Radio value={90}>90분</Radio>
-                  </Col>
-                  <Col span={8} style={{ textAlign: "left" }}>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
                     <Radio value={120}>120분</Radio>
-                  </Col>
+                  </LeftAlignedCol>
                 </Row>
                 {/* <Row>
                   {LimitTimes.map((limitTime, index) => (
@@ -442,13 +490,12 @@ const Popup = () => {
               </Radio.Group>
             </Form.Item>
 
-            <Form.Item name="" label="주행유형">
+            <Form.Item label="주행유형">
               <Radio.Group
-                style={{ float: "left" }}
                 name="ucTripType"
                 value={ucTripType}
-                buttonStyle="solid"
-                onChange=""
+                onChange={e => setUcTripType(e.target.value)}
+                style={{ float: "left" }}
               >
                 <Radio value={1}>편도</Radio>
                 <Radio value={2}>왕복</Radio>
@@ -475,10 +522,8 @@ const Popup = () => {
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
                 type="number"
-                name={ulGoodsPrice}
-                onChange={e => {
-                  setUlGoodsPrice(e.target.value);
-                }}
+                name="ulGoodsPrice"
+                onChange={e => setUlGoodsPrice(parseInt(e.target.value))}
                 disabled={ucPaymentMode !== PaymentMode.CASH}
               />
             </Form.Item>
@@ -488,35 +533,31 @@ const Popup = () => {
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
                 type="number"
-                name={ulErrandCharge}
+                name="ulErrandCharge"
                 onChange={e => {
-                  setUlErrandCharge(e.target.value);
+                  setUlErrandCharge(parseInt(e.target.value));
                 }}
               />
             </Form.Item>
 
-            <Form.Item name="" label="정산유형">
+            <Form.Item label="정산유형">
               <Radio.Group
-                style={{ float: "left" }}
                 name="ucErrandSettlementType"
                 value={ucErrandSettlementType}
-                onChange={e => {
-                  setUcErrandSettlementType(e.target.value);
-                }}
+                onChange={e => setUcErrandSettlementType(e.target.value)}
+                style={{ float: "left" }}
               >
                 <Radio value={1}>수기정산</Radio>
                 <Radio value={2}>자동정산</Radio>
               </Radio.Group>
             </Form.Item>
 
-            <Form.Item name="" label="대행 수수료">
+            <Form.Item label="대행 수수료">
               <Radio.Group
-                style={{ float: "left" }}
                 name="ucErrandFeeType"
                 value={ucErrandFeeType}
-                onChange={e => {
-                  setUcErrandFeeType(e.target.value);
-                }}
+                onChange={e => setUcErrandFeeType(e.target.value)}
+                style={{ float: "left" }}
               >
                 <Radio value={1}>수수료 금액</Radio>
                 <Radio value={2}>수수료 율(%)</Radio>
@@ -528,9 +569,10 @@ const Popup = () => {
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
                 type="number"
-                value=""
-                onChange=""
-                disabled=""
+                value={ulErrandFeeAmount}
+                name="ulErrandFeeAmount"
+                onChange={e => setUlErrandFeeAmount(parseInt(e.target.value))}
+                disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
               />
             </Form.Item>
 
@@ -539,9 +581,12 @@ const Popup = () => {
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
                 type="number"
-                value=""
-                onChange=""
-                disabled=""
+                name="ucErrandFeeRate"
+                value={ucErrandFeeRate}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setUcErrandFeeRate(parseInt(e.target.value))
+                }
+                disabled={ucErrandFeeType !== ErrandFeeType.RATE}
               />
             </Form.Item>
 
@@ -550,17 +595,26 @@ const Popup = () => {
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
                 type="number"
-                value=""
-                onChange=""
+                value={ulErrandFeeAgency}
+                name="ulErrandFeeAgency"
+                onChange={e => setUlErrandFeeAgency(e.target.value)}
               />
             </Form.Item>
 
             <Form.Item label="직권배차">
-              <Button type="primary" type="submit" style={{ width: "100%" }}>
-                기사선택
+              <Button
+                type={isDispatchListVisible ? "ghost" : "primary"}
+                block
+                onClick={() => {
+                  setIsDispatchListVisible(!isDispatchListVisible);
+                }}
+                style={{ width: "100%" }}
+              >
+                {isDispatchListVisible ? "닫기" : "기사선택"}
               </Button>
+
               <Row style={{ float: "right" }}>
-                <Button style={{ marginTop: "30px" }} type="submit" onClick={CallSign}>
+                <Button style={{ marginTop: "30px" }} type="primary" onClick={CallSign}>
                   접수
                 </Button>
               </Row>

@@ -22,6 +22,12 @@ import RiderSettlementList from "./components/rider/RiderSettlementList";
 import Board from "./components/Board/Board";
 import Writing from "./components/Board/Writing";
 import BoardDetail from "./components/Board/BoardDetail";
+import DistributorStatistics from "./components/Distributor/DistributorStatistics";
+import DistributorSignUpModal from "./components/Distributor/DistributorSignUpModal";
+import CallListDrawer from "./components/CallList/CallListDrawer";
+import { CallFee } from "./components/Distributor/CallFee";
+import { CallQuantity } from "./components/Distributor/CallQuantity";
+import { ProgramUsageFee } from "./components/Distributor/ProgramUsageFee";
 
 class App extends Component {
   render() {
@@ -48,6 +54,12 @@ class App extends Component {
           <Route path="/Board" component={Board} />
           <Route path="/Writing" component={Writing} />
           <Route path="/BoardDetail" component={BoardDetail} />
+          <Route path="/DistributorStatistics" component={DistributorStatistics} />
+          <Route path="/DistributorSignUpModal" component={DistributorSignUpModal} />
+          <Route path="/CallFee" component={CallFee} />
+          <Route path="/CallQuantity" component={CallQuantity} />
+          <Route path="/ProgramUsageFee" component={ProgramUsageFee} />
+          <Route path="/CallListDrawer" component={CallListDrawer} />
           <Redirect from="/" to="/CallListComponent" />
         </Switch>
       </Router>

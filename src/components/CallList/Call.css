@@ -30,6 +30,10 @@ table tbody {
   font-size: 10pt;
 }
 
+.ant-table-row {
+  cursor: pointer;
+}
+
 .ant-table-scroll {
   overflow-y: hidden;
 }

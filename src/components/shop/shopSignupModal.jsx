@@ -1,10 +1,12 @@
 /* eslint-disable */
 import React, { Component } from "react";
-import { Modal, Form, Input, Button, Row, Col } from "antd";
+import { Modal, Form, Input, Button, Row, Col, message } from "antd";
 import axios from "axios";
 import { PhoneOutlined } from "@ant-design/icons";
 import DaumPostCode from "react-daum-postcode";
 import "./shopSign.css";
+import LoginHelper from "src/pages/shared/LoginHelper";
+import Password from "antd/lib/input/Password";
 
 class shopSignupModal extends Component {
   constructor(props) {
@@ -32,6 +34,13 @@ class shopSignupModal extends Component {
       address: "",
       zoneCode: "",
       fullAddress: "",
+      acOldAddress: "",
+      ulLatiPos: "",
+      ulLongPos: "",
+      ulBaseDist: "",
+      ulBaseFare: "",
+      ulExtraDist: "",
+      ulExtraFare: "",
       isDaumPost: false,
       isRegister: false,
       register: []
@@ -52,9 +61,10 @@ class shopSignupModal extends Component {
   };
 
   handleCancel = e => {
-    this.setState({ isModalVisible: false, isDaumPost: false, fullAddress: "" });
     e.preventDefault();
 
+    this.onInitail();
+    this.setState({ isModalVisible: false, isDaumPost: false, fullAddress: "" });
     this.props.onCancel(this.state.isModalVisible);
   };
 
@@ -88,7 +98,7 @@ class shopSignupModal extends Component {
   };
 
   onAcpassword = e => {
-    this.setState({ password: e.target.value });
+    this.setState({ acPassword: e.target.value });
   };
 
   onAccellNo = e => {
@@ -152,6 +162,32 @@ class shopSignupModal extends Component {
     // }
   };
 
+  onInitail = () => {
+    this.setState({ acCompany: "" });
+    this.setState({ acPresident: "" });
+    this.setState({ acPassword: "" });
+    this.setState({ acCellNo: "" });
+    this.setState({ acPhoneNo: "" });
+    this.setState({ acBizRegNo: "" });
+    this.setState({ acResRegNo: "" });
+    this.setState({ acAddressDesc: "" });
+    this.setState({ allocRemark: "" });
+    this.setState({ remark: "" });
+    this.setState({ cpPresident: "" });
+    this.setState({ cpCellNo: "" });
+    this.setState({ baseDist: "" });
+    this.setState({ baseFare: "" });
+    this.setState({ extraDist: "" });
+    this.setState({ extraFare: "" });
+    this.setState({ acOldAddress: "" });
+    this.setState({ ulLatiPos: "" });
+    this.setState({ ulLongPos: "" });
+    this.setState({ ulBaseDist: "" });
+    this.setState({ ulBaseFare: "" });
+    this.setState({ ulExtraDist: "" });
+    this.setState({ ulExtraFare: "" });
+  };
+
   async onSingupData(e) {
     try {
       const form = new FormData();
@@ -171,16 +207,47 @@ class shopSignupModal extends Component {
         baseDist,
         baseFare,
         extraDist,
-        extraFare
+        extraFare,
+        acOldAddress,
+        ulLatiPos,
+        ulLongPos,
+        ulBaseDist,
+        ulBaseFare,
+        ulExtraDist,
+        ulExtraFare
       } = this.state;
+
+      if (!acCompany) {
+        message.error("가맹점명을 입력해주세요.");
+      }
+      if (!acPresident) {
+        message.error("대표자명을 입력해주세요.");
+      }
+      if (!Password) {
+        message.error("비밀번호를 입력해주세요.");
+      }
+      if (!acCellNo) {
+        message.error("휴대폰번호를 입력해주세요.");
+      }
+      if (!acPhoneNo) {
+        message.error("전화번호를 입력해주세요.");
+      }
+      if (!acBizRegNo) {
+        message.error("사업자번호를 입력해주세요.");
+      }
+      if (!acResRegNo) {
+        message.error("생년월일을 입력해주세요.");
+      }
 
       form.append("acCompany", acCompany);
       form.append("acPresident", acPresident);
       form.append("acPassword", acPassword);
+
       form.append("acCellNo", acCellNo);
       form.append("acPhoneNo", acPhoneNo);
       form.append("acBizRegNo", acBizRegNo);
       form.append("acResRegNo", acResRegNo);
+
       form.append("acAddressDesc", acAddressDesc);
       form.append("allocRemark", allocRemark);
       form.append("remark", remark);
@@ -190,15 +257,27 @@ class shopSignupModal extends Component {
       form.append("baseFare", baseFare);
       form.append("extraDist", extraDist);
       form.append("extraFare", extraFare);
+      form.append("acOldAddress", acOldAddress);
+      form.append("ulLatiPos", Number(ulLatiPos));
+      form.append("ulLongPos", Number(ulLongPos));
+      form.append("ulBaseDist", Number(ulBaseDist));
+      form.append("ulBaseFare", Number(ulBaseFare));
+      form.append("ulExtraDist", Number(ulExtraDist));
+      form.append("ulExtraFare", Number(ulExtraFare));
 
       const response = await axios({
         method: "post",
         url: "https://api.roadvoy.net/agency/shop/signup.php",
         data: form,
         headers: {
-          "Content-Type": "multipart/form-data"
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${LoginHelper.getToken()}`
         }
       });
+      this.setState({ isModalVisible: false });
+      this.onInitail();
+      console.log(response);
+      this.props.onCancel(this.state.isModalVisible);
     } catch (error) {
       if (error.response && error.response.data && error.response.data.msg) {
         throw new Error(error.response.data.msg);
@@ -231,7 +310,14 @@ class shopSignupModal extends Component {
       address,
       fullAddress,
       zoneCode,
-      isRegister
+      isRegister,
+      acOldAddress,
+      ulLatiPos,
+      ulLongPos,
+      ulBaseDist,
+      ulBaseFare,
+      ulExtraDist,
+      ulExtraFare
     } = this.state;
 
     const width = 595;
@@ -279,7 +365,12 @@ class shopSignupModal extends Component {
                       <label>비밀번호&nbsp;:</label>
                     </Col>
                     <Col span={8}>
-                      <Input name="acPassword" value={acPassword} onChange={this.onAcpassword} />
+                      <Input
+                        name="acPassword"
+                        value={acPassword}
+                        onChange={this.onAcpassword}
+                        type="password"
+                      />
                     </Col>
                   </Row>
                   <Row justify="center" gutter={([16], [16])}>
@@ -291,7 +382,7 @@ class shopSignupModal extends Component {
                         prefix={<PhoneOutlined />}
                         name="acCellNo"
                         value={acCellNo}
-                        onChange={this.onCellNo}
+                        onChange={this.onAccellNo}
                       />
                     </Col>
                   </Row>
@@ -313,7 +404,7 @@ class shopSignupModal extends Component {
                       <label>사업자번호&nbsp;:</label>
                     </Col>
                     <Col span={8}>
-                      <Input name="acBizRegNo" value={acBizRegNo} onChange={this.onBizRegNo} />
+                      <Input name="acBizRegNo" value={acBizRegNo} onChange={this.onAcbizRegNo} />
                     </Col>
                   </Row>
                   <Row justify="center" gutter={([16], [16])}>
@@ -444,7 +535,7 @@ class shopSignupModal extends Component {
                             addonAfter="원"
                             name="extraFare"
                             value={extraFare}
-                            onChange={this.extraFare}
+                            onChange={this.onExtraFare}
                           />
                         </Col>
                       </Row>

@@ -1,7 +1,10 @@
 /* eslint-disable */
-import React from "react";
+import React, { FC } from "react";
 import { Col, Descriptions, Table, Button } from "antd";
 
+interface Props {
+  riderInfo: any;
+}
 const columns = [
   {
     title: "영업일",
@@ -232,7 +235,7 @@ const columns = [
   }
 ];
 
-const RiderSettlementList = () => (
+const RiderSettlementList: FC<Props> = ({ riderInfo }) => (
   <div>
     <Col>
       <div>
