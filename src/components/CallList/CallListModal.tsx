@@ -31,6 +31,8 @@ const CallListModal: FC<Props> = props => {
   };
 
   const handleClickCancelErrand = () => {
+    // if (props.callInfo.ucDeliStatus !== 64) {
+    // }
     console.log(props.callInfo.ucDeliStatus);
 
     props.onCancel(isModalVisible);

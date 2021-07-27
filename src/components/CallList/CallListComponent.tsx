@@ -222,7 +222,7 @@ const CallListComponent = (callInfo: CallInfo) => {
     if (Number(callInfo.ucDeliStatus) === 1) {
       className.push("deli-status-temp");
       if (isCheckedTemp === false) {
-        className.push(" box-checked-show");
+        className.push(" box-checked-xw");
       }
     }
     if (Number(callInfo.ucDeliStatus) === 4) {
