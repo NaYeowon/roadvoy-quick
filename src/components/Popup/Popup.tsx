@@ -13,7 +13,7 @@ import SearchAddressType from "../../helpers/SearchAddressType";
 import ErrandFeeType from "src/helpers/ErrandFeeType";
 import ErrandType from "src/helpers/ErrandType";
 
-interface State {
+export interface State {
   acOriginCompany: string;
   acOriginCellNo: string;
   acOriginOldAddr: string;

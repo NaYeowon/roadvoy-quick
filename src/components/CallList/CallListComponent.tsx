@@ -13,10 +13,10 @@ import LoginHelper from "../../pages/shared/LoginHelper";
 import { costFormat, getCellNoFormat, getDateFormat } from "../../util/FormatUtil";
 import moment from "moment";
 import ErrandType from "src/helpers/ErrandType";
-import CallListDrawer from "./CallListDrawer";
-import Modal from "antd/lib/modal/Modal";
+import CallListModal from "./CallListModal";
 
 export interface CallInfo {
+  acDestCellNo: string;
   title: string;
   dataIndex: string;
   width: number;
@@ -35,11 +35,16 @@ export interface CallInfo {
   acOriginOldAddr: string;
   ucErrandType: ErrandType;
   acDestAddrDesc: string;
+  acCourPresident: string;
+
+  onCancel: any;
+  onOk: any;
+  visible: any;
 }
 
 const columns: ColumnsType<CallInfo> = [
   {
-    title: "가맹명",
+    title: "상점명",
     dataIndex: "acDestCompany",
     key: "acDestCompany",
     className: "deli-status",
@@ -149,6 +154,8 @@ const CallListComponent = (callInfo: CallInfo) => {
   const [isCheckedDone, setIsCheckedDone] = useState(true);
   const [isCheckedCancel, setIsCheckedCancel] = useState(true);
 
+  const [test, setTest] = useState<string>("");
+
   useEffect(() => {
     const delay = window.setInterval(fetchCallList, 1000);
     return () => clearInterval(delay);
@@ -206,40 +213,43 @@ const CallListComponent = (callInfo: CallInfo) => {
     }
   };
 
-  const TableList = (record: CallInfo) => {
+  const TableList = (callInfo: CallInfo) => {
     const className: any = [];
 
-    if (Number(record.ucDeliStatus) === 1) {
+    let a = JSON.stringify(callInfo);
+    setTest(a);
+
+    if (Number(callInfo.ucDeliStatus) === 1) {
       className.push("deli-status-temp");
       if (isCheckedTemp === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(record.ucDeliStatus) === 4) {
+    if (Number(callInfo.ucDeliStatus) === 4) {
       className.push("deli-status-wait");
       if (isCheckedWait === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(record.ucDeliStatus) === 8) {
+    if (Number(callInfo.ucDeliStatus) === 8) {
       className.push("deli-status-alloc");
       if (isCheckedAlloc === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(record.ucDeliStatus) === 16) {
+    if (Number(callInfo.ucDeliStatus) === 16) {
       className.push("deli-status-pkup");
       if (isCheckedPkup === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(record.ucDeliStatus) === 32) {
+    if (Number(callInfo.ucDeliStatus) === 32) {
       className.push("deli-status-done");
       if (isCheckedDone === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(record.ucDeliStatus) === 64) {
+    if (Number(callInfo.ucDeliStatus) === 64) {
       className.push("deli-status-cancel");
       if (isCheckedCancel === false) {
         className.push(" box-checked-show");
@@ -279,10 +289,11 @@ const CallListComponent = (callInfo: CallInfo) => {
     setIsCheckedCancel(!isCheckedCancel);
   };
 
-  const showModal = () => {
-    setIsModalVisible(true);
+  const CallOk = (data: boolean) => {
+    setIsModalVisible(false);
   };
-  const handleOk = () => {
+
+  const CallCancel = (data: boolean) => {
     setIsModalVisible(false);
   };
   return (
@@ -338,18 +349,19 @@ const CallListComponent = (callInfo: CallInfo) => {
         columns={columns}
         dataSource={astErrand}
         bordered
-        onRow={() => {
-          return {
-            onClick: () => {
-              showModal();
-            }
-          };
-        }}
         pagination={false}
         size="small"
         scroll={{ y: 650 }}
         rowClassName={TableList}
+        onRow={() => {
+          return {
+            onClick: () => {
+              setIsModalVisible(true);
+            }
+          };
+        }}
       />
+      <CallListModal visible={isModalVisible} onOk={CallOk} onCancel={CallCancel} callInfo={test} />
     </>
   );
 };
@@ -359,13 +371,4 @@ const CustomCheckbox = styled(Checkbox)`
   color: white;
   font-size: 11pt;
   font-weight: bold;
-`;
-const CallDetailDrawerShopName = styled.h2`
-  color: black;
-  margin: 0;
-  font-weight: bold;
-  display: block;
-`;
-const CustomRow = styled.p`
-  margin: 0;
 `;

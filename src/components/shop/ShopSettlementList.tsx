@@ -113,7 +113,6 @@ const columns = [
 
 const ShopSettlementList: FC<Props> = ({ shopInfo }) => {
   useEffect(() => {});
-
   return (
     <div>
       <Col>

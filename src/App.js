@@ -24,7 +24,6 @@ import Writing from "./components/Board/Writing";
 import BoardDetail from "./components/Board/BoardDetail";
 import DistributorStatistics from "./components/Distributor/DistributorStatistics";
 import DistributorSignUpModal from "./components/Distributor/DistributorSignUpModal";
-import CallListDrawer from "./components/CallList/CallListDrawer";
 import { CallFee } from "./components/Distributor/CallFee";
 import { CallQuantity } from "./components/Distributor/CallQuantity";
 import { ProgramUsageFee } from "./components/Distributor/ProgramUsageFee";
@@ -59,7 +58,6 @@ class App extends Component {
           <Route path="/CallFee" component={CallFee} />
           <Route path="/CallQuantity" component={CallQuantity} />
           <Route path="/ProgramUsageFee" component={ProgramUsageFee} />
-          <Route path="/CallListDrawer" component={CallListDrawer} />
           <Redirect from="/" to="/CallListComponent" />
         </Switch>
       </Router>

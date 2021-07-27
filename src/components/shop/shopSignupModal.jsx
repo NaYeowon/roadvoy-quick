@@ -341,7 +341,7 @@ class shopSignupModal extends Component {
         >
           <div style={{ maxWidth: "700px", margin: "0 auto", paddingTop: "100px" }}>
             <div style={{ textAlign: "center" }}>
-              <h2 htmlFor="company-name">가맹등록</h2>
+              <h2 htmlFor="company-name">상점등록</h2>
               <Form onSubmit="handleOk">
                 <div style={{ textAlign: "center", margin: "0 auto" }}>
                   <Row gutter={[16, 48]} justify="center">

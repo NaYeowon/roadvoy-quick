@@ -155,6 +155,54 @@ const columns: ColumnsType<IShop> = [
         className: "rainy-extra-fare-column",
         render: (text: string, record: IShop) => "",
         width: 30
+      },
+      {
+        title: "장거리",
+        dataIndex: "",
+        key: "",
+        className: "",
+        render: (text: string, record: IShop) => "",
+        width: 30
+      },
+      {
+        title: "시간초과(야간)",
+        dataIndex: "",
+        key: "",
+        className: "",
+        render: (text: string, record: IShop) => "",
+        width: 30
+      },
+      {
+        title: "물건가격별",
+        dataIndex: "",
+        key: "",
+        className: "",
+        render: (text: string, record: IShop) => "",
+        width: 30
+      },
+      {
+        title: "주문수정",
+        dataIndex: "",
+        key: "",
+        className: "",
+        render: (text: string, record: IShop) => "",
+        width: 30
+      },
+      {
+        title: "구역",
+        dataIndex: "",
+        key: "",
+        className: "",
+        render: (text: string, record: IShop) => "",
+        width: 30
+      },
+      {
+        title: "기타",
+        dataIndex: "",
+        key: "",
+        className: "",
+        render: (text: string, record: IShop) => "",
+        width: 30
       }
     ]
   }
