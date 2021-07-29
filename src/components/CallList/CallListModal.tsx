@@ -1,7 +1,6 @@
 /* eslint-disable */
-import * as React from "react";
 import { useState, useEffect, FC } from "react";
-import { Row, Col, Button, Popconfirm, message } from "antd";
+import { Button, Popconfirm, message } from "antd";
 import styled from "styled-components";
 import Modal from "antd/lib/modal/Modal";
 import "./CallListModal.css";
@@ -12,9 +11,10 @@ interface Props {
   visible: boolean | undefined;
   onOk: any;
   onCancel: any;
-  callInfo: any;
+  callInfo: CallInfo | undefined;
 }
-const CallListModal: FC<Props> = props => {
+const CallListModal: FC<Props> = (props: Props) => {
+  const { visible, onOk, onCancel, callInfo } = props;
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
@@ -31,25 +31,24 @@ const CallListModal: FC<Props> = props => {
   };
 
   const handleClickCancelErrand = () => {
-    // if (props.callInfo.ucDeliStatus !== 64) {
-    // }
-    console.log(props.callInfo.ucDeliStatus);
-
     props.onCancel(isModalVisible);
     message.success("배차가 취소되었습니다.");
   };
 
+  if (!callInfo) {
+    return <></>;
+  }
+
   return (
     <>
-      <Modal title="콜 상세" visible={props.visible} onCancel={handleCancel} onOk={handleOk}>
+      <Modal title="콜 상세" visible={visible} onCancel={handleCancel} onOk={handleOk}>
         <div>
           <div style={{ marginBottom: "10px" }}>
-            <CallDetailModalShopName>{props.callInfo.acDestCompany}</CallDetailModalShopName>
-            <p>주문시간: {}</p>
-            <p>조리시간: </p>
+            <CallDetailModalShopName>{callInfo.acDestCompany}</CallDetailModalShopName>
+            <p>주문시간: {callInfo.acOrderDateTime}</p>
             <p>상점연락처: </p>
           </div>
-          <CallDetailShopTitle title="기사" value="" />
+          <CallDetailShopTitle title="기사" value={callInfo.acCourPresident} />
           <CallDetailShopTitle title="배달비" value="ㅁㄴㅇㅁㄴㅇ" />
           <CallDetailShopTitle title="결제정보" value="ㅁㄴㅇㅁㅇ" />
           <CallDetailShopTitle title="고객연락처" value="123131" />

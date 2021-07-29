@@ -49,14 +49,14 @@ const columns: ColumnsType<CallInfo> = [
     key: "acDestCompany",
     className: "deli-status",
     width: 120,
-    render: (text: string, record: CallInfo) => record.acDestCompany
+    render: (text: string, record: CallInfo) => record.acDestCompany,
   },
   {
     title: "접수",
     dataIndex: "acOrderDateTime",
     className: "deli-status",
     width: 50,
-    render: (data: string, record: CallInfo) => getDateFormat(data)
+    render: (data: string, record: CallInfo) => getDateFormat(data),
   },
   {
     title: "진행/조리",
@@ -66,7 +66,7 @@ const columns: ColumnsType<CallInfo> = [
     render: (text: string, call: CallInfo) => {
       const diff = Math.abs(moment().valueOf() - moment(call.acOrderDateTime).valueOf());
       return Math.floor(diff / 1000 / 60) + "분/" + `${call.ucLimitTime}` + "분";
-    }
+    },
   },
   {
     title: "주소",
@@ -80,14 +80,14 @@ const columns: ColumnsType<CallInfo> = [
         // return `${call.acOriginOldAddr} ${call.acDestOldAddr}`;
         return `${call.acOriginOldAddr} ${call.acDestOldAddr} ${call.acDestAddrDesc}`;
       }
-    }
+    },
   },
   {
     title: "배달비",
     dataIndex: "ulErrandCharge",
     className: "deli-status",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "결제정보",
@@ -119,24 +119,24 @@ const columns: ColumnsType<CallInfo> = [
             </>
           );
       }
-    }
+    },
   },
   {
     title: "기사",
     dataIndex: "acCourPresident",
     className: "deli-status",
-    width: 90
+    width: 90,
   },
   {
     title: "고객연락처",
     dataIndex: "acDestCellNo",
     className: "deli-status",
     width: 90,
-    render: (phone: string) => getCellNoFormat(phone)
-  }
+    render: (phone: string) => getCellNoFormat(phone),
+  },
 ];
 
-const CallListComponent = (callInfo: CallInfo) => {
+const CallListComponent = () => {
   const [astErrand, setAstManageCall] = useState<CallInfo[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -154,24 +154,24 @@ const CallListComponent = (callInfo: CallInfo) => {
   const [isCheckedDone, setIsCheckedDone] = useState(true);
   const [isCheckedCancel, setIsCheckedCancel] = useState(true);
 
-  const [test, setTest] = useState<string>("");
+  const [callInfo, setCallInfo] = useState<CallInfo | undefined>(undefined);
 
   useEffect(() => {
     const delay = window.setInterval(fetchCallList, 1000);
     return () => clearInterval(delay);
   }, []);
 
-  const fetchCallList = async (record: CallInfo) => {
+  const fetchCallList = async () => {
     try {
       const response = await axios({
         method: "get",
         url: "https://api.roadvoy.net/agency/errand/list.php",
         headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
         },
         params: {
-          acErrandDate: "2021-07-23"
-        }
+          acErrandDate: "2021-07-23",
+        },
       });
       const astErrand = response.data.astErrand as any[];
       setAstManageCall(
@@ -217,7 +217,6 @@ const CallListComponent = (callInfo: CallInfo) => {
     const className: any = [];
 
     let a = JSON.stringify(callInfo);
-    setTest(a);
 
     if (Number(callInfo.ucDeliStatus) === 1) {
       className.push("deli-status-temp");
@@ -353,15 +352,21 @@ const CallListComponent = (callInfo: CallInfo) => {
         size="small"
         scroll={{ y: 650 }}
         rowClassName={TableList}
-        onRow={() => {
+        onRow={(callInfo: CallInfo) => {
           return {
             onClick: () => {
               setIsModalVisible(true);
-            }
+              setCallInfo(callInfo);
+            },
           };
         }}
       />
-      <CallListModal visible={isModalVisible} onOk={CallOk} onCancel={CallCancel} callInfo={test} />
+      <CallListModal
+        visible={isModalVisible}
+        onOk={CallOk}
+        onCancel={CallCancel}
+        callInfo={callInfo}
+      />
     </>
   );
 };
