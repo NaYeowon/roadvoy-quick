@@ -1,50 +1,48 @@
- .deli-status-temp {
-    background-color: #455A64
-  }
-  
-  .deli-status-wait  {
-    background-color: #00BCD4
-  }
-  
-  .deli-status-alloc {
-    background-color: #FF8F00 !important;
-  }
+.deli-status-temp {
+  background-color: #455a64;
+}
 
+.deli-status-wait {
+  background-color: #00bcd4;
+}
 
-  
-  .deli-status-pkup {
-    background-color: #AA00FF;
-  }
-  
-  .deli-status-done {
-    background-color: #4CAF50;
-  }
-  
-  .deli-status-cancel {
-    background-color: #F44336;
-  }
+.deli-status-alloc {
+  background-color: #ff8f00 !important;
+}
 
-  .ant-table tr:hover td {
-    background-color: transparent !important;
-  }
+.deli-status-pkup {
+  background-color: #aa00ff;
+}
 
-  .deli-status-alloc:hover {
-    opacity: 0.8;
-  }
+.deli-status-done {
+  background-color: #4caf50;
+}
 
-  table tbody {
-    font-size: 10pt;
-  }
-  
-  .ant-table-scroll {
-    overflow-y: hidden;
-  }
-    
-  .ant-table-row td {
-    padding: 2px 6px !important;
-  }
-  .box-checked-show {
-    display: none;
+.deli-status-cancel {
+  background-color: #f44336;
+}
+
+.ant-table tr:hover td {
+  background-color: transparent !important;
+}
+
+table tbody {
+  font-size: 10pt;
+}
+
+.ant-table-row {
+  cursor: pointer;
+}
+
+.ant-table-scroll {
+  overflow-y: hidden;
+}
+
+.ant-table-row td {
+  padding: 2px 6px !important;
+}
+.box-checked-show {
+  display: none;
 }
 
 .test tbody {
