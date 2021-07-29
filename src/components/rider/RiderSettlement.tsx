@@ -14,30 +14,30 @@ const columns = [
   {
     title: "이름",
     dataIndex: "acPresident",
-    key: "acPresident"
+    key: "acPresident",
   },
   {
     title: "콜수",
     dataIndex: "usMonthDoneCallSum",
     key: "usMonthDoneCallSum",
-    width: 80
-  }
+    width: 80,
+  },
 ];
 
 const { RangePicker } = DatePicker;
 
 const RiderSettlement = (props: RiderInfo) => {
   const [astManageRider, setAstManageRider] = useState<RiderInfo[]>([]);
-  const [selectedRider, setSelectedRider] = useState(false);
-  const [riderInfoData, setRiderInfoData] = useState("");
+  const [selectedRider, setSelectedRider] = useState<RiderInfo | undefined>(undefined);
+
   const fetchRiderList = async () => {
     try {
       const response = await axios({
         method: "get",
         url: "https://api.roadvoy.net/agency/rider/manage/list.php",
         headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`
-        }
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
       });
 
       setAstManageRider(response.data.astManageRider);
@@ -67,7 +67,7 @@ const RiderSettlement = (props: RiderInfo) => {
         대행에지불한콜수수료: astManageRider[i],
         나에게캐시입금: astManageRider[i],
         다른기사에게캐시송금: astManageRider[i],
-        현금카드송금: astManageRider[i]
+        현금카드송금: astManageRider[i],
       };
     }
     const dataWS = XLSX.utils.json_to_sheet(dataSheet);
@@ -77,20 +77,16 @@ const RiderSettlement = (props: RiderInfo) => {
   };
 
   useEffect(() => {
-    // const delay = window.setInterval(fetchRiderList, 1000);
-    // return () => clearInterval(delay);
     fetchRiderList();
   }, []);
 
   const SettlementList = (record: any) => {
     let content;
-    let riderInfo = new Array();
-    riderInfo = record;
-    console.log(riderInfo);
-    if (selectedRider === false) {
+
+    if (!selectedRider) {
       content = <Content>기사를 선택하세요.</Content>;
     } else {
-      content = <RiderSettlementList riderInfo={riderInfo} />;
+      content = <RiderSettlementList riderInfo={selectedRider} />;
     }
 
     return (
@@ -128,9 +124,8 @@ const RiderSettlement = (props: RiderInfo) => {
             onRow={(record: RiderInfo) => {
               return {
                 onClick: () => {
-                  setSelectedRider(true);
-                  setRiderInfoData(JSON.stringify(record));
-                }
+                  setSelectedRider(record);
+                },
               };
             }}
             size="small"
