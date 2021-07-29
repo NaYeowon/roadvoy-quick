@@ -9,30 +9,23 @@ import { CallInfo } from "./CallListComponent";
 
 interface Props {
   visible: boolean | undefined;
-  onOk: any;
-  onCancel: any;
+  onOk: () => void;
+  onCancel: () => void;
   callInfo: CallInfo | undefined;
 }
 const CallListModal: FC<Props> = (props: Props) => {
   const { visible, onOk, onCancel, callInfo } = props;
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  useEffect(() => {
-    console.log(props.callInfo);
-  }, []);
 
   const handleCancel = () => {
-    setIsModalVisible(false);
-    props.onCancel(isModalVisible);
+    onCancel();
   };
   const handleOk = () => {
-    setIsModalVisible(false);
-    props.onOk(isModalVisible);
+    onOk();
   };
 
   const handleClickCancelErrand = () => {
-    props.onCancel(isModalVisible);
     message.success("배차가 취소되었습니다.");
+    onCancel();
   };
 
   if (!callInfo) {

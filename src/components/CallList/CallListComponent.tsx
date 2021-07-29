@@ -288,13 +288,14 @@ const CallListComponent = () => {
     setIsCheckedCancel(!isCheckedCancel);
   };
 
-  const CallOk = (data: boolean) => {
+  const CallOk = () => {
     setIsModalVisible(false);
   };
 
-  const CallCancel = (data: boolean) => {
+  const CallCancel = () => {
     setIsModalVisible(false);
   };
+
   return (
     <>
       <Header />
