@@ -1,13 +1,13 @@
 /* eslint-disable */
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Col, Descriptions, Table, Button } from "antd";
 import { RiderInfo } from "../shop/types";
-import APIHelper from "../../helpers/APIHelper";
-import { plainToClass } from "class-transformer";
 import moment from "moment";
 import { CircularProgress } from "@material-ui/core";
 import axios from "axios";
 import LoginHelper from "../../pages/shared/LoginHelper";
+import RiderDailyTotal from "../../dto/RiderDailyTotal";
+import RiderDaily from "../../dto/RiderDaily";
 
 interface Props {
   riderInfo: RiderInfo;
@@ -33,20 +33,20 @@ const columns = [
       },
       {
         title: "배달비",
-        dataIndex: "1DayTotalRevenue",
-        key: "1DayTotalRevenue",
+        dataIndex: "lDayTotalRevenue",
+        key: "lDayTotalRevenue",
         width: 100,
       },
       {
         title: "콜수수료",
-        dataIndex: "1DayDeliCost",
-        key: "1DayDeliCost",
+        dataIndex: "lDayDeliCost",
+        key: "lDayDeliCost",
         width: 100,
       },
       {
         title: "수입",
-        dataIndex: "1DayDeliIncome",
-        key: "1DayDeliIncome",
+        dataIndex: "lDayDeliIncome",
+        key: "lDayDeliIncome",
         width: 100,
       },
     ],
@@ -62,22 +62,22 @@ const columns = [
       },
       {
         title: "배달비",
-        dataIndex: "1DayErrandCharge",
-        key: "1DayErrandCharge",
+        dataIndex: "lDayErrandCharge",
+        key: "lDayErrandCharge",
         width: 100,
       },
       {
         title: "심부름 수수료",
-        dataIndex: "1DayErrandFeeAgency",
-        key: "1DayErrandFeeAgency",
+        dataIndex: "lDayErrandFeeAgency",
+        key: "lDayErrandFeeAgency",
         width: 100,
       },
     ],
   },
   {
     title: "리스료",
-    dataIndex: "1DayCycleLeaseCost",
-    key: "1DayCycleLeaseCost",
+    dataIndex: "lDayCycleLeaseCost",
+    key: "lDayCycleLeaseCost",
     width: 100,
   },
   {
@@ -169,20 +169,20 @@ const columns = [
   },
   {
     title: "잔고",
-    dataIndex: "1RealBalance",
-    key: "1RealBalance",
+    dataIndex: "lRealBalance",
+    key: "lRealBalance",
     width: 100,
   },
   {
     title: "보증금",
-    dataIndex: "1DayCourierDeposit",
-    key: "1DayCourierDeposit",
+    dataIndex: "lDayCourierDeposit",
+    key: "lDayCourierDeposit",
     width: 100,
   },
   {
     title: "출금가능액",
-    dataIndex: "1ReclaimableBalance",
-    key: "1ReclaimableBalance",
+    dataIndex: "lReclaimableBalance",
+    key: "lReclaimableBalance",
     width: 100,
   },
   {
@@ -190,26 +190,26 @@ const columns = [
     children: [
       {
         title: "콜수수료",
-        dataIndex: "1NonDeliCost",
-        key: "1NonDeliCost",
+        dataIndex: "lNonDeliCost",
+        key: "lNonDeliCost",
         width: 100,
       },
       {
         title: "리스료",
-        dataIndex: "1NonCycleLeaseCost",
-        key: "1NonCycleLeaseCost",
+        dataIndex: "lNonCycleLeaseCost",
+        key: "lNonCycleLeaseCost",
         width: 100,
       },
       {
         title: "전날까지누적 콜수수료",
-        dataIndex: "1NonPrevNonDeliCost",
-        key: "1NonPrevNonDeliCost",
+        dataIndex: "lNonPrevNonDeliCost",
+        key: "lNonPrevNonDeliCost",
         width: 100,
       },
       {
         title: "전날까지누적 리스료",
-        dataIndex: "1NonPrevNonCycleLeaseCost",
-        key: "1NonPrevNonCycleLeaseCost",
+        dataIndex: "lNonPrevNonCycleLeaseCost",
+        key: "lNonPrevNonCycleLeaseCost",
         width: 100,
       },
     ],
@@ -219,26 +219,26 @@ const columns = [
     children: [
       {
         title: "콜수수료",
-        dataIndex: "1RepayDeliCost",
-        key: "1RepayDeliCost",
+        dataIndex: "lRepayDeliCost",
+        key: "lRepayDeliCost",
         width: 100,
       },
       {
         title: "리스료",
-        dataIndex: "1RepayCycleLeaseCost",
-        key: "1RepayCycleLeaseCost",
+        dataIndex: "lRepayCycleLeaseCost",
+        key: "lRepayCycleLeaseCost",
         width: 100,
       },
       {
         title: "전날콜수수료",
-        dataIndex: "1RepayPrevNonDeliCost",
-        key: "1RepayPrevNonDeliCost",
+        dataIndex: "lRepayPrevNonDeliCost",
+        key: "lRepayPrevNonDeliCost",
         width: 100,
       },
       {
         title: "전날리스료",
-        dataIndex: "1RepayPrevNonCycleLeaseCost",
-        key: "1RepayPrevNonCycleLeaseCost",
+        dataIndex: "lRepayPrevNonCycleLeaseCost",
+        key: "lRepayPrevNonCycleLeaseCost",
         width: 100,
       },
     ],
@@ -246,14 +246,14 @@ const columns = [
 ];
 
 const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) => {
-  const [astRiderDaily, setAstRiderDaily] = useState<any[]>([]);
-  const [stRiderDailyTotal, setStRiderDailyTotal] = useState<any[]>([]);
+  const [astRiderDaily, setAstRiderDaily] = useState<RiderDaily[]>([]);
+  const [stRiderDailyTotal, setStRiderDailyTotal] = useState<RiderDailyTotal | undefined>();
 
   useEffect(() => {
     if (riderInfo && acStartDate) {
       getRiderSettlementDetail();
     }
-  }, [riderInfo]);
+  }, [riderInfo, acStartDate, acEndDate]);
 
   const getRiderSettlementDetail = async () => {
     try {
@@ -299,28 +299,32 @@ const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) =
           <Button>다운로드</Button>
         </div>
         <Descriptions bordered column={{ xxl: 5, xl: 5, lg: 5, md: 3, sm: 2, xs: 1 }} size="small">
-          <Descriptions.Item label="배달콜수">0콜</Descriptions.Item>
-          <Descriptions.Item label="배달비">0원</Descriptions.Item>
-          <Descriptions.Item label="콜수수료">0원</Descriptions.Item>
-          <Descriptions.Item label="퀵콜수">0원</Descriptions.Item>
-          <Descriptions.Item label="퀵배달비">0원</Descriptions.Item>
-          <Descriptions.Item label="퀵수수료">0원</Descriptions.Item>
-          <Descriptions.Item label="기사 캐시입금">0원</Descriptions.Item>
-          <Descriptions.Item label="기사 캐시송금">0원</Descriptions.Item>
-          <Descriptions.Item label="현금→카드 송금">0원</Descriptions.Item>
-          <Descriptions.Item label="카드→현금 송금">0원</Descriptions.Item>
-          <Descriptions.Item label="예치금 송금">0원</Descriptions.Item>
-          <Descriptions.Item label="가상계좌입금">0원</Descriptions.Item>
-          <Descriptions.Item label="출금">0원</Descriptions.Item>
-          <Descriptions.Item label="출금수수료">0원</Descriptions.Item>
-          <Descriptions.Item label="본사출금">0원</Descriptions.Item>
+          <Descriptions.Item label="배달콜수">{`${stRiderDailyTotal.usDayDoneCallSum}콜`}</Descriptions.Item>
+          <Descriptions.Item label="배달비">{`${stRiderDailyTotal.lDayTotalRevenue}원`}</Descriptions.Item>
+          <Descriptions.Item label="콜수수료">{`${stRiderDailyTotal.lDayDeliCost}원`}</Descriptions.Item>
+
+          <Descriptions.Item label="퀵콜수">{`${stRiderDailyTotal.usDayDoneErrandSum}콜`}</Descriptions.Item>
+          <Descriptions.Item label="퀵배달비">{`${stRiderDailyTotal.lDayErrandCharge}원`}</Descriptions.Item>
+          <Descriptions.Item label="퀵수수료">{`${stRiderDailyTotal.lDayErrandFeeAgency}원`}</Descriptions.Item>
+
+          <Descriptions.Item label="기사 캐시입금">{`${stRiderDailyTotal.ulSubstituteCashPlus}원`}</Descriptions.Item>
+          <Descriptions.Item label="기사 캐시송금">{`${stRiderDailyTotal.ulSubstituteCashMinus}원`}</Descriptions.Item>
+
+          <Descriptions.Item label="현금→카드 입금">{`${stRiderDailyTotal.ulSubstituteInput}원`}</Descriptions.Item>
+          <Descriptions.Item label="카드→현금 송금">{`${stRiderDailyTotal.ulSubstituteRefund}원`}</Descriptions.Item>
+          <Descriptions.Item label="예치금송금">{`${stRiderDailyTotal.ulSubstituteDeposit}원`}</Descriptions.Item>
+          <Descriptions.Item label="가상계좌입금">{`${stRiderDailyTotal.ulVirBankDeposit}원`}</Descriptions.Item>
+
+          <Descriptions.Item label="출금">{`${stRiderDailyTotal.ulReClaimAmount}원`}</Descriptions.Item>
+          <Descriptions.Item label="출금수수료">{`${stRiderDailyTotal.ulReClaimComm}원`}</Descriptions.Item>
+          <Descriptions.Item label="본사출금">{`${stRiderDailyTotal.ulCreditAmount}원`}</Descriptions.Item>
         </Descriptions>
       </Col>
 
       <Col>
         <Table
           columns={columns}
-          // dwataSource={}
+          dataSource={astRiderDaily}
           bordered
           pagination={false}
           size="small"
