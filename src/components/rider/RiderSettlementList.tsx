@@ -1,10 +1,18 @@
 /* eslint-disable */
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Col, Descriptions, Table, Button } from "antd";
 import { RiderInfo } from "../shop/types";
+import APIHelper from "../../helpers/APIHelper";
+import { plainToClass } from "class-transformer";
+import moment from "moment";
+import { CircularProgress } from "@material-ui/core";
+import axios from "axios";
+import LoginHelper from "../../pages/shared/LoginHelper";
 
 interface Props {
   riderInfo: RiderInfo;
+  acStartDate: moment.Moment;
+  acEndDate: moment.Moment;
 }
 
 const columns = [
@@ -237,44 +245,91 @@ const columns = [
   },
 ];
 
-const RiderSettlementList: FC<Props> = ({ riderInfo }) => (
-  <div>
-    <Col>
-      <div>
-        <span style={{ float: "left" }}>{riderInfo.acPresident}</span>
-        <Button>다운로드</Button>
-      </div>
-      <Descriptions bordered column={{ xxl: 5, xl: 5, lg: 5, md: 3, sm: 2, xs: 1 }} size="small">
-        <Descriptions.Item label="배달콜수">0콜</Descriptions.Item>
-        <Descriptions.Item label="배달비">0원</Descriptions.Item>
-        <Descriptions.Item label="콜수수료">0원</Descriptions.Item>
-        <Descriptions.Item label="퀵콜수">0원</Descriptions.Item>
-        <Descriptions.Item label="퀵배달비">0원</Descriptions.Item>
-        <Descriptions.Item label="퀵수수료">0원</Descriptions.Item>
-        <Descriptions.Item label="기사 캐시입금">0원</Descriptions.Item>
-        <Descriptions.Item label="기사 캐시송금">0원</Descriptions.Item>
-        <Descriptions.Item label="현금→카드 송금">0원</Descriptions.Item>
-        <Descriptions.Item label="카드→현금 송금">0원</Descriptions.Item>
-        <Descriptions.Item label="예치금 송금">0원</Descriptions.Item>
-        <Descriptions.Item label="가상계좌입금">0원</Descriptions.Item>
-        <Descriptions.Item label="출금">0원</Descriptions.Item>
-        <Descriptions.Item label="출금수수료">0원</Descriptions.Item>
-        <Descriptions.Item label="본사출금">0원</Descriptions.Item>
-      </Descriptions>
-    </Col>
+const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) => {
+  const [astRiderDaily, setAstRiderDaily] = useState<any[]>([]);
+  const [stRiderDailyTotal, setStRiderDailyTotal] = useState<any[]>([]);
 
-    <Col>
-      <Table
-        columns={columns}
-        // dwataSource={}
-        bordered
-        pagination={false}
-        size="small"
-        scroll={{ x: "calc(700px + 50%)", y: 650 }}
-      />
-      ,
-    </Col>
-  </div>
-);
+  useEffect(() => {
+    if (riderInfo && acStartDate) {
+      getRiderSettlementDetail();
+    }
+  }, [riderInfo]);
+
+  const getRiderSettlementDetail = async () => {
+    try {
+      const response = await axios({
+        method: "get",
+        url: "https://api.roadvoy.net/shared/rider/settlement/detail/index.php",
+        headers: {
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
+        params: {
+          ucAreaNo: riderInfo.ucAreaNo,
+          ucDistribId: riderInfo.ucDistribId,
+          ucAgencyId: riderInfo.ucAgencyId,
+          ucMemCourId: riderInfo.ucMemCourId,
+          acStartDate: acStartDate.format("YYYY-MM-DD"),
+          acEndDate: acEndDate.format("YYYY-MM-DD"),
+        },
+      });
+
+      const { data } = response;
+
+      setAstRiderDaily(data.lstRiderDaily);
+      setStRiderDailyTotal(data.stRiderDailyTotal);
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.data && error.response.data.msg) {
+        throw new Error(error.response.data.msg);
+      } else {
+        throw new Error("서버에서 응답을 받지 못했습니다");
+      }
+    }
+  };
+
+  if (!astRiderDaily || !stRiderDailyTotal) {
+    return <CircularProgress title="로딩중" />;
+  }
+
+  return (
+    <div>
+      <Col>
+        <div>
+          <span style={{ float: "left" }}>{riderInfo.acPresident}</span>
+          <Button>다운로드</Button>
+        </div>
+        <Descriptions bordered column={{ xxl: 5, xl: 5, lg: 5, md: 3, sm: 2, xs: 1 }} size="small">
+          <Descriptions.Item label="배달콜수">0콜</Descriptions.Item>
+          <Descriptions.Item label="배달비">0원</Descriptions.Item>
+          <Descriptions.Item label="콜수수료">0원</Descriptions.Item>
+          <Descriptions.Item label="퀵콜수">0원</Descriptions.Item>
+          <Descriptions.Item label="퀵배달비">0원</Descriptions.Item>
+          <Descriptions.Item label="퀵수수료">0원</Descriptions.Item>
+          <Descriptions.Item label="기사 캐시입금">0원</Descriptions.Item>
+          <Descriptions.Item label="기사 캐시송금">0원</Descriptions.Item>
+          <Descriptions.Item label="현금→카드 송금">0원</Descriptions.Item>
+          <Descriptions.Item label="카드→현금 송금">0원</Descriptions.Item>
+          <Descriptions.Item label="예치금 송금">0원</Descriptions.Item>
+          <Descriptions.Item label="가상계좌입금">0원</Descriptions.Item>
+          <Descriptions.Item label="출금">0원</Descriptions.Item>
+          <Descriptions.Item label="출금수수료">0원</Descriptions.Item>
+          <Descriptions.Item label="본사출금">0원</Descriptions.Item>
+        </Descriptions>
+      </Col>
+
+      <Col>
+        <Table
+          columns={columns}
+          // dwataSource={}
+          bordered
+          pagination={false}
+          size="small"
+          scroll={{ x: "calc(700px + 50%)", y: 650 }}
+        />
+        ,
+      </Col>
+    </div>
+  );
+};
 
 export default RiderSettlementList;

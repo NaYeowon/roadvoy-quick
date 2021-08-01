@@ -9,6 +9,7 @@ import RiderSettlementList from "./RiderSettlementList";
 import { RiderInfo } from "../shop/types";
 import XLSX from "xlsx";
 import styled from "styled-components";
+import moment from "moment";
 
 const columns = [
   {
@@ -29,6 +30,13 @@ const { RangePicker } = DatePicker;
 const RiderSettlement = (props: RiderInfo) => {
   const [astManageRider, setAstManageRider] = useState<RiderInfo[]>([]);
   const [selectedRider, setSelectedRider] = useState<RiderInfo | undefined>(undefined);
+  const [acStartDate, setAcStartDate] = useState<moment.Moment>(moment());
+  const [acEndDate, setAcEndDate] = useState<moment.Moment>(moment());
+
+  const handleChangeDateRange = val => {
+    setAcStartDate(val[0]);
+    setAcEndDate(val[1]);
+  };
 
   const fetchRiderList = async () => {
     try {
@@ -86,7 +94,13 @@ const RiderSettlement = (props: RiderInfo) => {
     if (!selectedRider) {
       content = <Content>기사를 선택하세요.</Content>;
     } else {
-      content = <RiderSettlementList riderInfo={selectedRider} />;
+      content = (
+        <RiderSettlementList
+          riderInfo={selectedRider}
+          acStartDate={acStartDate}
+          acEndDate={acEndDate}
+        />
+      );
     }
 
     return (
@@ -111,7 +125,11 @@ const RiderSettlement = (props: RiderInfo) => {
             <div style={{ textAlign: "center" }}>
               <b>조회기간</b>
             </div>
-            <RangePicker style={{ width: "100%" }} />
+            <RangePicker
+              style={{ width: "100%" }}
+              value={[acStartDate, acEndDate]}
+              onChange={handleChangeDateRange}
+            />
             <Button style={{ width: "100%" }} onClick={riderXlsx}>
               다운로드
             </Button>
