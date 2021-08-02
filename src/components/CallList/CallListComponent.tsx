@@ -16,6 +16,7 @@ import ErrandType from "src/helpers/ErrandType";
 import CallListModal from "./CallListModal";
 
 export interface CallInfo {
+  acOriginCellNo: string;
   acDestCellNo: string;
   title: string;
   dataIndex: string;
@@ -30,6 +31,11 @@ export interface CallInfo {
   acOrderDateTime: string;
   acDoneDateTime: string;
   acCanCelDateTime: string;
+
+  ulErrandCharge: number;
+  ucPaymentMode: number;
+  acClientMemo: string;
+  acAllocDateTime: string;
 
   acDestOldAddr: string;
   acOriginOldAddr: string;
@@ -136,9 +142,10 @@ const columns: ColumnsType<CallInfo> = [
   }
 ];
 
-const CallListComponent = (callInfo: CallInfo) => {
+const CallListComponent = () => {
   const [astErrand, setAstManageCall] = useState<CallInfo[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectCall, setSelectCall] = useState<CallInfo | undefined>(undefined);
 
   const [tempCount, setTempCount] = useState(0);
   const [waitCount, setWaitCount] = useState(0);
@@ -154,14 +161,13 @@ const CallListComponent = (callInfo: CallInfo) => {
   const [isCheckedDone, setIsCheckedDone] = useState(true);
   const [isCheckedCancel, setIsCheckedCancel] = useState(true);
 
-  const [test, setTest] = useState<string>("");
-
+  const [callInfo, setCallInfo] = useState<CallInfo | undefined>(undefined);
   useEffect(() => {
     const delay = window.setInterval(fetchCallList, 1000);
     return () => clearInterval(delay);
   }, []);
 
-  const fetchCallList = async (record: CallInfo) => {
+  const fetchCallList = async () => {
     try {
       const response = await axios({
         method: "get",
@@ -215,9 +221,6 @@ const CallListComponent = (callInfo: CallInfo) => {
 
   const TableList = (callInfo: CallInfo) => {
     const className: any = [];
-
-    let a = JSON.stringify(callInfo);
-    setTest(a);
 
     if (Number(callInfo.ucDeliStatus) === 1) {
       className.push("deli-status-temp");
@@ -289,11 +292,11 @@ const CallListComponent = (callInfo: CallInfo) => {
     setIsCheckedCancel(!isCheckedCancel);
   };
 
-  const CallOk = (data: boolean) => {
+  const CallOk = () => {
     setIsModalVisible(false);
   };
 
-  const CallCancel = (data: boolean) => {
+  const CallCancel = () => {
     setIsModalVisible(false);
   };
   return (
@@ -353,15 +356,22 @@ const CallListComponent = (callInfo: CallInfo) => {
         size="small"
         scroll={{ y: 650 }}
         rowClassName={TableList}
-        onRow={() => {
+        onRow={(callInfo: CallInfo) => {
           return {
             onClick: () => {
               setIsModalVisible(true);
+              setSelectCall(callInfo);
+              setCallInfo(callInfo);
             }
           };
         }}
       />
-      <CallListModal visible={isModalVisible} onOk={CallOk} onCancel={CallCancel} callInfo={test} />
+      <CallListModal
+        visible={isModalVisible}
+        onOk={CallOk}
+        onCancel={CallCancel}
+        callInfo={callInfo}
+      />
     </>
   );
 };
