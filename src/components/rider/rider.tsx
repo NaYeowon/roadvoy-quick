@@ -12,6 +12,7 @@ import MemberHelper from "src/helpers/MemberHelper";
 
 import { costFormat } from "../../util/FormatUtil";
 import LoginHelper from "../../pages/shared/LoginHelper";
+import SelectPage from "../Layout/SelectPage";
 
 interface Rider {
   title: string;
@@ -166,13 +167,9 @@ const Rider = () => {
         <span>
           <b>{astManageRider?.length}</b>개의 기사가 등록 되어있습니다.
         </span>
+
         <span style={{ float: "right" }}>
-          {/* <Link to='#'>
-                    <Button>기사별정산</Button>
-                </Link>
-                <Link to='#'>
-                    <Button>기사등록</Button>
-                </Link> */}
+          <SelectPage />
         </span>
       </PageHeader>
       <Table

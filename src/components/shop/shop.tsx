@@ -15,6 +15,7 @@ import MemberHelper from "src/helpers/MemberHelper";
 import NumberUtil from "../../util/NumberUtil";
 import LoginHelper from "../../pages/shared/LoginHelper";
 import { costFormat } from "../../util/FormatUtil";
+import SelectPage from "../Layout/SelectPage";
 
 // ================================
 // react 는 props (property) 와 state 가 변경될 때 마다 render 가 호출되므로
@@ -254,7 +255,9 @@ const Shop = () => {
         <span>
           <b>{astManageShop?.length}</b>개의 가맹점이 등록 되어있습니다.
         </span>
-        <span style={{ float: "right" }} />
+        <span style={{ float: "right" }}>
+          <SelectPage />
+        </span>
       </PageHeader>
       <Table
         columns={columns}
