@@ -1,4 +1,5 @@
 export interface ShopInfo {
+  format: any;
   title: string;
   dataIndex: string;
   acStartDate: Date;
@@ -12,6 +13,16 @@ export interface ShopInfo {
   ucAgencyId: string;
   ucMemCourId: string;
   shopInfoData: string;
+
+  usDayDoneCallSum: number;
+  ulDayTotalDeliFee: number;
+  ulDayCallCntFee: number;
+  ulSubstituteRefund: number;
+  ulSubstituteInput: number;
+  ulSubstituteDeposit: number;
+  ulSubstituteCashMinusByManager: number;
+  ulVirBankDeposit: number;
+  ulVirBankFee: number;
 }
 
 export interface RiderInfo {
@@ -40,6 +51,20 @@ export interface RiderInfo {
   ulCallCntFee: number;
   ulDayTotalRevenue: number;
   usMonthDoneCallSum: number;
+
+  lDayTotalRevenue: number;
+  lDayDeliCost: number;
+  usDayDoneErrandSum: number;
+  lDayErrandFeeAgency: number;
+  ulSubstituteCashPlus: number;
+  ulSubstituteCashMinus: number;
+  ulSubstituteInput: number;
+  ulSubstituteRefund: number;
+  ulSubstituteDeposit: number;
+  ulVirBankDeposit: number;
+  ulReClaimAmount: number;
+  ulReClaimComm: number;
+  ulCreditAmount: number;
 }
 
 class RiderInfo1 {
