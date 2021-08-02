@@ -24,6 +24,10 @@ import Writing from "./components/Board/Writing";
 import BoardDetail from "./components/Board/BoardDetail";
 import DistributorStatistics from "./components/Distributor/DistributorStatistics";
 import DistributorSignUpModal from "./components/Distributor/DistributorSignUpModal";
+import AgencySiginupModal from "./components/AgencySettlement/AgencySiginupModal";
+import DistributorSettlement from "./components/Distributor/DistributorSettlement";
+import DistributorApproval from "./components/HeadOffice/DistributorApproval";
+
 import { CallFee } from "./components/Distributor/CallFee";
 import { CallQuantity } from "./components/Distributor/CallQuantity";
 import { ProgramUsageFee } from "./components/Distributor/ProgramUsageFee";
@@ -58,6 +62,9 @@ class App extends Component {
           <Route path="/CallFee" component={CallFee} />
           <Route path="/CallQuantity" component={CallQuantity} />
           <Route path="/ProgramUsageFee" component={ProgramUsageFee} />
+          <Route path="/AgencySiginupModal" component={AgencySiginupModal} />
+          <Route path="/DistributorSettlement" component={DistributorSettlement} />
+          <Route path="/DistributorApproval" component={DistributorApproval} />
           <Redirect from="/" to="/CallListComponent" />
         </Switch>
       </Router>
