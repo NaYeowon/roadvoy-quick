@@ -12,6 +12,7 @@ import { callFormat, costFormat } from "../../util/FormatUtil";
 import XLSX from "xlsx";
 import { ShopInfo } from "./types";
 import styled from "styled-components";
+import moment from "moment";
 
 const columns: ColumnsType<ShopInfo> = [
   {
@@ -35,8 +36,14 @@ const { RangePicker } = DatePicker;
 
 const ShopSettlement = (props: ShopInfo) => {
   const [astManageShop, setAstManageShop] = useState<ShopInfo[]>([]);
-  const [selectedShop, setSelectedShpo] = useState(false);
-  const [shopInfoData, setShopInfoData] = useState("");
+  const [selectedShop, setSelectedShpo] = useState<ShopInfo | undefined>(undefined);
+  const [acStartDate, setAcStartDate] = useState<moment.Moment>(moment());
+  const [acEndDate, SetAcEndDate] = useState<moment.Moment>(moment());
+
+  const handleChangeDateRange = val => {
+    setAcStartDate(val[0]);
+    SetAcEndDate(val[1]);
+  };
 
   const fetchShopList = async () => {
     try {
@@ -81,13 +88,16 @@ const ShopSettlement = (props: ShopInfo) => {
 
   const SettlementList = (record: any) => {
     let content;
-    let shopInfo = new Array();
-    shopInfo = record;
-    console.log(shopInfo);
-    if (selectedShop === false) {
+    if (!selectedShop) {
       content = <Content>상점을 선택하세요.</Content>;
     } else {
-      content = <ShopSettlementList shopInfo={shopInfo} />;
+      content = (
+        <ShopSettlementList
+          shopInfo={selectedShop}
+          acStartDate={acStartDate}
+          acEndDate={acEndDate}
+        />
+      );
     }
 
     return (
@@ -112,7 +122,11 @@ const ShopSettlement = (props: ShopInfo) => {
             <div style={{ textAlign: "center" }}>
               <b>조회기간</b>
             </div>
-            <RangePicker style={{ width: "100%" }} />
+            <RangePicker
+              style={{ width: "100%" }}
+              value={[acStartDate, acEndDate]}
+              onChange={handleChangeDateRange}
+            />
             <Button style={{ width: "100%" }} onClick={donwloadXlsx}>
               다운로드
             </Button>
@@ -125,8 +139,7 @@ const ShopSettlement = (props: ShopInfo) => {
             onRow={(record: ShopInfo) => {
               return {
                 onClick: () => {
-                  setSelectedShpo(true);
-                  setShopInfoData(JSON.stringify(record));
+                  setSelectedShpo(record);
                 }
               };
             }}
