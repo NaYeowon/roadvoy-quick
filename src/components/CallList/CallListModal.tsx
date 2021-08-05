@@ -7,6 +7,9 @@ import "./CallListModal.css";
 import { CallDetailShopTitle } from "./index";
 import { CallInfo } from "./CallListComponent";
 import { costFormat, getCellNoFormat, getDateFormat } from "src/util/FormatUtil";
+import axios from "axios";
+import LoginHelper from "src/pages/shared/LoginHelper";
+import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
 
 const { Step } = Steps;
 interface Props {
@@ -26,12 +29,28 @@ const CallListModal: FC<Props> = (props: Props) => {
     onOk();
   };
 
-  const handleClickCancelErrand = () => {
-    onCancel();
-    message.success("배차가 취소되었습니다.");
-    console.log(cancelBtn);
+  const handleClickCancelErrand = async () => {
+    const form = new FormData();
+
+    form.append("ulErrandSeqNo", String(props.callInfo!!.ulErrandSeqNo));
+    try {
+      const response = await axios({
+        method: "post",
+        url: "https://api.roadvoy.net/agency/errand/cancel.php",
+        data: form,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${LoginHelper.getToken()}`
+        }
+      });
+      console.log(response);
+      message.success("배차가 취소되었습니다.");
+    } catch (e) {
+      message.error(e.message);
+    }
+
     // return (
-    //   <div>
+    //   <div
     //     {callInfo?.ucDeliStatus !== 64
     //       ? message.success("배차가 취소되었습니다.")
     //       : message.success("이미 취소된 콜입니다.")}
@@ -63,7 +82,7 @@ const CallListModal: FC<Props> = (props: Props) => {
             <CallDetailShopTitle title="고객요청사항" value={callInfo.acClientMemo} />
             <CallDetailShopTitle
               title="배달주소"
-              value={`${callInfo.acOriginOldAddr} ${callInfo.acDestOldAddr} ${callInfo.acDestAddrDesc}`}
+              value={`${callInfo.acDestOldAddr} ${callInfo.acDestAddrDesc}`}
             />
           </div>
         </div>
