@@ -11,6 +11,7 @@ import RiderDaily from "../../dto/RiderDaily";
 import { callFormat, costFormat } from "src/util/FormatUtil";
 import DateUtil from "src/util/DateUtil";
 import { NavLink } from "react-router-dom";
+import APIHelper from "src/helpers/APIHelper";
 
 interface Props {
   riderInfo: RiderInfo;
@@ -357,7 +358,33 @@ const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) =
       <Col>
         <div>
           <span style={{ float: "left" }}>{riderInfo.acPresident}</span>
-          <Button>다운로드</Button>
+          <Button
+            onClick={() => {
+              const fileName = `기사정산 ${acStartDate.format("YYYY-MM-DD")} ~ ${acEndDate.format(
+                "YYYY-MM-DD"
+              )}.xlsx`;
+              APIHelper.getInstance()({
+                method: "GET",
+                url: "https://api.roadvoy.net/shared/rider/settlement/export/index.php",
+                params: {
+                  acStartDate: acStartDate.format("YYYY-MM-DD"),
+                  acEndDate: acEndDate.format("YYYY-MM-DD")
+                },
+                responseType: "blob"
+              }).then(response => {
+                const url = window.URL.createObjectURL(
+                  new Blob([response.data], { type: response.headers["content-type"] })
+                );
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("dowonload", fileName);
+                document.body.appendChild(link);
+                link.click();
+              });
+            }}
+          >
+            다운로드
+          </Button>
         </div>
         <Descriptions bordered column={{ xxl: 5, xl: 5, lg: 5, md: 3, sm: 2, xs: 1 }} size="small">
           <Descriptions.Item label="배달콜수">{`${stRiderDailyTotal.usDayDoneCallSum}콜`}</Descriptions.Item>

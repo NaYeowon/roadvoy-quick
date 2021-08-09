@@ -21,8 +21,8 @@ const columns = [
   },
   {
     title: "콜수",
-    dataIndex: "usDayDoneCallSum",
-    key: "usDayDoneCallSum",
+    dataIndex: "usDayDoneErrandSum",
+    key: "usDayDoneErrandSum",
     width: 80,
     render: (call: number) => callFormat(call)
   }
@@ -33,7 +33,7 @@ const { RangePicker } = DatePicker;
 const RiderSettlement = (props: RiderInfo) => {
   const [astManageRider, setAstManageRider] = useState<RiderInfo[]>([]);
   const [selectedRider, setSelectedRider] = useState<RiderInfo | undefined>(undefined);
-  const [acStartDate, setAcStartDate] = useState<moment.Moment>(moment());
+  const [acStartDate, setAcStartDate] = useState<moment.Moment>(moment().startOf("month"));
   const [acEndDate, setAcEndDate] = useState<moment.Moment>(moment());
 
   const handleChangeDateRange = val => {
