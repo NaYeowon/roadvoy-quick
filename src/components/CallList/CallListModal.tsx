@@ -10,6 +10,7 @@ import { costFormat, getCellNoFormat, getDateFormat } from "src/util/FormatUtil"
 import axios from "axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
+import CallTimeLine from "./CallTimeLine";
 
 const { Step } = Steps;
 interface Props {
@@ -20,7 +21,6 @@ interface Props {
 }
 const CallListModal: FC<Props> = (props: Props) => {
   const { visible, onOk, onCancel, callInfo } = props;
-  const [cancelBtn, setCancelBtn] = useState();
 
   const handleCancel = () => {
     onCancel();
@@ -48,14 +48,6 @@ const CallListModal: FC<Props> = (props: Props) => {
     } catch (e) {
       message.error(e.message);
     }
-
-    // return (
-    //   <div
-    //     {callInfo?.ucDeliStatus !== 64
-    //       ? message.success("배차가 취소되었습니다.")
-    //       : message.success("이미 취소된 콜입니다.")}
-    //   </div>
-    // );
   };
 
   if (!callInfo) {
@@ -73,25 +65,21 @@ const CallListModal: FC<Props> = (props: Props) => {
           </div>
           <div style={{ marginBottom: "10px" }}>
             <CallDetailShopTitle title="기사" value={callInfo.acCourPresident} />
-            <CallDetailShopTitle title="배달비" value={costFormat(callInfo.ucErrandType)} />
+            <CallDetailShopTitle title="배달비" value={costFormat(callInfo.ulErrandCharge)} />
             <CallDetailShopTitle title="결제정보" value={costFormat(callInfo.ulGoodsPrice)} />
             <CallDetailShopTitle
               title="고객연락처"
               value={getCellNoFormat(callInfo.acDestCellNo)}
             />
-            <CallDetailShopTitle title="고객요청사항" value={callInfo.acClientMemo} />
+            <CallDetailShopTitle title="고객요청사항" value={callInfo.acOriginMemo} />
             <CallDetailShopTitle
               title="배달주소"
               value={`${callInfo.acDestOldAddr} ${callInfo.acDestAddrDesc}`}
             />
+            <AddressDaumMapComponent callInfo={callInfo} />
           </div>
         </div>
-        <Steps size="small" current={1} style={{ marginBottom: "20px" }}>
-          <Step title="주문" description={getDateFormat(callInfo.acOrderDateTime)} />
-
-          <Step title="배차" />
-          <Step title="완료" />
-        </Steps>
+        <CallTimeLine callInfo={callInfo} />
         <Button>콜 수정</Button>
         <Button type="ghost">배차 취소 </Button>
         <Popconfirm

@@ -16,6 +16,11 @@ import ErrandType from "src/helpers/ErrandType";
 import CallListModal from "./CallListModal";
 
 export interface CallInfo {
+  acPickupDateTime: number;
+  ulDestLongPos: number;
+  ulDestLatiPos: number;
+  ulErrandSeqNo: number;
+  acOriginMemo: string;
   acOriginCellNo: string;
   acDestCellNo: string;
   title: string;
