@@ -11,6 +11,7 @@ import axios from "axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
 import CallTimeLine from "./CallTimeLine";
+import CallModify from "./CallModify";
 
 const { Step } = Steps;
 interface Props {
@@ -21,12 +22,22 @@ interface Props {
 }
 const CallListModal: FC<Props> = (props: Props) => {
   const { visible, onOk, onCancel, callInfo } = props;
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [callModalInfo, setCallModalInfo] = useState<CallInfo | undefined>(undefined);
 
   const handleCancel = () => {
     onCancel();
   };
   const handleOk = () => {
     onOk();
+  };
+
+  const CallOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const CallCancel = () => {
+    setIsModalVisible(false);
   };
 
   const handleClickCancelErrand = async () => {
@@ -54,6 +65,8 @@ const CallListModal: FC<Props> = (props: Props) => {
     return <></>;
   }
 
+  console.log(callInfo);
+
   return (
     <>
       <Modal title="콜 상세" visible={visible} onCancel={handleCancel} onOk={handleOk}>
@@ -76,11 +89,18 @@ const CallListModal: FC<Props> = (props: Props) => {
               title="배달주소"
               value={`${callInfo.acDestOldAddr} ${callInfo.acDestAddrDesc}`}
             />
-            <AddressDaumMapComponent callInfo={callInfo} />
+            <AddressDaumMapComponent callInfo={callInfo} key={callInfo.ulErrandSeqNo} />
           </div>
         </div>
         <CallTimeLine callInfo={callInfo} />
-        <Button>콜 수정</Button>
+        <Button
+          onClick={() => {
+            setIsModalVisible(true);
+            setCallModalInfo(callInfo);
+          }}
+        >
+          콜 수정
+        </Button>
         <Button type="ghost">배차 취소 </Button>
         <Popconfirm
           title="정말 콜을 취소하시겠습니까?"
@@ -93,6 +113,12 @@ const CallListModal: FC<Props> = (props: Props) => {
           </Button>
         </Popconfirm>
       </Modal>
+      <CallModify
+        visible={isModalVisible}
+        onOk={CallOk}
+        onCancel={CallCancel}
+        callInfo={callModalInfo}
+      />
     </>
   );
 };
