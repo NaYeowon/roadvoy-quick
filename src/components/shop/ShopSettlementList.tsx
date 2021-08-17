@@ -2,7 +2,7 @@
 import * as React from "react";
 import { FC, useEffect, useState } from "react";
 import { Col, Descriptions, Table, Button } from "antd";
-import { costFormat } from "../../util/FormatUtil";
+import { callFormat, costFormat } from "../../util/FormatUtil";
 import { ShopInfo } from "./types";
 import axios from "axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
@@ -151,8 +151,8 @@ const ShopSettlementList: FC<Props> = ({ shopInfo, acStartDate, acEndDate }) => 
 
       const { data } = response;
 
-      setAstShopDaily(data.lstShopDaily);
-      setStShopDailyTotal(data.stShopDailyTotal);
+      setAstShopDaily(data.lstFranchiseDaily);
+      setStShopDailyTotal(data.stFranchiseDailyTotal);
     } catch (error) {
       console.log(error);
       if (error.response && error.response.data && error.response.data.msg) {
@@ -175,31 +175,31 @@ const ShopSettlementList: FC<Props> = ({ shopInfo, acStartDate, acEndDate }) => 
         </div>
         <Descriptions bordered column={{ xxl: 5, xl: 4, lg: 4, md: 3, sm: 2, xs: 1 }} size="small">
           <Descriptions.Item label="배달콜수">
-            {`${stShopDailyTotal.usDayDoneCallSum}`}콜
+            {callFormat(stShopDailyTotal.usDayDoneCallSum)}
           </Descriptions.Item>
           <Descriptions.Item label="배달비">
-            {`${stShopDailyTotal.ulDayTotalDeliFee}`}원
+            {costFormat(stShopDailyTotal.ulDayTotalDeliFee)}
           </Descriptions.Item>
           <Descriptions.Item label="콜당수수료">
-            {`${stShopDailyTotal.ulDayCallCntFee}`}원
+            {costFormat(stShopDailyTotal.ulDayCallCntFee)}
           </Descriptions.Item>
           <Descriptions.Item label="현금→카드 송금 ">
-            {`${stShopDailyTotal.ulSubstituteRefund}`}원
+            {costFormat(stShopDailyTotal.ulSubstituteRefund)}
           </Descriptions.Item>
           <Descriptions.Item label="카드→현금 입금">
-            {`${stShopDailyTotal.ulSubstituteInput}`}원
+            {costFormat(stShopDailyTotal.ulSubstituteInput)}
           </Descriptions.Item>
           <Descriptions.Item label="기사가 캐시입금">
-            {`${stShopDailyTotal.ulSubstituteDeposit}`}원
+            {costFormat(stShopDailyTotal.ulSubstituteDeposit)}
           </Descriptions.Item>
           <Descriptions.Item label="캐시 관리자 직권회수">
-            {`${stShopDailyTotal.ulSubstituteCashMinusByManager}`}원
+            {costFormat(stShopDailyTotal.ulSubstituteCashMinusByManager)}
           </Descriptions.Item>
           <Descriptions.Item label="가상계좌 입금">
-            {`${stShopDailyTotal.ulVirBankDeposit}`}원
+            {costFormat(stShopDailyTotal.ulVirBankDeposit)}
           </Descriptions.Item>
           <Descriptions.Item label="가상계좌 수수료">
-            {`${stShopDailyTotal.ulVirBankFee}`}원
+            {costFormat(stShopDailyTotal.ulVirBankFee)}
           </Descriptions.Item>
         </Descriptions>
       </Col>
