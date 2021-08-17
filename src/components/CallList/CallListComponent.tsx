@@ -16,6 +16,18 @@ import ErrandType from "src/helpers/ErrandType";
 import CallListModal from "./CallListModal";
 
 export interface CallInfo {
+  acOriginCompany: string;
+  acDestMemo: string;
+  ulErrandFeeAmount: number;
+  ucErrandFeeRate: number;
+  ucErrandSettlementType: number;
+  ucAllocType: number;
+  ucTripType: number;
+  ulErrandFeeAgency: number;
+  ulOriginLatiPos: number;
+  ulOriginLongPos: number;
+  ucErrandFeeType: number;
+
   acPickupDateTime: number;
   ulDestLongPos: number;
   ulDestLatiPos: number;
@@ -35,7 +47,7 @@ export interface CallInfo {
   usOrderCnt: number;
   acOrderDateTime: string;
   acDoneDateTime: string;
-  acCanCelDateTime: string;
+  acCancelDateTime: string;
 
   ulErrandCharge: number;
   ucPaymentMode: number;
@@ -47,7 +59,9 @@ export interface CallInfo {
   ucErrandType: ErrandType;
   acDestAddrDesc: string;
   acCourPresident: string;
-
+  acOriginAddrDesc: string;
+  acOriginNewAddr: string;
+  acDestNewAddr: string;
   onCancel: any;
   onOk: any;
   visible: any;
@@ -85,11 +99,28 @@ const columns: ColumnsType<CallInfo> = [
     className: "deli-status",
     width: 200,
     render: (text: string, call: CallInfo) => {
-      if (call.ucErrandType == ErrandType.SAME) {
-        return call.acDestOldAddr;
+      if (call.ucErrandType == ErrandType.DIFFERENT_DESTINATION) {
+        const originAddr = call.acOriginOldAddr ? call.acOriginOldAddr : call.acOriginNewAddr;
+        const destAddr = call.acDestOldAddr ? call.acDestOldAddr : call.acDestNewAddr;
+        return (
+          <div>
+            <div>
+              <Tag color="volcano">픽업지</Tag>
+              {originAddr} {call.acOriginAddrDesc}
+            </div>
+            <div>
+              <Tag color="purple">목적지</Tag>
+              {destAddr}
+            </div>
+          </div>
+        );
       } else {
-        // return `${call.acOriginOldAddr} ${call.acDestOldAddr}`;
-        return `${call.acOriginOldAddr} ${call.acDestOldAddr} ${call.acDestAddrDesc}`;
+        return (
+          <div>
+            <Tag color="purple">목적지</Tag>
+            {call.acDestOldAddr} {call.acDestAddrDesc}
+          </div>
+        );
       }
     }
   },
@@ -181,7 +212,7 @@ const CallListComponent = () => {
           Authorization: `Bearer ${LoginHelper.getToken()}`
         },
         params: {
-          acErrandDate: "2021-07-23"
+          acErrandDate: moment().format("YYYY-MM-DD")
         }
       });
       const astErrand = response.data.astErrand as any[];
