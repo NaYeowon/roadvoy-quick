@@ -16,6 +16,9 @@ import NumberUtil from "../../util/NumberUtil";
 import LoginHelper from "../../pages/shared/LoginHelper";
 import { costFormat } from "../../util/FormatUtil";
 import SelectPage from "../Layout/SelectPage";
+import shopSignupModal from "./shopSignupModal";
+import ShopDetail from "./ShopDetail";
+import { ShopInfo } from "./types";
 
 // ================================
 // react 는 props (property) 와 state 가 변경될 때 마다 render 가 호출되므로
@@ -24,25 +27,27 @@ import SelectPage from "../Layout/SelectPage";
 // arr[0]['ucMemCourId'];
 // arr[1]['ucMemCourId']
 
-interface IShop {
-  title: string;
-  dataIndex: string;
-  width: number;
-  usDeliDoneCntSum: number;
-  usMonthDeliDoneCntSum: number;
-  ulVirAccDeposit: number;
-  ulVirAccDeduct: number;
-  lVirAccBalance: number;
-  ucTimeExtraFareType: number;
-  ucNightExtraFareType: number;
-  ucRainyExtraFareType: number;
-  ucAreaNo: string;
-  ucDistribId: string;
-  ucAgencyId: string;
-  ucMemCourId: string;
-}
+// interface IShop {
+//   title: string;
+//   dataIndex: string;
+//   width: number;
+//   usDeliDoneCntSum: number;
+//   usMonthDeliDoneCntSum: number;
+//   ulVirAccDeposit: number;
+//   ulVirAccDeduct: number;
+//   lVirAccBalance: number;
+//   ucTimeExtraFareType: number;
+//   ucNightExtraFareType: number;
+//   ucRainyExtraFareType: number;
+//   ucAreaNo: string;
+//   ucDistribId: string;
+//   ucAgencyId: string;
+//   ucMemCourId: string;
 
-const columns: ColumnsType<IShop> = [
+//   onCancel: any;
+// }
+
+const columns: ColumnsType<ShopInfo> = [
   {
     title: "계정정보",
     children: [
@@ -50,7 +55,7 @@ const columns: ColumnsType<IShop> = [
         title: "아이디",
         dataIndex: "ucMemCourId",
         width: 120,
-        render: (text: string, record: IShop) => `${MemberHelper.formatMemberId(record)}`
+        render: (text: string, record: ShopInfo) => `${MemberHelper.formatMemberId(record)}`
       },
       {
         title: "가맹명",
@@ -115,7 +120,7 @@ const columns: ColumnsType<IShop> = [
         //   let format = (data2.ulVirAccDeposit + data2.lVirAccBalance - data2.ulVirAccDeduct)
         //   return format.toLocaleString()+'원'
         // }
-        render: (string: any, record: IShop) =>
+        render: (string: any, record: ShopInfo) =>
           NumberUtil.formatNumberWithText(
             Number(record.ulVirAccDeposit) +
               Number(record.lVirAccBalance) -
@@ -138,7 +143,7 @@ const columns: ColumnsType<IShop> = [
         dataIndex: "ucTimeExtraFareType",
         key: "ucTimeExtraFareType",
         className: "time-extra-fare-column",
-        render: (text: string, record: IShop) => "",
+        render: (text: string, record: ShopInfo) => "",
         width: 30
       },
       {
@@ -146,7 +151,7 @@ const columns: ColumnsType<IShop> = [
         dataIndex: "ucNightExtraFareType",
         key: "ucNightExtraFareType",
         className: "night-extra-fare-column",
-        render: (text: string, record: IShop) => "",
+        render: (text: string, record: ShopInfo) => "",
         width: 30
       },
       {
@@ -154,55 +159,7 @@ const columns: ColumnsType<IShop> = [
         dataIndex: "ucRainyExtraFareType",
         key: "ucRainyExtraFareType",
         className: "rainy-extra-fare-column",
-        render: (text: string, record: IShop) => "",
-        width: 30
-      },
-      {
-        title: "장거리",
-        dataIndex: "",
-        key: "",
-        className: "",
-        render: (text: string, record: IShop) => "",
-        width: 30
-      },
-      {
-        title: "시간초과(야간)",
-        dataIndex: "",
-        key: "",
-        className: "",
-        render: (text: string, record: IShop) => "",
-        width: 30
-      },
-      {
-        title: "물건가격별",
-        dataIndex: "",
-        key: "",
-        className: "",
-        render: (text: string, record: IShop) => "",
-        width: 30
-      },
-      {
-        title: "주문수정",
-        dataIndex: "",
-        key: "",
-        className: "",
-        render: (text: string, record: IShop) => "",
-        width: 30
-      },
-      {
-        title: "구역",
-        dataIndex: "",
-        key: "",
-        className: "",
-        render: (text: string, record: IShop) => "",
-        width: 30
-      },
-      {
-        title: "기타",
-        dataIndex: "",
-        key: "",
-        className: "",
-        render: (text: string, record: IShop) => "",
+        render: (text: string, record: ShopInfo) => "",
         width: 30
       }
     ]
@@ -214,7 +171,19 @@ const columns: ColumnsType<IShop> = [
 // ================================
 
 const Shop = () => {
-  const [astManageShop, setAstManageShop] = useState<IShop[]>([]);
+  const [astManageShop, setAstManageShop] = useState<ShopInfo[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectShop, setSelectShop] = useState<ShopInfo | undefined>(undefined);
+  const [shopInfo, setShopInfo] = useState<ShopInfo | undefined>(undefined);
+
+  const okHandle = () => {
+    setIsModalVisible(false);
+  };
+
+  const cancelHandle = () => {
+    setIsModalVisible(false);
+  };
+
   const fetchShopList = async () => {
     // ================================
     // 이 부분이 1초마다 호출되는 Routine
@@ -266,7 +235,7 @@ const Shop = () => {
         pagination={false}
         size="small"
         scroll={{ y: 650 }}
-        rowClassName={(record: IShop) => {
+        rowClassName={(record: ShopInfo) => {
           const className: any = [];
           if (record.ucTimeExtraFareType === 1) {
             className.push("time-extra-fare-on");
@@ -279,8 +248,22 @@ const Shop = () => {
           }
           return className.join(" ");
         }}
+        onRow={(shopInfo: ShopInfo) => {
+          return {
+            onClick: () => {
+              setIsModalVisible(true);
+              setSelectShop(shopInfo);
+              setShopInfo(shopInfo);
+            }
+          };
+        }}
       />
-      ,
+      <ShopDetail
+        visible={isModalVisible}
+        onCancel={cancelHandle}
+        onOk={okHandle}
+        shopInfo={selectShop}
+      />
     </div>
   );
 };
