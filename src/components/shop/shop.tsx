@@ -27,26 +27,6 @@ import { ShopInfo } from "./types";
 // arr[0]['ucMemCourId'];
 // arr[1]['ucMemCourId']
 
-// interface IShop {
-//   title: string;
-//   dataIndex: string;
-//   width: number;
-//   usDeliDoneCntSum: number;
-//   usMonthDeliDoneCntSum: number;
-//   ulVirAccDeposit: number;
-//   ulVirAccDeduct: number;
-//   lVirAccBalance: number;
-//   ucTimeExtraFareType: number;
-//   ucNightExtraFareType: number;
-//   ucRainyExtraFareType: number;
-//   ucAreaNo: string;
-//   ucDistribId: string;
-//   ucAgencyId: string;
-//   ucMemCourId: string;
-
-//   onCancel: any;
-// }
-
 const columns: ColumnsType<ShopInfo> = [
   {
     title: "계정정보",
