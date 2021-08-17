@@ -37,13 +37,15 @@ const AgencySiginupModal = props => {
     setIsOpenPost(false);
   };
 
-  const postCodeStyle = {
+  const postCodeStyle: React.CSSProperties = {
+    position: "absolute",
     display: "block",
-    top: "0%",
-    width: "400px",
-    height: "400px",
-    padding: "7px",
-    border: "1px solid #000000"
+    top: 35,
+    left: "-150px",
+    width: "500px",
+    height: "450px",
+    border: "1px solid #000000",
+    zIndex: 100
   };
 
   const handleOk = e => {
