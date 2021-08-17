@@ -37,7 +37,7 @@ const { RangePicker } = DatePicker;
 const ShopSettlement = (props: ShopInfo) => {
   const [astManageShop, setAstManageShop] = useState<ShopInfo[]>([]);
   const [selectedShop, setSelectedShpo] = useState<ShopInfo | undefined>(undefined);
-  const [acStartDate, setAcStartDate] = useState<moment.Moment>(moment());
+  const [acStartDate, setAcStartDate] = useState<moment.Moment>(moment().startOf("month"));
   const [acEndDate, SetAcEndDate] = useState<moment.Moment>(moment());
 
   const handleChangeDateRange = val => {
