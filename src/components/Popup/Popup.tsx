@@ -12,40 +12,13 @@ import PaymentMode from "../../helpers/PaymentMode";
 import SearchAddressType from "../../helpers/SearchAddressType";
 import ErrandFeeType from "src/helpers/ErrandFeeType";
 import ErrandType from "src/helpers/ErrandType";
+import { CallInfo } from "../CallList/CallListComponent";
+import DirectDispatch from "../CallList/DirectDispatch";
 
-export interface State {
-  acOriginCompany: string;
-  acOriginCellNo: string;
-  acOriginOldAddr: string;
-  acOriginNewAddr: string;
-  ulOriginLatiPos: number;
-  ulOriginLongPos: number;
-  acOriginAddrDesc: string;
-  acOriginMemo: string;
-
-  acDestCompany: string;
-  acDestCellNo: string;
-  acDestOldAddr: string;
-  acDestNewAddr: string;
-  ulDestLatiPos: number;
-  ulDestLongPos: number;
-  acDestAddrDesc: string;
-  acDestMemo: string;
-
-  ucErrandType: ErrandType;
-  ucLimitTime: number;
-  //ucTripType:
-  ucPaymentMode: PaymentMode;
-
-  ulErrandCharge: number;
-  ulGoodsPrice: number;
-  ucErrandFeeType: ErrandFeeType;
-  ucErrandFeeRate: number;
-  ulErrandFeeAmount: number;
-  ulErrandDispatchAgencyFee: number;
-
-  isDispatchListVisible: boolean;
+interface Props {
+  callInfo: CallInfo | undefined;
 }
+
 const { Search } = Input;
 const formItemLayout = {
   labelCol: {
@@ -65,7 +38,7 @@ const modalStyle: React.CSSProperties = {
   overflow: "hidden"
 };
 
-const Popup = (state: State) => {
+const Popup = (props: Props) => {
   const [fullAddress, setFullAddress] = useState("");
   const [zoneCode, setZoneCode] = useState("");
   const [isDaumPost, setIsDaumPost] = useState(false);
@@ -109,7 +82,7 @@ const Popup = (state: State) => {
 
     setFullAddress(AllAddress);
     setZoneCode(zoneCodes);
-    setAcDestOldAddr(AllAddress);
+    setAcOriginOldAddr(AllAddress);
     setIsDaumPost(false);
   };
 
@@ -165,8 +138,8 @@ const Popup = (state: State) => {
   const [acOriginCompany, setAcOriginCompany] = useState("");
   const [acOriginCellNo, setAcOriginCellNo] = useState("");
   const [acOriginMemo, setAcOriginMemo] = useState("");
-  const [ulOriginLatiPos, setUlOriginLatiPos] = useState(0);
-  const [ulOriginLongPos, setUlOriginLongPos] = useState(0);
+  const [ulOriginLatiPos, setUlOriginLatiPos] = useState("");
+  const [ulOriginLongPos, setUlOriginLongPos] = useState("");
   const [acOriginOldAddr, setAcOriginOldAddr] = useState("");
   const [acOriginNewAddr, setAcOriginNewAddr] = useState("");
   const [acOriginAddrDesc, setAcOriginAddrDesc] = useState("");
@@ -179,7 +152,7 @@ const Popup = (state: State) => {
 
   const [acDestCompany, setAcDestCompany] = useState("");
   const [acDestCellNo, setAcDestCellNo] = useState("");
-  const [acDestMemo, setDestMemo] = useState("");
+  const [acDestMemo, setAcDestMemo] = useState("");
   const [ulDestLatiPos, setUlDestLatiPos] = useState(0);
   const [ulDestLongPos, setUlDestLongPos] = useState(0);
   const [acDestOldAddr, setAcDestOldAddr] = useState("");
@@ -188,7 +161,7 @@ const Popup = (state: State) => {
   const [ucLimitTime, setUcLimitTime] = useState(0);
   const [ucPaymentMode, setUcPaymentMode] = useState(0);
   const [ucErrandFeeType, setUcErrandFeeType] = useState(0);
-  const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState(0);
+  const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState("");
   const [ucErrandFeeRate, setUcErrandFeeRate] = useState(0);
   const [ulErrandCharge, setUlErrandCharge] = useState(0);
   const [ulGoodsPrice, setUlGoodsPrice] = useState(0);
@@ -417,9 +390,9 @@ const Popup = (state: State) => {
               <Form.Item label="목적지 요청사항">
                 <TextArea
                   rows={2}
-                  name="acClientMemo"
+                  name="acDestMemo"
                   onChange={e => {
-                    setDestMemo(e.target.value);
+                    setAcDestMemo(e.target.value);
                   }}
                   value={acDestMemo}
                 />
@@ -571,7 +544,7 @@ const Popup = (state: State) => {
                 type="number"
                 value={ulErrandFeeAmount}
                 name="ulErrandFeeAmount"
-                onChange={e => setUlErrandFeeAmount(parseInt(e.target.value))}
+                onChange={e => setUlErrandFeeAmount(e.target.value)}
                 disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
               />
             </Form.Item>

@@ -43,11 +43,11 @@ const CallTimeLine = (props: Props) => {
       </Timeline.Item>
     );
   }
-  if (callInfo.acCanCelDateTime) {
+  if (callInfo.acCancelDateTime) {
     arrTimeLine.push(
       <Timeline.Item color="#F44336">
         <TimeTitle>취소</TimeTitle>
-        <span>{moment(callInfo.acCanCelDateTime).format("HH:mm:ss")}</span>
+        <span>{moment(callInfo.acCancelDateTime).format("HH:mm:ss")}</span>
       </Timeline.Item>
     );
   }
