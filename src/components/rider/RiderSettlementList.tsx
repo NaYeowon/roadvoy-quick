@@ -387,25 +387,55 @@ const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) =
           </Button>
         </div>
         <Descriptions bordered column={{ xxl: 5, xl: 5, lg: 5, md: 3, sm: 2, xs: 1 }} size="small">
-          <Descriptions.Item label="배달콜수">{`${stRiderDailyTotal.usDayDoneCallSum}콜`}</Descriptions.Item>
-          <Descriptions.Item label="배달비">{`${stRiderDailyTotal.lDayTotalRevenue}원`}</Descriptions.Item>
-          <Descriptions.Item label="콜수수료">{`${stRiderDailyTotal.lDayDeliCost}원`}</Descriptions.Item>
+          <Descriptions.Item label="배달콜수">
+            {callFormat(stRiderDailyTotal.usDayDoneCallSum)}
+          </Descriptions.Item>
+          <Descriptions.Item label="배달비">
+            {costFormat(stRiderDailyTotal.lDayTotalRevenue)}
+          </Descriptions.Item>
+          <Descriptions.Item label="콜수수료">
+            {costFormat(stRiderDailyTotal.lDayDeliCost)}
+          </Descriptions.Item>
 
-          <Descriptions.Item label="퀵콜수">{`${stRiderDailyTotal.usDayDoneErrandSum}콜`}</Descriptions.Item>
-          <Descriptions.Item label="퀵배달비">{`${stRiderDailyTotal.lDayErrandCharge}원`}</Descriptions.Item>
-          <Descriptions.Item label="퀵수수료">{`${stRiderDailyTotal.lDayErrandFeeAgency}원`}</Descriptions.Item>
+          <Descriptions.Item label="퀵콜수">
+            {callFormat(stRiderDailyTotal.usDayDoneErrandSum)}
+          </Descriptions.Item>
+          <Descriptions.Item label="퀵배달비">
+            {costFormat(stRiderDailyTotal.lDayErrandCharge)}
+          </Descriptions.Item>
+          <Descriptions.Item label="퀵수수료">
+            {costFormat(stRiderDailyTotal.lDayErrandFeeAgency)}
+          </Descriptions.Item>
 
-          <Descriptions.Item label="기사 캐시입금">{`${stRiderDailyTotal.ulSubstituteCashPlus}원`}</Descriptions.Item>
-          <Descriptions.Item label="기사 캐시송금">{`${stRiderDailyTotal.ulSubstituteCashMinus}원`}</Descriptions.Item>
+          <Descriptions.Item label="기사 캐시입금">
+            {costFormat(stRiderDailyTotal.ulSubstituteCashPlus)}
+          </Descriptions.Item>
+          <Descriptions.Item label="기사 캐시송금">
+            {costFormat(stRiderDailyTotal.ulSubstituteCashMinus)}
+          </Descriptions.Item>
 
-          <Descriptions.Item label="현금→카드 입금">{`${stRiderDailyTotal.ulSubstituteInput}원`}</Descriptions.Item>
-          <Descriptions.Item label="카드→현금 송금">{`${stRiderDailyTotal.ulSubstituteRefund}원`}</Descriptions.Item>
-          <Descriptions.Item label="예치금송금">{`${stRiderDailyTotal.ulSubstituteDeposit}원`}</Descriptions.Item>
-          <Descriptions.Item label="가상계좌입금">{`${stRiderDailyTotal.ulVirBankDeposit}원`}</Descriptions.Item>
+          <Descriptions.Item label="현금→카드 입금">
+            {costFormat(stRiderDailyTotal.ulSubstituteInput)}
+          </Descriptions.Item>
+          <Descriptions.Item label="카드→현금 송금">
+            {costFormat(stRiderDailyTotal.ulSubstituteRefund)}
+          </Descriptions.Item>
+          <Descriptions.Item label="예치금송금">
+            {costFormat(stRiderDailyTotal.ulSubstituteDeposit)}
+          </Descriptions.Item>
+          <Descriptions.Item label="가상계좌입금">
+            {costFormat(stRiderDailyTotal.ulVirBankDeposit)}
+          </Descriptions.Item>
 
-          <Descriptions.Item label="출금">{`${stRiderDailyTotal.ulReClaimAmount}원`}</Descriptions.Item>
-          <Descriptions.Item label="출금수수료">{`${stRiderDailyTotal.ulReClaimComm}원`}</Descriptions.Item>
-          <Descriptions.Item label="본사출금">{`${stRiderDailyTotal.ulCreditAmount}원`}</Descriptions.Item>
+          <Descriptions.Item label="출금">
+            {costFormat(stRiderDailyTotal.ulReClaimAmount)}
+          </Descriptions.Item>
+          <Descriptions.Item label="출금수수료">
+            {costFormat(stRiderDailyTotal.ulReClaimComm)}
+          </Descriptions.Item>
+          <Descriptions.Item label="본사출금">
+            {costFormat(stRiderDailyTotal.ulCreditAmount)}
+          </Descriptions.Item>
         </Descriptions>
       </Col>
 
