@@ -344,10 +344,9 @@ const ShopDetail: FC<Props> = (props: Props) => {
                     </Row>
                   </Col>
                 </Row>
-                <Row id="sign-up-submit">
-                  <Button type="primary" size="large" block>
-                    상점수정
-                  </Button>
+                <Row id="sign-up-submit" style={{ justifyContent: "center" }}>
+                  <Button type="primary">상점수정</Button>
+                  <Button type="ghost">상점삭제</Button>
                 </Row>
               </div>
             </Form>

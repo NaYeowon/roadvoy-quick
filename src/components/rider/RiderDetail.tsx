@@ -289,9 +289,10 @@ const RiderDetail: FC<Props> = (props: Props) => {
                   건&nbsp;&nbsp;&nbsp;&nbsp;
                   <Col span={3} />
                 </Row>
-                <Button block type="primary" style={{ marginTop: "20px" }}>
-                  기사 수정
-                </Button>
+                <Row id="sign-up-submit" style={{ justifyContent: "center" }}>
+                  <Button type="primary">기사 수정</Button>
+                  <Button type="ghost">기사 삭제</Button>
+                </Row>
               </div>
             </form>
           </div>
