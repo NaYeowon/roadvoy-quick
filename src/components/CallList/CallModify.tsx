@@ -94,7 +94,7 @@ const CallModify: FC<Props> = (props: Props) => {
   }, [callInfo]);
 
   const onInitail = () => {
-    setFullAddress(props.fullAddress);
+    setFullAddress(callInfo?.acOriginOldAddr);
     setZoneCode(props.zoneCode);
 
     setAcOriginCompany(callInfo?.acOriginCompany);
