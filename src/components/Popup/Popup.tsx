@@ -14,6 +14,7 @@ import ErrandFeeType from "src/helpers/ErrandFeeType";
 import ErrandType from "src/helpers/ErrandType";
 import { CallInfo } from "../CallList/CallListComponent";
 import DirectDispatch from "../CallList/DirectDispatch";
+import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
 
 interface Props {
   callInfo: CallInfo | undefined;
@@ -31,7 +32,7 @@ const formItemLayout = {
 
 const modalStyle: React.CSSProperties = {
   position: "absolute",
-  top: 0,
+  top: 30,
   left: "-100px",
   zIndex: 100,
   border: "1px solid #000000",
@@ -79,6 +80,7 @@ const Popup = (props: Props) => {
       }
       AllAddress += extraAddress !== "" ? `(${extraAddress})` : "";
     }
+    console.log(data);
 
     setFullAddress(AllAddress);
     setZoneCode(zoneCodes);
@@ -107,13 +109,19 @@ const Popup = (props: Props) => {
     setIsDaumPost2(false);
   };
 
-  const handleOpenPost = useCallback((SearchAddressType: SearchAddressType) => {
-    setIsDaumPost(true);
-  }, []);
+  const handleOpenPost = useCallback(
+    (SearchAddressType: SearchAddressType) => {
+      setIsDaumPost(!isDaumPost);
+    },
+    [!isDaumPost]
+  );
 
-  const handleOpenPost2 = useCallback((SearchAddressType: SearchAddressType) => {
-    setIsDaumPost2(true);
-  }, []);
+  const handleOpenPost2 = useCallback(
+    (SearchAddressType: SearchAddressType) => {
+      setIsDaumPost2(!isDaumPost2);
+    },
+    [!isDaumPost2]
+  );
 
   // const LimitTime = ({ time }) => (
   //   <LeftAlignedCol span={8}>
@@ -138,8 +146,8 @@ const Popup = (props: Props) => {
   const [acOriginCompany, setAcOriginCompany] = useState("");
   const [acOriginCellNo, setAcOriginCellNo] = useState("");
   const [acOriginMemo, setAcOriginMemo] = useState("");
-  const [ulOriginLatiPos, setUlOriginLatiPos] = useState("");
-  const [ulOriginLongPos, setUlOriginLongPos] = useState("");
+  const [ulOriginLatiPos, setUlOriginLatiPos] = useState(0);
+  const [ulOriginLongPos, setUlOriginLongPos] = useState(0);
   const [acOriginOldAddr, setAcOriginOldAddr] = useState("");
   const [acOriginNewAddr, setAcOriginNewAddr] = useState("");
   const [acOriginAddrDesc, setAcOriginAddrDesc] = useState("");
@@ -288,8 +296,7 @@ const Popup = (props: Props) => {
                 type="primary"
                 onClick={() => handleOpenPost(SearchAddressType.ERRAND_ORIGIN)}
                 style={{ width: "100%" }}
-                name={acOriginNewAddr}
-                value={acOriginAddrDesc}
+                value={acOriginOldAddr}
                 disabled={ucErrandType === ErrandType.SAME}
               >
                 주소검색
