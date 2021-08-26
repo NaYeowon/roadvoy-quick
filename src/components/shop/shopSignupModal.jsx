@@ -50,14 +50,7 @@ class shopSignupModal extends Component {
   }
 
   handleOpenPost = () => {
-    this.setState({
-      isDaumPost: true
-    });
-    window.onkeydown = e => {
-      if (e.key === "Escape") {
-        this.setState({ isDaumPost: false });
-      }
-    };
+    this.setState({ isDaumPost: !this.state.isDaumPost });
   };
 
   handleCancel = e => {
@@ -288,8 +281,7 @@ class shopSignupModal extends Component {
   }
 
   render() {
-    const { isModalShow, isModalClose } = this.props;
-    const { isDaumPost } = this.state;
+    const { isDaumPost, isModalVisible } = this.state;
     const {
       acCompany,
       acPresident,
@@ -324,7 +316,7 @@ class shopSignupModal extends Component {
     const height = 450;
     const modalStyle = {
       position: "absolute",
-      top: 0,
+      top: 35,
       left: "-178px",
       zIndex: "100",
       border: "1px solid #000000",
@@ -418,7 +410,7 @@ class shopSignupModal extends Component {
                   </Row>
                   <Row justify="center" gutter={([16], [16])}>
                     <Col span={4}>
-                      <label>가맹점주소&nbsp;:</label>
+                      <label>상점주소&nbsp;:</label>
                     </Col>
                     <Col span={8}>
                       <Button
@@ -543,7 +535,7 @@ class shopSignupModal extends Component {
                   </Row>
                   <Row id="sign-up-submit">
                     <Button type="primary" size="large" onClick={this.onSingupData} block>
-                      가맹등록
+                      상점등록
                     </Button>
                   </Row>
                 </div>

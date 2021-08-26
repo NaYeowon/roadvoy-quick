@@ -1,4 +1,5 @@
 export interface ShopInfo {
+  format: any;
   title: string;
   dataIndex: string;
   acStartDate: Date;
@@ -12,6 +13,40 @@ export interface ShopInfo {
   ucAgencyId: string;
   ucMemCourId: string;
   shopInfoData: string;
+
+  usDeliDoneCntSum: number;
+  ulVirAccDeposit: number;
+  ulVirAccDeduct: number;
+  lVirAccBalance: number;
+  ucTimeExtraFareType: number;
+  ucNightExtraFareType: number;
+  ucRainyExtraFareType: number;
+
+  usDayDoneCallSum: number;
+  ulDayTotalDeliFee: number;
+  ulDayCallCntFee: number;
+  ulSubstituteRefund: number;
+  ulSubstituteInput: number;
+  ulSubstituteDeposit: number;
+  ulSubstituteCashMinusByManager: number;
+  ulVirBankDeposit: number;
+  ulVirBankFee: number;
+
+  acPresident: string;
+  acCellNo: number;
+  acPhoneNo: number;
+  acBizRegNo: number;
+  acResRegNo: number;
+  acAddressDesc: string;
+  acRemark: string;
+  acAllocRemark: string;
+  acCpPresident: string;
+  acCpCellNo: number;
+  ulBaseDist: number;
+  ulBaseFare: number;
+  ulExtraDist: number;
+  ulExtraFare: number;
+  acPassword: number;
 }
 
 export interface RiderInfo {
@@ -40,6 +75,31 @@ export interface RiderInfo {
   ulCallCntFee: number;
   ulDayTotalRevenue: number;
   usMonthDoneCallSum: number;
+
+  lDayTotalRevenue: number;
+  lDayDeliCost: number;
+  usDayDoneErrandSum: number;
+  lDayErrandFeeAgency: number;
+  ulSubstituteCashPlus: number;
+  ulSubstituteCashMinus: number;
+  ulSubstituteInput: number;
+  ulSubstituteRefund: number;
+  ulSubstituteDeposit: number;
+  ulVirBankDeposit: number;
+  ulReClaimAmount: number;
+  ulReClaimComm: number;
+  ulCreditAmount: number;
+
+  acUserId: number;
+  acPassword: number;
+  acCellNo: number;
+  acteamName: string;
+  acBankAccount: number;
+  ucCourierTag: number;
+  conCallLimit: number;
+  usBankCode: number;
+  acWithdrawPassword: number;
+  cManagerFlag: number;
 }
 
 class RiderInfo1 {

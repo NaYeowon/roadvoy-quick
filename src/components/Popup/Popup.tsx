@@ -12,40 +12,14 @@ import PaymentMode from "../../helpers/PaymentMode";
 import SearchAddressType from "../../helpers/SearchAddressType";
 import ErrandFeeType from "src/helpers/ErrandFeeType";
 import ErrandType from "src/helpers/ErrandType";
+import { CallInfo } from "../CallList/CallListComponent";
+import DirectDispatch from "../CallList/DirectDispatch";
+import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
 
-export interface State {
-  acOriginCompany: string;
-  acOriginCellNo: string;
-  acOriginOldAddr: string;
-  acOriginNewAddr: string;
-  ulOriginLatiPos: number;
-  ulOriginLongPos: number;
-  acOriginAddrDesc: string;
-  acOriginMemo: string;
-
-  acDestCompany: string;
-  acDestCellNo: string;
-  acDestOldAddr: string;
-  acDestNewAddr: string;
-  ulDestLatiPos: number;
-  ulDestLongPos: number;
-  acDestAddrDesc: string;
-  acDestMemo: string;
-
-  ucErrandType: ErrandType;
-  ucLimitTime: number;
-  //ucTripType:
-  ucPaymentMode: PaymentMode;
-
-  ulErrandCharge: number;
-  ulGoodsPrice: number;
-  ucErrandFeeType: ErrandFeeType;
-  ucErrandFeeRate: number;
-  ulErrandFeeAmount: number;
-  ulErrandDispatchAgencyFee: number;
-
-  isDispatchListVisible: boolean;
+interface Props {
+  callInfo: CallInfo | undefined;
 }
+
 const { Search } = Input;
 const formItemLayout = {
   labelCol: {
@@ -58,14 +32,14 @@ const formItemLayout = {
 
 const modalStyle: React.CSSProperties = {
   position: "absolute",
-  top: 0,
+  top: 30,
   left: "-100px",
   zIndex: 100,
   border: "1px solid #000000",
   overflow: "hidden"
 };
 
-const Popup = (state: State) => {
+const Popup = (props: Props) => {
   const [fullAddress, setFullAddress] = useState("");
   const [zoneCode, setZoneCode] = useState("");
   const [isDaumPost, setIsDaumPost] = useState(false);
@@ -106,10 +80,11 @@ const Popup = (state: State) => {
       }
       AllAddress += extraAddress !== "" ? `(${extraAddress})` : "";
     }
+    console.log(data);
 
     setFullAddress(AllAddress);
     setZoneCode(zoneCodes);
-    setAcDestOldAddr(AllAddress);
+    setAcOriginOldAddr(AllAddress);
     setIsDaumPost(false);
   };
 
@@ -134,13 +109,19 @@ const Popup = (state: State) => {
     setIsDaumPost2(false);
   };
 
-  const handleOpenPost = useCallback((SearchAddressType: SearchAddressType) => {
-    setIsDaumPost(true);
-  }, []);
+  const handleOpenPost = useCallback(
+    (SearchAddressType: SearchAddressType) => {
+      setIsDaumPost(!isDaumPost);
+    },
+    [!isDaumPost]
+  );
 
-  const handleOpenPost2 = useCallback((SearchAddressType: SearchAddressType) => {
-    setIsDaumPost2(true);
-  }, []);
+  const handleOpenPost2 = useCallback(
+    (SearchAddressType: SearchAddressType) => {
+      setIsDaumPost2(!isDaumPost2);
+    },
+    [!isDaumPost2]
+  );
 
   // const LimitTime = ({ time }) => (
   //   <LeftAlignedCol span={8}>
@@ -179,7 +160,7 @@ const Popup = (state: State) => {
 
   const [acDestCompany, setAcDestCompany] = useState("");
   const [acDestCellNo, setAcDestCellNo] = useState("");
-  const [acDestMemo, setDestMemo] = useState("");
+  const [acDestMemo, setAcDestMemo] = useState("");
   const [ulDestLatiPos, setUlDestLatiPos] = useState(0);
   const [ulDestLongPos, setUlDestLongPos] = useState(0);
   const [acDestOldAddr, setAcDestOldAddr] = useState("");
@@ -188,7 +169,7 @@ const Popup = (state: State) => {
   const [ucLimitTime, setUcLimitTime] = useState(0);
   const [ucPaymentMode, setUcPaymentMode] = useState(0);
   const [ucErrandFeeType, setUcErrandFeeType] = useState(0);
-  const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState(0);
+  const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState("");
   const [ucErrandFeeRate, setUcErrandFeeRate] = useState(0);
   const [ulErrandCharge, setUlErrandCharge] = useState(0);
   const [ulGoodsPrice, setUlGoodsPrice] = useState(0);
@@ -315,8 +296,7 @@ const Popup = (state: State) => {
                 type="primary"
                 onClick={() => handleOpenPost(SearchAddressType.ERRAND_ORIGIN)}
                 style={{ width: "100%" }}
-                name={acOriginNewAddr}
-                value={acOriginAddrDesc}
+                value={acOriginOldAddr}
                 disabled={ucErrandType === ErrandType.SAME}
               >
                 주소검색
@@ -417,9 +397,9 @@ const Popup = (state: State) => {
               <Form.Item label="목적지 요청사항">
                 <TextArea
                   rows={2}
-                  name="acClientMemo"
+                  name="acDestMemo"
                   onChange={e => {
-                    setDestMemo(e.target.value);
+                    setAcDestMemo(e.target.value);
                   }}
                   value={acDestMemo}
                 />
@@ -571,7 +551,7 @@ const Popup = (state: State) => {
                 type="number"
                 value={ulErrandFeeAmount}
                 name="ulErrandFeeAmount"
-                onChange={e => setUlErrandFeeAmount(parseInt(e.target.value))}
+                onChange={e => setUlErrandFeeAmount(e.target.value)}
                 disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
               />
             </Form.Item>

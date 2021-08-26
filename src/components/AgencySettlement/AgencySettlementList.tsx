@@ -4,18 +4,14 @@ import { DatePicker, Space, Descriptions } from "antd";
 
 import Header from "../Layout/Header";
 
-const { RangePicker } = DatePicker;
-const AgencySettlement = () => (
+const AgencySettlementList = () => (
   <div>
-    <Header />
     <div style={{ padding: "50px" }}>
       <Space
         direction="vertical"
         size={12}
         style={{ width: "auto", display: "table", marginRight: "auto", marginLeft: "auto" }}
-      >
-        <RangePicker />
-      </Space>
+      ></Space>
 
       <Descriptions
         bordered
@@ -113,4 +109,4 @@ const AgencySettlement = () => (
   </div>
 );
 
-export default AgencySettlement;
+export default AgencySettlementList;

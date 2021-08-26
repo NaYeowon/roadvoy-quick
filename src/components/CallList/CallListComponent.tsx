@@ -16,6 +16,24 @@ import ErrandType from "src/helpers/ErrandType";
 import CallListModal from "./CallListModal";
 
 export interface CallInfo {
+  acOriginCompany: string;
+  acDestMemo: string;
+  ulErrandFeeAmount: number;
+  ucErrandFeeRate: number;
+  ucErrandSettlementType: number;
+  ucAllocType: number;
+  ucTripType: number;
+  ulErrandFeeAgency: number;
+  ulOriginLatiPos: number;
+  ulOriginLongPos: number;
+  ucErrandFeeType: number;
+
+  acPickupDateTime: number;
+  ulDestLongPos: number;
+  ulDestLatiPos: number;
+  ulErrandSeqNo: number;
+  acOriginMemo: string;
+  acOriginCellNo: string;
   acDestCellNo: string;
   title: string;
   dataIndex: string;
@@ -29,14 +47,21 @@ export interface CallInfo {
   usOrderCnt: number;
   acOrderDateTime: string;
   acDoneDateTime: string;
-  acCanCelDateTime: string;
+  acCancelDateTime: string;
+
+  ulErrandCharge: number;
+  ucPaymentMode: number;
+  acClientMemo: string;
+  acAllocDateTime: string;
 
   acDestOldAddr: string;
   acOriginOldAddr: string;
   ucErrandType: ErrandType;
   acDestAddrDesc: string;
   acCourPresident: string;
-
+  acOriginAddrDesc: string;
+  acOriginNewAddr: string;
+  acDestNewAddr: string;
   onCancel: any;
   onOk: any;
   visible: any;
@@ -74,11 +99,28 @@ const columns: ColumnsType<CallInfo> = [
     className: "deli-status",
     width: 200,
     render: (text: string, call: CallInfo) => {
-      if (call.ucErrandType == ErrandType.SAME) {
-        return call.acDestOldAddr;
+      if (call.ucErrandType == ErrandType.DIFFERENT_DESTINATION) {
+        const originAddr = call.acOriginOldAddr ? call.acOriginOldAddr : call.acOriginNewAddr;
+        const destAddr = call.acDestOldAddr ? call.acDestOldAddr : call.acDestNewAddr;
+        return (
+          <div>
+            <div>
+              <Tag color="volcano">픽업지</Tag>
+              {originAddr} {call.acOriginAddrDesc}
+            </div>
+            <div>
+              <Tag color="purple">목적지</Tag>
+              {destAddr}
+            </div>
+          </div>
+        );
       } else {
-        // return `${call.acOriginOldAddr} ${call.acDestOldAddr}`;
-        return `${call.acOriginOldAddr} ${call.acDestOldAddr} ${call.acDestAddrDesc}`;
+        return (
+          <div>
+            <Tag color="purple">목적지</Tag>
+            {call.acDestOldAddr} {call.acDestAddrDesc}
+          </div>
+        );
       }
     }
   },
@@ -136,9 +178,10 @@ const columns: ColumnsType<CallInfo> = [
   }
 ];
 
-const CallListComponent = (callInfo: CallInfo) => {
+const CallListComponent = () => {
   const [astErrand, setAstManageCall] = useState<CallInfo[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectCall, setSelectCall] = useState<CallInfo | undefined>(undefined);
 
   const [tempCount, setTempCount] = useState(0);
   const [waitCount, setWaitCount] = useState(0);
@@ -154,14 +197,13 @@ const CallListComponent = (callInfo: CallInfo) => {
   const [isCheckedDone, setIsCheckedDone] = useState(true);
   const [isCheckedCancel, setIsCheckedCancel] = useState(true);
 
-  const [test, setTest] = useState<string>("");
-
+  const [callInfo, setCallInfo] = useState<CallInfo | undefined>(undefined);
   useEffect(() => {
     const delay = window.setInterval(fetchCallList, 1000);
     return () => clearInterval(delay);
   }, []);
 
-  const fetchCallList = async (record: CallInfo) => {
+  const fetchCallList = async () => {
     try {
       const response = await axios({
         method: "get",
@@ -170,7 +212,7 @@ const CallListComponent = (callInfo: CallInfo) => {
           Authorization: `Bearer ${LoginHelper.getToken()}`
         },
         params: {
-          acErrandDate: "2021-07-23"
+          acErrandDate: moment().format("YYYY-MM-DD")
         }
       });
       const astErrand = response.data.astErrand as any[];
@@ -215,9 +257,6 @@ const CallListComponent = (callInfo: CallInfo) => {
 
   const TableList = (callInfo: CallInfo) => {
     const className: any = [];
-
-    let a = JSON.stringify(callInfo);
-    setTest(a);
 
     if (Number(callInfo.ucDeliStatus) === 1) {
       className.push("deli-status-temp");
@@ -289,11 +328,11 @@ const CallListComponent = (callInfo: CallInfo) => {
     setIsCheckedCancel(!isCheckedCancel);
   };
 
-  const CallOk = (data: boolean) => {
+  const CallOk = () => {
     setIsModalVisible(false);
   };
 
-  const CallCancel = (data: boolean) => {
+  const CallCancel = () => {
     setIsModalVisible(false);
   };
   return (
@@ -353,15 +392,22 @@ const CallListComponent = (callInfo: CallInfo) => {
         size="small"
         scroll={{ y: 650 }}
         rowClassName={TableList}
-        onRow={() => {
+        onRow={(callInfo: CallInfo) => {
           return {
             onClick: () => {
               setIsModalVisible(true);
+              setSelectCall(callInfo);
+              setCallInfo(callInfo);
             }
           };
         }}
       />
-      <CallListModal visible={isModalVisible} onOk={CallOk} onCancel={CallCancel} callInfo={test} />
+      <CallListModal
+        visible={isModalVisible}
+        onOk={CallOk}
+        onCancel={CallCancel}
+        callInfo={callInfo}
+      />
     </>
   );
 };

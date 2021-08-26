@@ -9,6 +9,9 @@ import RiderSettlementList from "./RiderSettlementList";
 import { RiderInfo } from "../shop/types";
 import XLSX from "xlsx";
 import styled from "styled-components";
+import moment from "moment";
+import { callFormat } from "src/util/FormatUtil";
+import SelectPage from "../Layout/SelectPage";
 
 const columns = [
   {
@@ -18,9 +21,10 @@ const columns = [
   },
   {
     title: "콜수",
-    dataIndex: "usMonthDoneCallSum",
-    key: "usMonthDoneCallSum",
-    width: 80
+    dataIndex: "usDayDoneErrandSum",
+    key: "usDayDoneErrandSum",
+    width: 80,
+    render: (call: number) => callFormat(call)
   }
 ];
 
@@ -28,8 +32,14 @@ const { RangePicker } = DatePicker;
 
 const RiderSettlement = (props: RiderInfo) => {
   const [astManageRider, setAstManageRider] = useState<RiderInfo[]>([]);
-  const [selectedRider, setSelectedRider] = useState(false);
-  const [riderInfoData, setRiderInfoData] = useState("");
+  const [selectedRider, setSelectedRider] = useState<RiderInfo | undefined>(undefined);
+  const [acStartDate, setAcStartDate] = useState<moment.Moment>(moment().startOf("month"));
+  const [acEndDate, setAcEndDate] = useState<moment.Moment>(moment());
+
+  const handleChangeDateRange = val => {
+    setAcStartDate(val[0]);
+    setAcEndDate(val[1]);
+  };
   const fetchRiderList = async () => {
     try {
       const response = await axios({
@@ -84,13 +94,16 @@ const RiderSettlement = (props: RiderInfo) => {
 
   const SettlementList = (record: any) => {
     let content;
-    let riderInfo = new Array();
-    riderInfo = record;
-    console.log(riderInfo);
-    if (selectedRider === false) {
+    if (!selectedRider) {
       content = <Content>기사를 선택하세요.</Content>;
     } else {
-      content = <RiderSettlementList riderInfo={riderInfo} />;
+      content = (
+        <RiderSettlementList
+          riderInfo={selectedRider}
+          acStartDate={acStartDate}
+          acEndDate={acEndDate}
+        />
+      );
     }
 
     return (
@@ -108,6 +121,7 @@ const RiderSettlement = (props: RiderInfo) => {
     <>
       <Header />
       <PageHeader />
+      <SelectPage />
       <Row>
         {SettlementList(astManageRider)}
         <Col span={4} pull={20}>
@@ -115,7 +129,11 @@ const RiderSettlement = (props: RiderInfo) => {
             <div style={{ textAlign: "center" }}>
               <b>조회기간</b>
             </div>
-            <RangePicker style={{ width: "100%" }} />
+            <RangePicker
+              style={{ width: "100%" }}
+              value={[acStartDate, acEndDate]}
+              onChange={handleChangeDateRange}
+            />
             <Button style={{ width: "100%" }} onClick={riderXlsx}>
               다운로드
             </Button>
@@ -128,8 +146,7 @@ const RiderSettlement = (props: RiderInfo) => {
             onRow={(record: RiderInfo) => {
               return {
                 onClick: () => {
-                  setSelectedRider(true);
-                  setRiderInfoData(JSON.stringify(record));
+                  setSelectedRider(record);
                 }
               };
             }}

@@ -2,10 +2,8 @@
 
 import React from "react";
 import Header from "../Layout/Header";
-import { Button, DatePicker, Descriptions } from "antd";
+import { Button, Calendar, Col, DatePicker, Descriptions, Row } from "antd";
 import { Link } from "react-router-dom";
-
-import "./DistributorStatistics.css";
 
 const DistributorStatistics = () => {
   function onChange(date, dateString) {
@@ -15,9 +13,12 @@ const DistributorStatistics = () => {
   return (
     <>
       <Header />
+      <Row>
+        <Col span={4} pull={20}></Col>
+      </Row>
       <div>
-        <span style={{ float: "left", width: "400px" }}>
-          <DatePicker onChange={onChange} picker="year" />
+        <span style={{ float: "left", width: "400px", paddingLeft: "10px" }}>
+          년도 : <DatePicker onChange={onChange} picker="year" />
         </span>
         <span style={{ float: "right" }}>
           <Button key="3">

@@ -2,10 +2,19 @@
 import * as React from "react";
 import { FC, useEffect, useState } from "react";
 import { Col, Descriptions, Table, Button } from "antd";
-import { costFormat } from "../../util/FormatUtil";
+import { callFormat, costFormat } from "../../util/FormatUtil";
+import { ShopInfo } from "./types";
+import axios from "axios";
+import LoginHelper from "src/pages/shared/LoginHelper";
+import { CircularProgress } from "@material-ui/core";
+import ShopDaily from "src/dto/ShopDaily";
+import ShopDailyTotal from "src/dto/ShopDailyTotal";
+import DateUtil from "src/util/DateUtil";
 
 interface Props {
-  shopInfo: any;
+  shopInfo: ShopInfo;
+  acStartDate: moment.Moment;
+  acEndDate: moment.Moment;
 }
 
 const columns = [
@@ -13,7 +22,10 @@ const columns = [
     title: "영업일",
     dataIndex: "acBizDate",
     key: "acBizDate",
-    width: 100
+    width: 100,
+    render: date => {
+      return DateUtil.formatShortDate(date);
+    }
   },
   {
     title: "배달",
@@ -22,8 +34,6 @@ const columns = [
         title: "콜수",
         dataIndex: "usDayDoneCallSum",
         key: "usDayDoneCallSum",
-        // dataIndex: 'usMonthDeliDoneCntSum',
-        // key: 'usMonthDeliDoneCntSum',
         width: 60,
         render: (cost: number) => costFormat(cost)
       },
@@ -111,32 +121,93 @@ const columns = [
   }
 ];
 
-const ShopSettlementList: FC<Props> = ({ shopInfo }) => {
-  useEffect(() => {});
+const ShopSettlementList: FC<Props> = ({ shopInfo, acStartDate, acEndDate }) => {
+  const [astShopDaily, setAstShopDaily] = useState<ShopDaily[]>([]);
+  const [stShopDailyTotal, setStShopDailyTotal] = useState<ShopDailyTotal | undefined>();
+
+  useEffect(() => {
+    if (shopInfo && acStartDate) {
+      getShopSettlementDetail();
+    }
+  }, [shopInfo, acStartDate, acEndDate]);
+
+  const getShopSettlementDetail = async () => {
+    try {
+      const response = await axios({
+        method: "get",
+        url: "https://api.roadvoy.net/shared/shop/settlement/detail/index.php",
+        headers: {
+          Authorization: `Bearer ${LoginHelper.getToken()}`
+        },
+        params: {
+          ucAreaNo: shopInfo.ucAreaNo,
+          ucDistribId: shopInfo.ucDistribId,
+          ucAgencyId: shopInfo.ucAgencyId,
+          ucMemCourId: shopInfo.ucMemCourId,
+          acStartDate: acStartDate.format("YYYY-MM-DD"),
+          acEndDate: acEndDate.format("YYYY-MM-DD")
+        }
+      });
+
+      const { data } = response;
+
+      setAstShopDaily(data.lstFranchiseDaily);
+      setStShopDailyTotal(data.stFranchiseDailyTotal);
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.data && error.response.data.msg) {
+        throw new Error(error.response.data.msg);
+      } else {
+        throw new Error("서버에서 응답을 받지 못했습니다.");
+      }
+    }
+  };
+
+  if (!astShopDaily || !stShopDailyTotal) {
+    return <CircularProgress title="로딩중" />;
+  }
   return (
     <div>
       <Col>
         <div>
-          <span style={{ float: "left" }}>가맹명</span>
+          <span style={{ float: "left" }}>{shopInfo.acCompany}</span>
           <Button>다운로드</Button>
         </div>
         <Descriptions bordered column={{ xxl: 5, xl: 4, lg: 4, md: 3, sm: 2, xs: 1 }} size="small">
-          <Descriptions.Item label="배달콜수">0콜</Descriptions.Item>
-          <Descriptions.Item label="배달비">0원</Descriptions.Item>
-          <Descriptions.Item label="콜당수수료">0원</Descriptions.Item>
-          <Descriptions.Item label="현금→카드 송금 ">0원</Descriptions.Item>
-          <Descriptions.Item label="카드→현금 입금">0원</Descriptions.Item>
-          <Descriptions.Item label="기사가 캐시입금">0원</Descriptions.Item>
-          <Descriptions.Item label="캐시 관리자 직권회수">0원</Descriptions.Item>
-          <Descriptions.Item label="가상계좌 입금">0원</Descriptions.Item>
-          <Descriptions.Item label="가상계좌 수수료">0원</Descriptions.Item>
+          <Descriptions.Item label="배달콜수">
+            {callFormat(stShopDailyTotal.usDayDoneCallSum)}
+          </Descriptions.Item>
+          <Descriptions.Item label="배달비">
+            {costFormat(stShopDailyTotal.ulDayTotalDeliFee)}
+          </Descriptions.Item>
+          <Descriptions.Item label="콜당수수료">
+            {costFormat(stShopDailyTotal.ulDayCallCntFee)}
+          </Descriptions.Item>
+          <Descriptions.Item label="현금→카드 송금 ">
+            {costFormat(stShopDailyTotal.ulSubstituteRefund)}
+          </Descriptions.Item>
+          <Descriptions.Item label="카드→현금 입금">
+            {costFormat(stShopDailyTotal.ulSubstituteInput)}
+          </Descriptions.Item>
+          <Descriptions.Item label="기사가 캐시입금">
+            {costFormat(stShopDailyTotal.ulSubstituteDeposit)}
+          </Descriptions.Item>
+          <Descriptions.Item label="캐시 관리자 직권회수">
+            {costFormat(stShopDailyTotal.ulSubstituteCashMinusByManager)}
+          </Descriptions.Item>
+          <Descriptions.Item label="가상계좌 입금">
+            {costFormat(stShopDailyTotal.ulVirBankDeposit)}
+          </Descriptions.Item>
+          <Descriptions.Item label="가상계좌 수수료">
+            {costFormat(stShopDailyTotal.ulVirBankFee)}
+          </Descriptions.Item>
         </Descriptions>
       </Col>
 
       <Col>
         <Table
           columns={columns}
-          dataSource={shopInfo}
+          dataSource={astShopDaily}
           bordered
           pagination={false}
           size="small"

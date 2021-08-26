@@ -10,12 +10,14 @@ import LoginHelper from "src/pages/shared/LoginHelper";
 import RiderSignupModal from "../rider/RiderSignupModal";
 import ShopSignupModal from "../shop/shopSignupModal";
 import DistributorSignUpModal from "../Distributor/DistributorSignUpModal";
+import AgencySiginupModal from "../AgencySettlement/AgencySiginupModal";
 
 const { SubMenu } = Menu;
 const Header = () => {
   const [isModalRiderVisible, setIsModalRiderVisible] = useState(false);
   const [isModalShopVisible, setIsModalShopVisible] = useState(false);
   const [isModalDistributorVisible, setIsModalDistributorVisible] = useState(false);
+  const [isModalAgencySiginupModal, setIsModalAgencySiginupModal] = useState(false);
 
   window.onkeydown = e => {
     if (e.key === "F2") {
@@ -39,6 +41,10 @@ const Header = () => {
     setIsModalDistributorVisible(true);
   };
 
+  const showModalAgency = () => {
+    setIsModalAgencySiginupModal(true);
+  };
+
   const RiderCancelData = (data: boolean) => {
     console.log(data);
     setIsModalRiderVisible(false);
@@ -48,6 +54,9 @@ const Header = () => {
   };
   const DistributorCancelData = (data: boolean) => {
     setIsModalDistributorVisible(false);
+  };
+  const AgencyCancelData = (data: boolean) => {
+    setIsModalAgencySiginupModal(false);
   };
 
   const RiderOkData = (data: boolean) => {
@@ -59,6 +68,10 @@ const Header = () => {
   };
   const DistributorOkData = (data: boolean) => {
     setIsModalDistributorVisible(false);
+  };
+
+  const AgencyOkData = (data: boolean) => {
+    setIsModalAgencySiginupModal(false);
   };
 
   const OnCallRegister = () => {
@@ -131,7 +144,9 @@ const Header = () => {
         <NavLink to="/AgencySettlement">대행정산</NavLink>
       </Menu.Item>
       <Menu.Item key="2">
-        <a href="void">대행등록</a>
+        <a href="void:0" onClick={showModalAgency}>
+          대행등록
+        </a>
       </Menu.Item>
     </Menu>
   );
@@ -142,10 +157,10 @@ const Header = () => {
         <NavLink to="/Distributor">총판조회</NavLink>
       </Menu.Item>
       <Menu.Item key="1">
-        <NavLink to="/DistributorStatistics">총판통계</NavLink>
+        <NavLink to="/CallQuantity">총판통계</NavLink>
       </Menu.Item>
       <Menu.Item key="2">
-        <NavLink to="#">총판정산</NavLink>
+        <NavLink to="/DistributorSettlement">총판정산</NavLink>
       </Menu.Item>
       <Menu.Item key="3">
         <a href="void:0" onClick={ShowModalDistributor}>
@@ -158,7 +173,10 @@ const Header = () => {
   const HeadOffice = (
     <Menu>
       <Menu.Item key="0">
-        <NavLink to="/HeadOffice">총판승인</NavLink>
+        <NavLink to="/DistributorApproval">총판승인</NavLink>
+      </Menu.Item>
+      <Menu.Item key="0">
+        <NavLink to="/HeadOffice">본사정산</NavLink>
       </Menu.Item>
     </Menu>
   );
@@ -236,6 +254,11 @@ const Header = () => {
         visible={isModalDistributorVisible}
         onOk={DistributorOkData}
         onCancel={DistributorCancelData}
+      />
+      <AgencySiginupModal
+        visible={isModalAgencySiginupModal}
+        onOk={AgencyOkData}
+        onCancel={AgencyOkData}
       />
     </header>
   );

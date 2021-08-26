@@ -1,71 +1,124 @@
 /* eslint-disable */
-import * as React from "react";
 import { useState, useEffect, FC } from "react";
-import { Row, Col, Button, Popconfirm, message } from "antd";
+import { Button, Popconfirm, message, Steps } from "antd";
 import styled from "styled-components";
 import Modal from "antd/lib/modal/Modal";
 import "./CallListModal.css";
 import { CallDetailShopTitle } from "./index";
 import { CallInfo } from "./CallListComponent";
+import { costFormat, getCellNoFormat, getDateFormat } from "src/util/FormatUtil";
+import axios from "axios";
+import LoginHelper from "src/pages/shared/LoginHelper";
+import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
+import CallTimeLine from "./CallTimeLine";
+import CallModify from "./CallModify";
 
+const { Step } = Steps;
 interface Props {
   visible: boolean | undefined;
-  onOk: any;
-  onCancel: any;
-  callInfo: any;
+  onOk: () => void;
+  onCancel: () => void;
+  callInfo: CallInfo | undefined;
 }
-const CallListModal: FC<Props> = props => {
+const CallListModal: FC<Props> = (props: Props) => {
+  const { visible, onOk, onCancel, callInfo } = props;
   const [isModalVisible, setIsModalVisible] = useState(false);
-
-  useEffect(() => {
-    console.log(props.callInfo);
-  }, []);
+  const [callModalInfo, setCallModalInfo] = useState<CallInfo | undefined>(undefined);
 
   const handleCancel = () => {
-    setIsModalVisible(false);
-    props.onCancel(isModalVisible);
+    onCancel();
   };
   const handleOk = () => {
+    onOk();
+  };
+
+  const CallOk = () => {
     setIsModalVisible(false);
-    props.onOk(isModalVisible);
   };
 
-  const handleClickCancelErrand = () => {
-    // if (props.callInfo.ucDeliStatus !== 64) {
-    // }
-    console.log(props.callInfo.ucDeliStatus);
-
-    props.onCancel(isModalVisible);
-    message.success("배차가 취소되었습니다.");
+  const CallCancel = () => {
+    setIsModalVisible(false);
   };
+
+  const handleClickCancelErrand = async () => {
+    const form = new FormData();
+
+    form.append("ulErrandSeqNo", String(props.callInfo!!.ulErrandSeqNo));
+    try {
+      const response = await axios({
+        method: "post",
+        url: "https://api.roadvoy.net/agency/errand/cancel.php",
+        data: form,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${LoginHelper.getToken()}`
+        }
+      });
+      console.log(response);
+      message.success("배차가 취소되었습니다.");
+    } catch (e) {
+      message.error(e.message);
+    }
+  };
+
+  if (!callInfo) {
+    return <></>;
+  }
+
+  console.log(callInfo);
 
   return (
     <>
-      <Modal title="콜 상세" visible={props.visible} onCancel={handleCancel} onOk={handleOk}>
+      <Modal title="콜 상세" visible={visible} onCancel={handleCancel} onOk={handleOk}>
         <div>
           <div style={{ marginBottom: "10px" }}>
-            <CallDetailModalShopName>{props.callInfo.acDestCompany}</CallDetailModalShopName>
-            <p>주문시간: {}</p>
-            <p>조리시간: </p>
-            <p>상점연락처: </p>
+            <CallDetailModalShopName>{callInfo.acDestCompany}</CallDetailModalShopName>
+            <p>주문시간: {callInfo.acOrderDateTime}</p>
+            <p>상점연락처: {getCellNoFormat(callInfo.acOriginCellNo)}</p>
           </div>
-          <CallDetailShopTitle title="기사" value="" />
-          <CallDetailShopTitle title="배달비" value="ㅁㄴㅇㅁㄴㅇ" />
-          <CallDetailShopTitle title="결제정보" value="ㅁㄴㅇㅁㅇ" />
-          <CallDetailShopTitle title="고객연락처" value="123131" />
-          <CallDetailShopTitle title="고객요청사항" value="123131321" />
-          <CallDetailShopTitle title="배달주소" value="1231312" />
+          <div style={{ marginBottom: "10px" }}>
+            <CallDetailShopTitle title="기사" value={callInfo.acCourPresident} />
+            <CallDetailShopTitle title="배달비" value={costFormat(callInfo.ulErrandCharge)} />
+            <CallDetailShopTitle title="결제정보" value={costFormat(callInfo.ulGoodsPrice)} />
+            <CallDetailShopTitle
+              title="고객연락처"
+              value={getCellNoFormat(callInfo.acDestCellNo)}
+            />
+            <CallDetailShopTitle title="고객요청사항" value={callInfo.acOriginMemo} />
+            <CallDetailShopTitle
+              title="배달주소"
+              value={`${callInfo.acDestOldAddr} ${callInfo.acDestAddrDesc}`}
+            />
+            <AddressDaumMapComponent callInfo={callInfo} key={callInfo.ulErrandSeqNo} />
+          </div>
         </div>
-        <Button>콜 수정</Button>
+        <CallTimeLine callInfo={callInfo} />
+        <Button
+          onClick={() => {
+            setIsModalVisible(true);
+            setCallModalInfo(callInfo);
+          }}
+        >
+          콜 수정
+        </Button>
+        <Button type="ghost">배차 취소 </Button>
         <Popconfirm
           title="정말 콜을 취소하시겠습니까?"
           onConfirm={handleClickCancelErrand}
           okText="네"
           cancelText="아니요"
         >
-          <Button type="ghost">콜 취소 </Button>
+          <Button type="primary" danger>
+            콜 취소
+          </Button>
         </Popconfirm>
       </Modal>
+      <CallModify
+        visible={isModalVisible}
+        onOk={CallOk}
+        onCancel={CallCancel}
+        callInfo={callModalInfo}
+      />
     </>
   );
 };

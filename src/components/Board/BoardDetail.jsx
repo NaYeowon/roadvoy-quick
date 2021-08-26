@@ -8,7 +8,7 @@ import Header from "../Layout/Header";
 const BoardDetail = () => {
   const history = useHistory();
 
-  const onCancle = () => {
+  const onCancel = () => {
     history.goBack();
   };
   return (
@@ -23,7 +23,7 @@ const BoardDetail = () => {
           <Descriptions.Item label="내용" span={3} rows={8} />
         </Descriptions>
         <div style={{ textAlign: "center", paddingTop: "10px" }}>
-          <Button onClick={onCancle}>목록</Button>
+          <Button onClick={onCancel}>목록</Button>
           <Button>수정</Button>
           <Button>삭제</Button>
         </div>

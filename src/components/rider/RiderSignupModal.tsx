@@ -7,11 +7,20 @@ import axios from "axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import "./RiderSettlementList.css";
 import Checkbox from "antd/lib/checkbox/Checkbox";
+import { RiderInfo } from "../shop/types";
 
 const { Option } = Select;
 
-const RiderSignupModal = props => {
-  const [visible, setVisible] = useState(true);
+interface Props {
+  visible: boolean | undefined;
+  onOk: any;
+  onCancel: any;
+  //riderInfo: RiderInfo | undefined
+}
+
+const RiderSignupModal = (props: Props) => {
+  const { visible, onCancel, onOk } = props;
+  const [isModalVisible, setIsModalVisible] = useState(true);
 
   const [acUserId, setAcUserId] = useState("");
   const [acPresident, setAcPresident] = useState("");
@@ -31,19 +40,19 @@ const RiderSignupModal = props => {
   const [acResRegNo, setAcResRegNo] = useState("");
 
   const handleOk = e => {
-    setVisible(false);
+    setIsModalVisible(false);
     e.preventDefault();
     onInitail();
 
-    props.onOk(visible);
+    props.onOk();
   };
 
   const handleCancel = e => {
-    setVisible(false);
+    setIsModalVisible(false);
     e.preventDefault();
     onInitail();
 
-    props.onOk(visible);
+    props.onOk();
   };
 
   const onInitail = () => {
@@ -73,13 +82,14 @@ const RiderSignupModal = props => {
     form.append("acPassword", acPassword);
     form.append("acCellNo", acCellNo);
     form.append("acteamName", acteamName);
-    form.append("usBankCode", Number(usBankCode));
-    form.append("acBankAccount", Number(acBankAccount));
+    //form.append("usBankCode", Number(usBankCode));
+    form.append("usBankCode", usBankCode);
+    form.append("acBankAccount", String(acBankAccount));
     form.append("acWithdrawPassword", acWithdrawPassword);
-    form.append("ucCourierTag", Number(ucCourierTag));
+    form.append("ucCourierTag", String(ucCourierTag));
     form.append("lCourierLease", lCourierLease);
-    form.append("lCourierDeposit", Number(lCourierDeposit));
-    form.append("lCallUnitPrice", Number(lCallUnitPrice));
+    form.append("lCourierDeposit", String(lCourierDeposit));
+    form.append("lCallUnitPrice", String(lCallUnitPrice));
     form.append("cManagerFlag", cManagerFlag ? "Y" : "N");
     form.append("conCallLimit", conCallLimit);
     form.append("acName", acName);
@@ -96,8 +106,8 @@ const RiderSignupModal = props => {
         }
       });
       onInitail();
-      setVisible(false);
-      props.onOk(visible);
+      setIsModalVisible(false);
+      props.onOk();
       console.log(response);
     } catch (e) {
       message.error(e.message);
@@ -105,7 +115,7 @@ const RiderSignupModal = props => {
   };
   return (
     <>
-      <Modal width="700px" visible={props.visible} onOk={handleOk} onCancel={handleCancel}>
+      <Modal width="700px" visible={visible} onOk={handleOk} onCancel={handleCancel}>
         <div style={{ maxWidth: "700px", margin: "0 auto", paddingTop: "50px" }}>
           <div style={{ textAlign: "center" }}>
             <h2>기사등록</h2>
@@ -128,7 +138,7 @@ const RiderSignupModal = props => {
 
                 <Row justify="center" gutter={[16, 48]}>
                   <Col span={4}>
-                    <label>이름&nbsp;:</label>
+                    <label>이름&nbsp;: </label>
                   </Col>
                   <Col span={8}>
                     <Input
@@ -190,7 +200,7 @@ const RiderSignupModal = props => {
                   </Col>
                   <Col span={8}>
                     <Select
-                      name="acBankAccount"
+                      //name="acBankAccount"
                       value={acBankAccount}
                       onChange={e => setAcBankAccount(e)}
                       style={{ width: "100%" }}
@@ -237,7 +247,7 @@ const RiderSignupModal = props => {
                   </Col>
                   <Col span={4}>
                     <Select
-                      name="ucCourierTag"
+                      //name="ucCourierTag"
                       value={ucCourierTag}
                       onChange={e => {
                         setUcCourierTag(e);
@@ -303,8 +313,8 @@ const RiderSignupModal = props => {
                     &nbsp;&nbsp;<label>관리자모드&nbsp;:</label>&nbsp;&nbsp;
                     <Checkbox
                       name="cManagerFlag"
-                      onChange={e => setCManagerFlag(e.target.checked)}
-                      checked={cManagerFlag}
+                      // onChange={(e) => setCManagerFlag(e.target.checked)}
+                      // checked={cManagerFlag}
                     />
                     {/* antd Checkbox */}
                   </Col>

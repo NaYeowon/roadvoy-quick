@@ -12,20 +12,28 @@ import MemberHelper from "src/helpers/MemberHelper";
 
 import { costFormat } from "../../util/FormatUtil";
 import LoginHelper from "../../pages/shared/LoginHelper";
+import SelectPage from "../Layout/SelectPage";
+import RiderSignupModal from "./RiderSignupModal";
+import { RiderInfo } from "../shop/types";
+import RiderDetail from "./RiderDetail";
 
-interface Rider {
-  title: string;
-  dataIndex: string;
-  width: number;
-}
-const columns: ColumnsType<Rider> = [
+// interface Rider {
+//   title: string;
+//   dataIndex: string;
+//   width: number;
+
+//   visible: any;
+//   onOk: any;
+//   onCancle: any;
+// }
+const columns: ColumnsType<RiderInfo> = [
   {
     title: "계정정보",
     children: [
       {
         title: "아이디",
         dataIndex: "ucMemCourId",
-        render: (text: string, record: Rider) => `${MemberHelper.formatMemberId(record)}`,
+        render: (text: string, record: RiderInfo) => `${MemberHelper.formatMemberId(record)}`,
         width: 120
       },
       {
@@ -124,7 +132,18 @@ const columns: ColumnsType<Rider> = [
 ];
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const Rider = () => {
-  const [astManageRider, setAstManageRider] = useState<Rider[]>([]);
+  const [astManageRider, setAstManageRider] = useState<RiderInfo[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectRider, setSelectRider] = useState<RiderInfo | undefined>(undefined);
+  const [RiderInfo, setRiderInfo] = useState<RiderInfo | undefined>(undefined);
+
+  const okHandle = () => {
+    setIsModalVisible(false);
+  };
+
+  const cancelHandle = () => {
+    setIsModalVisible(false);
+  };
   const fetchRiderList = async () => {
     try {
       const response = await axios({
@@ -166,13 +185,9 @@ const Rider = () => {
         <span>
           <b>{astManageRider?.length}</b>개의 기사가 등록 되어있습니다.
         </span>
+
         <span style={{ float: "right" }}>
-          {/* <Link to='#'>
-                    <Button>기사별정산</Button>
-                </Link>
-                <Link to='#'>
-                    <Button>기사등록</Button>
-                </Link> */}
+          <SelectPage />
         </span>
       </PageHeader>
       <Table
@@ -182,8 +197,22 @@ const Rider = () => {
         pagination={false}
         size="small"
         scroll={{ y: 650 }}
+        onRow={(riderInfo: RiderInfo) => {
+          return {
+            onClick: () => {
+              setIsModalVisible(true);
+              setSelectRider(riderInfo);
+              setRiderInfo(riderInfo);
+            }
+          };
+        }}
       />
-      ,
+      <RiderDetail
+        visible={isModalVisible}
+        onCancel={cancelHandle}
+        onOk={okHandle}
+        riderInfo={selectRider}
+      />
     </div>
   );
 };
