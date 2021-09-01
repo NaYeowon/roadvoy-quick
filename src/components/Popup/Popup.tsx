@@ -20,8 +20,6 @@ import Stopover from "./Stopover";
 import { RiderInfo } from "../shop/types";
 import ErrandAllocType from "src/helpers/ErrandAllocType";
 import AddressAPIService from "src/util/kakao";
-import DistanceHelper from "src/helpers/DistanceHelper";
-import PreferenceHelper from "src/helpers/PreferenceHelper";
 
 interface Props {
   callInfo: CallInfo | undefined;
