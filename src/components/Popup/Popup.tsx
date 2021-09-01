@@ -20,6 +20,7 @@ import Stopover from "./Stopover";
 import { RiderInfo } from "../shop/types";
 import ErrandAllocType from "src/helpers/ErrandAllocType";
 import AddressAPIService from "src/util/kakao";
+import DistanceHelper from "src/helpers/DistanceHelper";
 
 interface Props {
   callInfo: CallInfo | undefined;
@@ -140,26 +141,6 @@ const Popup = (props: Props) => {
     [!isDaumPost2]
   );
 
-  // const LimitTime = ({ time }) => (
-  //   <LeftAlignedCol span={8}>
-  //     <Radio value={time}>{time}</Radio>
-  //   </LeftAlignedCol>
-  // );
-
-  // const LimitTimes = [
-  //   "즉시",
-  //   "5분",
-  //   "15분",
-  //   "10분",
-  //   "20분",
-  //   "30분",
-  //   "40분",
-  //   "50분",
-  //   "60분",
-  //   "90분",
-  //   "120분"
-  // ];
-
   const [acOriginCompany, setAcOriginCompany] = useState("");
   const [acOriginCellNo, setAcOriginCellNo] = useState("");
   const [acOriginMemo, setAcOriginMemo] = useState("");
@@ -278,14 +259,6 @@ const Popup = (props: Props) => {
     setAcDestMemo(acOriginMemo);
   };
 
-  // const _renderDispatchedRider = (): JSX.Element => {
-  //   if (!stForceDispatchRider) {
-  //     return <></>;
-  //   }
-
-  //   return <span>{stForceDispatchRider!!.acPresident}</span>;
-  // };
-
   const handleClickCancelSelectDispatchRider = () => {
     setUcAllocType(ErrandAllocType.NORMAL), setStForceDispatchRider(null);
   };
@@ -300,22 +273,23 @@ const Popup = (props: Props) => {
     );
   }
 
-  // let originToDestDistance;
-  // if (ulOriginLatiPos !== 0 && ucErrandType !== ErrandType.SAME && ulDestLatiPos !== 0) {
-  //   originToDestDistance = DistanceHelper.getDistanceText(
-  //     ulOriginLatiPos,
-  //     ulOriginLongPos,
-  //     ulDestLatiPos,
-  //     ulDestLongPos
-  //   );
+  // TypeError: Cannot read property 'getDistance' of undefined
+  let originToDestDistance;
+  if (ulOriginLatiPos !== 0 && ucErrandType !== ErrandType.SAME && ulDestLatiPos !== 0) {
+    originToDestDistance = DistanceHelper.getDistanceText(
+      ulOriginLatiPos,
+      ulOriginLongPos,
+      ulDestLatiPos,
+      ulDestLongPos
+    );
 
-  //   const distance = DistanceHelper.getDistance(
-  //     ulOriginLatiPos,
-  //     ulOriginLongPos,
-  //     ulDestLatiPos,
-  //     ulDestLongPos
-  //   );
-  // }
+    const distance = DistanceHelper.getDistance(
+      ulOriginLatiPos,
+      ulOriginLongPos,
+      ulDestLatiPos,
+      ulDestLongPos
+    );
+  }
   return (
     <>
       <Row style={{ borderBottom: "1px solid #f5f5f5" }}>
@@ -503,7 +477,7 @@ const Popup = (props: Props) => {
               />
             </Form.Item>
 
-            <Form.Item label="픽업 ↔ 목적지"></Form.Item>
+            <Form.Item label="픽업 ↔ 목적지">{originToDestDistance}</Form.Item>
           </Form>
         </Col>
         <Col span={12} pull={1}>
@@ -555,11 +529,6 @@ const Popup = (props: Props) => {
                     <Radio value={120}>120분</Radio>
                   </LeftAlignedCol>
                 </Row>
-                {/* <Row>
-                  {LimitTimes.map((limitTime, index) => (
-                    <LimitTime key={index} time={limitTime} />
-                  ))}
-                </Row> */}
               </Radio.Group>
             </Form.Item>
 
