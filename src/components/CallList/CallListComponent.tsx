@@ -16,6 +16,16 @@ import ErrandType from "src/helpers/ErrandType";
 import CallListModal from "./CallListModal";
 
 export interface CallInfo {
+  acErrandDate: string;
+  ucAreaNo: string;
+  ucDistribId: string;
+  ucAgencyId: string;
+  ucMemCourId: string;
+  acTradeDate: string;
+  ulTradeSeqNo: string;
+
+  ulErrandDispatchAgencyFee: number;
+  acCourCellNo: string;
   acOriginCompany: string;
   acDestMemo: string;
   ulErrandFeeAmount: number;
@@ -70,11 +80,11 @@ export interface CallInfo {
 const columns: ColumnsType<CallInfo> = [
   {
     title: "상점명",
-    dataIndex: "acDestCompany",
-    key: "acDestCompany",
+    dataIndex: "acOriginCompany",
+    key: "acOriginCompany",
     className: "deli-status",
     width: 120,
-    render: (text: string, record: CallInfo) => record.acDestCompany
+    render: (text: string, record: CallInfo) => record.acOriginCompany
   },
   {
     title: "접수",
