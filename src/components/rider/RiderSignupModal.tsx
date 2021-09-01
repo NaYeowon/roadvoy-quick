@@ -26,7 +26,7 @@ const RiderSignupModal = (props: Props) => {
   const [acPresident, setAcPresident] = useState("");
   const [acPassword, setAcPassword] = useState("");
   const [acCellNo, setAcCellNo] = useState("");
-  const [acteamName, setAcTeamName] = useState("");
+  const [acTeamName, setAcTeamName] = useState("");
   const [usBankCode, setUsBankCode] = useState("");
   const [acBankAccount, setAcBankAccount] = useState("");
   const [acWithdrawPassword, setAcWithdrawPassword] = useState("");
@@ -81,7 +81,7 @@ const RiderSignupModal = (props: Props) => {
     form.append("acPresident", acPresident);
     form.append("acPassword", acPassword);
     form.append("acCellNo", acCellNo);
-    form.append("acteamName", acteamName);
+    form.append("acTeamName", acTeamName);
     //form.append("usBankCode", Number(usBankCode));
     form.append("usBankCode", usBankCode);
     form.append("acBankAccount", String(acBankAccount));
@@ -187,7 +187,7 @@ const RiderSignupModal = (props: Props) => {
                   <Col span={8}>
                     <Input
                       name="acTeamName"
-                      value={acteamName}
+                      value={acTeamName}
                       onChange={e => {
                         setAcTeamName(e.target.value);
                       }}
