@@ -1,7 +1,9 @@
 /* eslint-disable */
 import * as React from "react";
+import "./CallSignPopup.css";
 import { useState, useCallback, useEffect } from "react";
-import { Form, Radio, Button, Input, Col, Row, message, Checkbox } from "antd";
+import { Form, Radio, Button, Input, Col, Row, message, Checkbox, Collapse } from "antd";
+import { CloseCircleTwoTone } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import DaumPostcode from "react-daum-postcode";
 import axios from "axios";
@@ -14,12 +16,18 @@ import ErrandFeeType from "src/helpers/ErrandFeeType";
 import ErrandType from "src/helpers/ErrandType";
 import { CallInfo } from "../CallList/CallListComponent";
 import DirectDispatch from "../CallList/DirectDispatch";
-import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
+import Stopover from "./Stopover";
+import { RiderInfo } from "../shop/types";
+import ErrandAllocType from "src/helpers/ErrandAllocType";
+import AddressAPIService from "src/util/kakao";
+import DistanceHelper from "src/helpers/DistanceHelper";
+import PreferenceHelper from "src/helpers/PreferenceHelper";
 
 interface Props {
   callInfo: CallInfo | undefined;
+  stForceDispatchRider: RiderInfo;
 }
-
+const { Panel } = Collapse;
 const { Search } = Input;
 const formItemLayout = {
   labelCol: {
@@ -50,6 +58,8 @@ const Popup = (props: Props) => {
 
   const [isDispatchListVisible, setIsDispatchListVisible] = useState(false);
 
+  const [stForceDispatchRider, setStForceDispatchRider] = useState<RiderInfo | null>(null);
+
   useEffect(() => {
     //console.log("useEffect");
     window.onkeydown = e => {
@@ -62,15 +72,17 @@ const Popup = (props: Props) => {
     };
   }, []);
 
-  const onFinish = values => {
-    //console.log("Received values of form: ", values);
-  };
-
-  const handleAddress = data => {
+  const handleAddress = async data => {
     let AllAddress = data.address;
     let extraAddress = "";
     const zoneCodes = data.zonecode;
 
+    const kakaos = await AddressAPIService.getAddressByKakaoAddress(data.address);
+    if (kakaos.length > 0) {
+      let kakao = kakaos[0];
+      setUlOriginLatiPos(kakao.y);
+      setUlOriginLongPos(kakao.x);
+    }
     if (data.addressType === "R") {
       if (data.bname !== "") {
         extraAddress += data.bname;
@@ -81,6 +93,7 @@ const Popup = (props: Props) => {
       AllAddress += extraAddress !== "" ? `(${extraAddress})` : "";
     }
     console.log(data);
+    console.log(ulOriginLatiPos);
 
     setFullAddress(AllAddress);
     setZoneCode(zoneCodes);
@@ -88,10 +101,16 @@ const Popup = (props: Props) => {
     setIsDaumPost(false);
   };
 
-  const handleAddress2 = data => {
+  const handleAddress2 = async data => {
     let AllAddress2 = data.address;
     let extraAddress2 = "";
     const zoneCodes2 = data.zonecode;
+    const kakaos = await AddressAPIService.getAddressByKakaoAddress(data.address);
+    if (kakaos.length > 0) {
+      let kakao = kakaos[0];
+      setUlDestLatiPos(kakao.y);
+      setUlDestLongPos(kakao.x);
+    }
 
     if (data.addressType === "R") {
       if (data.bname !== "") {
@@ -177,6 +196,7 @@ const Popup = (props: Props) => {
   const [ucAllocType, setUcAllocType] = useState(1);
   const [ucTripType, setUcTripType] = useState(0);
   const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState("");
+  const [ulErrandDispatchAgencyFee, setUlErrandDispatchAgencyFee] = useState("");
 
   const CallSign = async () => {
     const form = new FormData();
@@ -216,6 +236,14 @@ const Popup = (props: Props) => {
     form.append("ucAllocType", String(ucAllocType));
     form.append("ucTripType", String(ucTripType));
     form.append("ulErrandFeeAgency", String(ulErrandFeeAgency));
+    form.append("ulErrandDispatchAgencyFee", String(ulErrandDispatchAgencyFee));
+
+    if (ucAllocType === ErrandAllocType.FORCE_DISPATCH && stForceDispatchRider) {
+      form.append("ucAcptAreaNo", String(stForceDispatchRider.ucAreaNo));
+      form.append("ucAcptDistribId", String(stForceDispatchRider.ucDistribId));
+      form.append("ucAcptAgencyId", String(stForceDispatchRider.ucAgencyId));
+      form.append("ucAcptMemCourId", String(stForceDispatchRider.ucMemCourId));
+    }
 
     try {
       const response = await axios({
@@ -233,19 +261,73 @@ const Popup = (props: Props) => {
       message.error(e.message);
     }
   };
-  // material-ui
-  // antd
 
-  // material-ui
+  const handleClickSwap = () => {
+    setAcOriginCompany(acDestCompany);
+    setAcOriginCellNo(acDestCellNo);
+    setAcOriginOldAddr(acDestOldAddr);
+    setAcOriginNewAddr(acDestNewAddr);
+    setFullAddress(fullAddress2);
+    setAcOriginAddrDesc(acDestAddrDesc);
+    setAcOriginMemo(acDestMemo);
 
+    setAcDestCompany(acOriginCompany);
+    setAcDestCellNo(acOriginCellNo);
+    setAcDestOldAddr(acOriginOldAddr);
+    setAcDestNewAddr(acOriginNewAddr);
+    setFullAddress2(fullAddress);
+    setAcDestAddrDesc(acOriginAddrDesc);
+    setAcDestMemo(acOriginMemo);
+  };
+
+  // const _renderDispatchedRider = (): JSX.Element => {
+  //   if (!stForceDispatchRider) {
+  //     return <></>;
+  //   }
+
+  //   return <span>{stForceDispatchRider!!.acPresident}</span>;
+  // };
+
+  const handleClickCancelSelectDispatchRider = () => {
+    setUcAllocType(ErrandAllocType.NORMAL), setStForceDispatchRider(null);
+  };
+
+  let forceAllocRiderBody;
+  if (stForceDispatchRider) {
+    forceAllocRiderBody = (
+      <span onClick={handleClickCancelSelectDispatchRider}>
+        <span>{stForceDispatchRider.acPresident}</span>
+        <CloseCircleTwoTone twoToneColor="#ff0000" style={{ paddingLeft: "5px" }} />
+      </span>
+    );
+  }
+
+  // let originToDestDistance;
+  // if (ulOriginLatiPos !== 0 && ucErrandType !== ErrandType.SAME && ulDestLatiPos !== 0) {
+  //   originToDestDistance = DistanceHelper.getDistanceText(
+  //     ulOriginLatiPos,
+  //     ulOriginLongPos,
+  //     ulDestLatiPos,
+  //     ulDestLongPos
+  //   );
+
+  //   const distance = DistanceHelper.getDistance(
+  //     ulOriginLatiPos,
+  //     ulOriginLongPos,
+  //     ulDestLatiPos,
+  //     ulDestLongPos
+  //   );
+  // }
   return (
     <>
+      <Row style={{ borderBottom: "1px solid #f5f5f5" }}>
+        <TitleCol>심부름 접수</TitleCol>
+      </Row>
       <Row>
         <Col span={12}>
           <Form
             name="validate_other"
             {...formItemLayout}
-            onFinish={onFinish}
             initialValues={{
               "input-number": 3,
               "checkbox-group": ["A", "B"],
@@ -264,6 +346,9 @@ const Popup = (props: Props) => {
                   checked={ucErrandType === ErrandType.SAME}
                 />
                 바로목적지로
+                <Button style={{ left: "63px" }} onClick={handleClickSwap}>
+                  픽업지 ↔ 목적지
+                </Button>
               </Col>
             </Form.Item>
 
@@ -336,87 +421,97 @@ const Popup = (props: Props) => {
                 disabled={ucErrandType === ErrandType.SAME}
               />
             </Form.Item>
-            <div style={{ backgroundColor: "#fff280" }}>
-              <Form.Item label="목적지 업체명">
-                <Input
-                  placeholder="업체명을 입력하세요"
-                  name="acDestCompany"
-                  value={acDestCompany}
-                  onChange={e => {
-                    setAcDestCompany(e.target.value);
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item label="목적지 연락처">
-                <Input
-                  placeholder="연락처를 입력하세요"
-                  name="acDestCellNo"
-                  value={acDestCellNo}
-                  onChange={e => {
-                    setAcDestCellNo(e.target.value);
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item label="목적지 주소">
-                <Button
-                  type="primary"
-                  block
-                  onClick={() => handleOpenPost2(SearchAddressType.ERRAND_DEST)}
-                  style={{ width: "100%" }}
-                  name="acDestOldAddr"
-                  value={acDestOldAddr}
-                >
-                  주소검색
-                </Button>
-
-                {isDaumPost2 ? (
-                  <DaumPostcode
-                    onComplete={handleAddress2}
-                    autoClose
-                    width={595}
-                    height={450}
-                    style={modalStyle}
-                  />
-                ) : null}
-                <div>{fullAddress2}</div>
-              </Form.Item>
-
-              <Form.Item label="목적지 상세주소">
-                <Input
-                  placeholder="상세주소를 입력하세요"
-                  name="acDestAddrDesc"
-                  value={acDestAddrDesc}
-                  onChange={e => {
-                    setAcDestAddrDesc(e.target.value);
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item label="목적지 요청사항">
-                <TextArea
-                  rows={2}
-                  name="acDestMemo"
-                  onChange={e => {
-                    setAcDestMemo(e.target.value);
-                  }}
-                  value={acDestMemo}
-                />
-              </Form.Item>
+            <div style={{ textAlign: "center" }}>
+              <Collapse ghost>
+                <Panel header={<Button>경유지 추가 1</Button>} key="1" showArrow={false}>
+                  <Stopover />
+                </Panel>
+              </Collapse>
+              <Collapse ghost>
+                <Panel header={<Button>경유지 추가 2</Button>} key="2" showArrow={false}>
+                  <Stopover />
+                </Panel>
+              </Collapse>
+              <Collapse ghost>
+                <Panel header={<Button>경유지 추가 3</Button>} key="3" showArrow={false}>
+                  <Stopover />
+                </Panel>
+              </Collapse>
             </div>
-            <Form.Item label="픽업 ↔ 목적지">
-              <span>
-                <b />
-              </span>
+            <Form.Item label="목적지 업체명">
+              <Input
+                placeholder="업체명을 입력하세요"
+                name="acDestCompany"
+                value={acDestCompany}
+                onChange={e => {
+                  setAcDestCompany(e.target.value);
+                }}
+              />
             </Form.Item>
+            <Form.Item label="목적지 연락처">
+              <Input
+                placeholder="연락처를 입력하세요"
+                name="acDestCellNo"
+                value={acDestCellNo}
+                onChange={e => {
+                  setAcDestCellNo(e.target.value);
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item label="목적지 주소">
+              <Button
+                type="primary"
+                block
+                onClick={() => handleOpenPost2(SearchAddressType.ERRAND_DEST)}
+                style={{ width: "100%" }}
+                name="acDestOldAddr"
+                value={acDestOldAddr}
+              >
+                주소검색
+              </Button>
+
+              {isDaumPost2 ? (
+                <DaumPostcode
+                  onComplete={handleAddress2}
+                  autoClose
+                  width={595}
+                  height={450}
+                  style={modalStyle}
+                />
+              ) : null}
+              <div>{fullAddress2}</div>
+            </Form.Item>
+
+            <Form.Item label="목적지 상세주소">
+              <Input
+                placeholder="상세주소를 입력하세요"
+                name="acDestAddrDesc"
+                value={acDestAddrDesc}
+                onChange={e => {
+                  setAcDestAddrDesc(e.target.value);
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item label="목적지 요청사항">
+              <TextArea
+                rows={2}
+                name="acDestMemo"
+                onChange={e => {
+                  setAcDestMemo(e.target.value);
+                }}
+                value={acDestMemo}
+              />
+            </Form.Item>
+
+            <Form.Item label="픽업 ↔ 목적지"></Form.Item>
           </Form>
         </Col>
         <Col span={12} pull={1}>
           <Form
             name="validate_other"
             {...formItemLayout}
-            onFinish={onFinish}
             initialValues={{
               "input-number": 3,
               "checkbox-group": ["A", "B"],
@@ -575,13 +670,14 @@ const Popup = (props: Props) => {
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
                 type="number"
-                value={ulErrandFeeAgency}
-                name="ulErrandFeeAgency"
-                onChange={e => setUlErrandFeeAgency(e.target.value)}
+                value={ulErrandDispatchAgencyFee}
+                name="ulErrandDispatchAgencyFee"
+                onChange={e => setUlErrandDispatchAgencyFee(e.target.value)}
               />
             </Form.Item>
 
             <Form.Item label="직권배차">
+              {forceAllocRiderBody}
               <Button
                 type={isDispatchListVisible ? "ghost" : "primary"}
                 block
@@ -592,9 +688,20 @@ const Popup = (props: Props) => {
               >
                 {isDispatchListVisible ? "닫기" : "기사선택"}
               </Button>
-
+              {isDispatchListVisible ? (
+                <DirectDispatch
+                  beforeOrderDispatch
+                  onSelectedBeforeDispatchRider={rider => {
+                    setIsDispatchListVisible(false);
+                    setStForceDispatchRider(rider);
+                    setUcAllocType(ErrandAllocType.FORCE_DISPATCH);
+                  }}
+                />
+              ) : (
+                <></>
+              )}
               <Row style={{ float: "right" }}>
-                <Button style={{ marginTop: "30px" }} type="primary" onClick={CallSign}>
+                <Button style={{ marginTop: "30px" }} type="ghost" onClick={CallSign}>
                   접수
                 </Button>
               </Row>
@@ -608,4 +715,8 @@ const Popup = (props: Props) => {
 export default Popup;
 const LeftAlignedCol = styled(Col)`
   text-align: left;
+`;
+const TitleCol = styled(Col)`
+  font-size: 3vh;
+  padding: 5px 20px 15px 20px;
 `;
