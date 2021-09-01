@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Button, Checkbox, Col, Form, Input, Radio, Row } from "antd";
+import { Button, Checkbox, Col, Collapse, Form, Input, Radio, Row } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import React, { useCallback, useEffect, useState, FC } from "react";
 import ErrandType from "src/helpers/ErrandType";
@@ -11,6 +11,13 @@ import styled from "styled-components";
 import PaymentMode from "src/helpers/PaymentMode";
 import ErrandFeeType from "src/helpers/ErrandFeeType";
 import { Script } from "vm";
+import Stopover from "../Popup/Stopover";
+import DirectDispatch from "./DirectDispatch";
+import ErrandAllocType from "src/helpers/ErrandAllocType";
+import { RiderInfo } from "../shop/types";
+import { CloseCircleTwoTone } from "@ant-design/icons";
+
+const { Panel } = Collapse;
 
 const formItemLayout = {
   labelCol: {
@@ -39,6 +46,7 @@ interface Props {
 }
 const CallModify: FC<Props> = (props: Props) => {
   const { visible, onOk, onCancel, callInfo } = props;
+  const [stForceDispatchRider, setStForceDispatchRider] = useState<RiderInfo | null>(null);
 
   const [fullAddress, setFullAddress] = useState(props.fullAddress);
   const [zoneCode, setZoneCode] = useState(props.zoneCode);
@@ -122,6 +130,8 @@ const CallModify: FC<Props> = (props: Props) => {
     setUlGoodsPrice(Number(callInfo?.ulGoodsPrice));
     setUcErrandSettlementType(Number(callInfo?.ucErrandSettlementType));
     setUcTripType(Number(callInfo?.ucTripType));
+    setUlErrandFeeAgency(callInfo?.ulErrandFeeAgency);
+    setUcAllocType(callInfo?.ucAllocType);
   };
 
   const handleCancel = () => {
@@ -178,15 +188,27 @@ const CallModify: FC<Props> = (props: Props) => {
     setAcDestOldAddr(AllAddress2);
     setIsDaumPost2(false);
   };
+  const _renderDispatchedRider = (): JSX.Element => {
+    if (!stForceDispatchRider) {
+      return <></>;
+    }
 
-  const handleOpenPost = useCallback((SearchAddressType: SearchAddressType) => {
-    setIsDaumPost(!isDaumPost);
-  }, []);
+    return <span>{stForceDispatchRider!!.acPresident}</span>;
+  };
 
-  const handleOpenPost2 = useCallback((SearchAddressType: SearchAddressType) => {
-    setIsDaumPost2(!isDaumPost2);
-  }, []);
+  const handleClickCancelSelectDispatchRider = () => {
+    setUcAllocType(ErrandAllocType.NORMAL), setStForceDispatchRider(null);
+  };
 
+  let forceAllocRiderBody;
+  if (stForceDispatchRider) {
+    forceAllocRiderBody = (
+      <span onClick={handleClickCancelSelectDispatchRider}>
+        {stForceDispatchRider.acPresident}
+        <CloseCircleTwoTone twoToneColor="#ff0000" />
+      </span>
+    );
+  }
   return (
     <div>
       <Modal
@@ -221,7 +243,6 @@ const CallModify: FC<Props> = (props: Props) => {
                   바로목적지로
                 </Col>
               </Form.Item>
-
               <Form.Item label="픽업지 업체명">
                 <Input
                   placeholder="업체명을 입력하세요"
@@ -231,7 +252,6 @@ const CallModify: FC<Props> = (props: Props) => {
                   disabled={ucErrandType === ErrandType.SAME}
                 />
               </Form.Item>
-
               <Form.Item label="픽업지 연락처">
                 <Input
                   placeholder="연락처를 입력하세요"
@@ -243,7 +263,6 @@ const CallModify: FC<Props> = (props: Props) => {
                   disabled={ucErrandType === ErrandType.SAME}
                 />
               </Form.Item>
-
               <Form.Item label="픽업지 주소">
                 <Button
                   type="primary"
@@ -271,7 +290,6 @@ const CallModify: FC<Props> = (props: Props) => {
                 </div>
                 <div>{fullAddress}</div>
               </Form.Item>
-
               <Form.Item label="픽업지 상세주소">
                 <Input
                   placeholder="상세주소를 입력하세요"
@@ -283,7 +301,6 @@ const CallModify: FC<Props> = (props: Props) => {
                   disabled={ucErrandType === ErrandType.SAME}
                 />
               </Form.Item>
-
               <Form.Item label="픽업지 요청사항">
                 <TextArea
                   rows={2}
@@ -295,76 +312,87 @@ const CallModify: FC<Props> = (props: Props) => {
                   disabled={ucErrandType === ErrandType.SAME}
                 />
               </Form.Item>
-              <div style={{ backgroundColor: "#fff280" }}>
-                <Form.Item label="목적지 업체명">
-                  <Input
-                    placeholder="업체명을 입력하세요"
-                    name="acDestCompany"
-                    value={acDestCompany}
-                    onChange={e => setAcDestCompany(e.target.value)}
-                  />
-                </Form.Item>
-
-                <Form.Item label="목적지 연락처">
-                  <Input
-                    placeholder="연락처를 입력하세요"
-                    name="acDestCellNo"
-                    value={acDestCellNo}
-                    onChange={e => {
-                      setAcDestCellNo(e.target.value);
-                    }}
-                  />
-                </Form.Item>
-
-                <Form.Item label="목적지 주소">
-                  <Button
-                    type="primary"
-                    block
-                    //onClick={() => handleOpenPost2(SearchAddressType.ERRAND_DEST)}
-                    onClick={() => {
-                      setIsDaumPost2(!isDaumPost2);
-                    }}
-                    style={{ width: "100%" }}
-                    name="acDestOldAddr"
-                    value={acDestOldAddr}
-                  >
-                    주소검색
-                  </Button>
-
-                  {isDaumPost2 ? (
-                    <DaumPostcode
-                      onComplete={handleAddress2}
-                      autoClose
-                      width={595}
-                      height={450}
-                      style={modalStyle}
-                    />
-                  ) : null}
-                  <div>{fullAddress2}</div>
-                </Form.Item>
-
-                <Form.Item label="목적지 상세주소">
-                  <Input
-                    placeholder="상세주소를 입력하세요"
-                    name="acDestAddrDesc"
-                    value={acDestAddrDesc}
-                    onChange={e => {
-                      setAcDestAddrDesc(e.target.value);
-                    }}
-                  />
-                </Form.Item>
-
-                <Form.Item label="목적지 요청사항">
-                  <TextArea
-                    rows={2}
-                    name="acDestMemo"
-                    onChange={e => {
-                      setAcDestMemo(e.target.value);
-                    }}
-                    value={acDestMemo}
-                  />
-                </Form.Item>
+              <div style={{ textAlign: "center" }}>
+                <Collapse ghost>
+                  <Panel header={<Button>경유지 추가 1</Button>} key="1" showArrow={false}>
+                    <Stopover />
+                  </Panel>
+                </Collapse>
+                <Collapse ghost>
+                  <Panel header={<Button>경유지 추가 2</Button>} key="2" showArrow={false}>
+                    <Stopover />
+                  </Panel>
+                </Collapse>
+                <Collapse ghost>
+                  <Panel header={<Button>경유지 추가 3</Button>} key="3" showArrow={false}>
+                    <Stopover />
+                  </Panel>
+                </Collapse>
               </div>
+              <Form.Item label="목적지 업체명">
+                <Input
+                  placeholder="업체명을 입력하세요"
+                  name="acDestCompany"
+                  value={acDestCompany}
+                  onChange={e => setAcDestCompany(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item label="목적지 연락처">
+                <Input
+                  placeholder="연락처를 입력하세요"
+                  name="acDestCellNo"
+                  value={acDestCellNo}
+                  onChange={e => {
+                    setAcDestCellNo(e.target.value);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item label="목적지 주소">
+                <Button
+                  type="primary"
+                  block
+                  //onClick={() => handleOpenPost2(SearchAddressType.ERRAND_DEST)}
+                  onClick={() => {
+                    setIsDaumPost2(!isDaumPost2);
+                  }}
+                  style={{ width: "100%" }}
+                  name="acDestOldAddr"
+                  value={acDestOldAddr}
+                >
+                  주소검색
+                </Button>
+
+                {isDaumPost2 ? (
+                  <DaumPostcode
+                    onComplete={handleAddress2}
+                    autoClose
+                    width={595}
+                    height={450}
+                    style={modalStyle}
+                  />
+                ) : null}
+                <div>{fullAddress2}</div>
+              </Form.Item>
+              <Form.Item label="목적지 상세주소">
+                <Input
+                  placeholder="상세주소를 입력하세요"
+                  name="acDestAddrDesc"
+                  value={acDestAddrDesc}
+                  onChange={e => {
+                    setAcDestAddrDesc(e.target.value);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item label="목적지 요청사항">
+                <TextArea
+                  rows={2}
+                  name="acDestMemo"
+                  onChange={e => {
+                    setAcDestMemo(e.target.value);
+                  }}
+                  value={acDestMemo}
+                />
+              </Form.Item>
               <Form.Item label="픽업 ↔ 목적지">
                 <span>
                   <b />
@@ -541,6 +569,7 @@ const CallModify: FC<Props> = (props: Props) => {
               </Form.Item>
 
               <Form.Item label="직권배차">
+                {forceAllocRiderBody}
                 <Button
                   type={isDispatchListVisible ? "ghost" : "primary"}
                   block
@@ -551,9 +580,20 @@ const CallModify: FC<Props> = (props: Props) => {
                 >
                   {isDispatchListVisible ? "닫기" : "기사선택"}
                 </Button>
-
+                {isDispatchListVisible ? (
+                  <DirectDispatch
+                    beforeOrderDispatch
+                    onSelectedBeforeDispatchRider={rider => {
+                      setIsDispatchListVisible(false);
+                      setStForceDispatchRider(rider);
+                      setUcAllocType(ErrandAllocType.FORCE_DISPATCH);
+                    }}
+                  />
+                ) : (
+                  <></>
+                )}
                 <Row style={{ float: "right" }}>
-                  <Button style={{ marginTop: "30px" }} type="primary">
+                  <Button style={{ marginTop: "30px" }} type="ghost">
                     심부름 수정
                   </Button>
                 </Row>
