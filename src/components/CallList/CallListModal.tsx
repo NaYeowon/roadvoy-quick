@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { useState, useEffect, FC } from "react";
-import { Button, Popconfirm, message, Steps } from "antd";
+import { Button, Popconfirm, message, Steps, Tag } from "antd";
 import styled from "styled-components";
 import Modal from "antd/lib/modal/Modal";
 import "./CallListModal.css";
@@ -12,6 +12,8 @@ import LoginHelper from "src/pages/shared/LoginHelper";
 import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
 import CallTimeLine from "./CallTimeLine";
 import CallModify from "./CallModify";
+import PaymentModeAndAmount from "src/util/PaymentModeAndAmount";
+import TradeAPIService from "src/util/TradeAPIService";
 
 const { Step } = Steps;
 interface Props {
@@ -55,7 +57,7 @@ const CallListModal: FC<Props> = (props: Props) => {
         }
       });
       console.log(response);
-      message.success("배차가 취소되었습니다.");
+      message.success("콜이 취소되었습니다.");
     } catch (e) {
       message.error(e.message);
     }
@@ -65,32 +67,81 @@ const CallListModal: FC<Props> = (props: Props) => {
     return <></>;
   }
 
-  console.log(callInfo);
+  const handleClickDispatchCancel = async () => {
+    const form = new FormData();
 
+    form.append("ucAreaNo", String(props.callInfo?.ucAreaNo));
+    form.append("ucDistribId", String(props.callInfo?.ucDistribId));
+    form.append("ucAgencyId", String(props.callInfo?.ucAgencyId));
+    form.append("ucMemCourId", String(props.callInfo?.ucMemCourId));
+    form.append("acErrandDate", callInfo.acErrandDate);
+    form.append("ulErrandSeqNo", String(props.callInfo?.ulErrandSeqNo));
+    try {
+      const response = await axios({
+        method: "post",
+        url: "https://api.roadvoy.net/agency/errand/dispatch/cancel.php",
+        data: form,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${LoginHelper.getToken()}`
+        }
+      });
+      console.log(response);
+      message.success("배차가 취소되었습니다.");
+    } catch (e) {
+      message.error(e.message);
+    }
+  };
   return (
     <>
       <Modal title="콜 상세" visible={visible} onCancel={handleCancel} onOk={handleOk}>
         <div>
           <div style={{ marginBottom: "10px" }}>
-            <CallDetailModalShopName>{callInfo.acDestCompany}</CallDetailModalShopName>
+            <CallDetailModalShopName>{callInfo.acOriginCompany}</CallDetailModalShopName>
             <p>주문시간: {callInfo.acOrderDateTime}</p>
-            <p>상점연락처: {getCellNoFormat(callInfo.acOriginCellNo)}</p>
+            <p>픽업제한시간: {callInfo.ucLimitTime}분</p>
           </div>
           <div style={{ marginBottom: "10px" }}>
             <CallDetailShopTitle title="기사" value={callInfo.acCourPresident} />
-            <CallDetailShopTitle title="배달비" value={costFormat(callInfo.ulErrandCharge)} />
-            <CallDetailShopTitle title="결제정보" value={costFormat(callInfo.ulGoodsPrice)} />
             <CallDetailShopTitle
-              title="고객연락처"
-              value={getCellNoFormat(callInfo.acDestCellNo)}
+              title="기사연락처"
+              value={getCellNoFormat(callInfo.acCourCellNo)}
             />
-            <CallDetailShopTitle title="고객요청사항" value={callInfo.acOriginMemo} />
+            <CallDetailShopTitle title="배달비" value={costFormat(callInfo.ulErrandCharge)} />
             <CallDetailShopTitle
-              title="배달주소"
+              title="대행 수수료"
+              value={costFormat(callInfo.ulErrandFeeAgency)}
+            />
+            <CallDetailShopTitle
+              title="배차대행 수수료"
+              value={costFormat(callInfo.ulErrandDispatchAgencyFee)}
+            />
+            <CallDetailShopTitle
+              title="결제유형"
+              value={<PaymentModeAndAmount callInfo={callInfo} />}
+            />
+            <CallDetailShopTitle title="현금결제액" value={costFormat(callInfo.ulGoodsPrice)} />
+            <CallDetailShopTitle
+              title="픽업지연락처"
+              value={getCellNoFormat(callInfo.acOriginCellNo)}
+            />
+            <CallDetailShopTitle title="픽업지업체명" value={callInfo.acOriginCompany} />
+            <CallDetailShopTitle title="픽업지요청사항" value={callInfo.acOriginMemo} />
+            <CallDetailShopTitle
+              title="픽업지주소"
+              value={`${callInfo.acOriginOldAddr} ${callInfo.acOriginAddrDesc}`}
+            />
+          </div>
+          <div style={{ backgroundColor: "#fff280" }}>
+            <CallDetailShopTitle title="목적지연락처" value={callInfo.acDestCellNo} />
+            <CallDetailShopTitle title="목적지업체명" value={callInfo.acDestCompany} />
+            <CallDetailShopTitle title="목적지요청사항" value={callInfo.acDestMemo} />
+            <CallDetailShopTitle
+              title="목적지주소"
               value={`${callInfo.acDestOldAddr} ${callInfo.acDestAddrDesc}`}
             />
-            <AddressDaumMapComponent callInfo={callInfo} key={callInfo.ulErrandSeqNo} />
           </div>
+          <AddressDaumMapComponent callInfo={callInfo} />
         </div>
         <CallTimeLine callInfo={callInfo} />
         <Button
@@ -101,9 +152,17 @@ const CallListModal: FC<Props> = (props: Props) => {
         >
           콜 수정
         </Button>
-        <Button type="ghost">배차 취소 </Button>
         <Popconfirm
-          title="정말 콜을 취소하시겠습니까?"
+          title="정말 배차를 취소 하시겠습니까?"
+          onConfirm={handleClickDispatchCancel}
+          okText="네"
+          cancelText="아니요"
+        >
+          <Button type="ghost">배차 취소 </Button>
+        </Popconfirm>
+
+        <Popconfirm
+          title="정말 콜을 취소 하시겠습니까?"
           onConfirm={handleClickCancelErrand}
           okText="네"
           cancelText="아니요"
