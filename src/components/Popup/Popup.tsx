@@ -273,7 +273,6 @@ const Popup = (props: Props) => {
     );
   }
 
-  // TypeError: Cannot read property 'getDistance' of undefined
   let originToDestDistance;
   if (ulOriginLatiPos !== 0 && ucErrandType !== ErrandType.SAME && ulDestLatiPos !== 0) {
     originToDestDistance = DistanceHelper.getDistanceText(
@@ -282,6 +281,8 @@ const Popup = (props: Props) => {
       ulDestLatiPos,
       ulDestLongPos
     );
+
+    console.log(originToDestDistance + "originToDestDistance");
 
     const distance = DistanceHelper.getDistance(
       ulOriginLatiPos,
