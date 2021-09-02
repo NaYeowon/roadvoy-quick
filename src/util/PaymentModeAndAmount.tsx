@@ -3,6 +3,7 @@ import { Tag } from "antd";
 import React from "react";
 import { CallInfo } from "src/components/CallList/CallListComponent";
 import styled from "styled-components";
+import { costFormat } from "./FormatUtil";
 
 interface Props {
   callInfo: CallInfo;
@@ -12,7 +13,7 @@ const PaymentModeAndAmount = (props: Props) => {
   const { callInfo } = props;
 
   const ucPaymentMode: number = Number(callInfo.ucPaymentMode);
-  const charge = Number(callInfo.ulGoodsPrice).toLocaleString();
+  const charge = costFormat(Number(callInfo.ulGoodsPrice));
 
   let paymentModeText;
   let paymentColor;
@@ -35,7 +36,7 @@ const PaymentModeAndAmount = (props: Props) => {
   return (
     <>
       <PaymentModeTag color={paymentColor}>{paymentModeText}</PaymentModeTag>
-      <span>{charge}원</span>
+      <span>{charge}</span>
     </>
   );
 };
