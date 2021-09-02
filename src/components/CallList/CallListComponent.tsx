@@ -24,6 +24,9 @@ export interface CallInfo {
   acTradeDate: string;
   ulTradeSeqNo: string;
 
+  ulSplitPostPayment: number;
+  ulSplitPrePayment: number;
+
   ulErrandDispatchAgencyFee: number;
   acCourCellNo: string;
   acOriginCompany: string;
