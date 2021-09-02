@@ -1,21 +1,20 @@
 /* eslint-disable */
-import geolib from "geolib";
-import NumberUtil from "src/util/NumberUtil";
+import * as geolib from "geolib";
 
 class DistanceHelper {
-  static getDistance(ulFromLatiPos, ulFromLongPos, ulToLatiPos, ulToLongPos) {
+  static getDistance(uloOriginLatiPos, ulOriginLongPos, ulDestLatiPos, ulDestLongPos) {
     const distance = geolib.getDistance(
-      { latitude: parseFloat(ulFromLatiPos), longitude: parseFloat(ulFromLongPos) },
-      { latitude: parseFloat(ulToLatiPos), longitude: parseFloat(ulToLongPos) }
+      { latitude: uloOriginLatiPos, longitude: ulOriginLongPos },
+      { latitude: ulDestLatiPos, longitude: ulDestLongPos }
     );
 
     return distance;
   }
 
-  static getDistanceText(ulFromLatiPos, ulFromLongPos, ulToLatiPos, ulToLongPos) {
+  static getDistanceText(uloOriginLatiPos, ulOriginLongPos, ulDestLatiPos, ulDestLongPos) {
     const distance = geolib.getDistance(
-      { latitude: parseFloat(ulFromLatiPos), longitude: parseFloat(ulFromLongPos) },
-      { latitude: parseFloat(ulToLatiPos), longitude: parseFloat(ulToLongPos) }
+      { latitude: uloOriginLatiPos, longitude: ulOriginLongPos },
+      { latitude: ulDestLatiPos, longitude: ulDestLongPos }
     );
 
     return DistanceHelper.getDistanceToText(distance);
