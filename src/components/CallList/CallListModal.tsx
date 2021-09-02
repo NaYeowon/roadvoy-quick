@@ -103,11 +103,11 @@ const CallListModal: FC<Props> = (props: Props) => {
           </div>
           <div style={{ marginBottom: "10px" }}>
             <CallDetailShopTitle title="기사" value={callInfo.acCourPresident} />
-            <CallDetailShopTitle
+            <CallDetailShopTitle 
               title="기사연락처"
               value={getCellNoFormat(callInfo.acCourCellNo)}
             />
-            <CallDetailShopTitle title="배달비" value={costFormat(callInfo.ulErrandCharge)} />
+            <CallDetailShopTitle title="배달비용" value={costFormat(callInfo.ulErrandCharge)} />
             <CallDetailShopTitle
               title="대행 수수료"
               value={costFormat(callInfo.ulErrandFeeAgency)}
@@ -117,10 +117,22 @@ const CallListModal: FC<Props> = (props: Props) => {
               value={costFormat(callInfo.ulErrandDispatchAgencyFee)}
             />
             <CallDetailShopTitle
-              title="결제유형"
+              title="배달기사 수수료"
+              value={costFormat(callInfo.ulErrandCharge - callInfo.ulErrandDispatchAgencyFee)}
+            />
+            <CallDetailShopTitle
+              title="물건가격"
               value={<PaymentModeAndAmount callInfo={callInfo} />}
             />
-            <CallDetailShopTitle title="현금결제액" value={costFormat(callInfo.ulGoodsPrice)} />
+            <CallDetailShopTitle 
+              title="선지급액(분할)"
+              value={costFormat(callInfo.ulSplitPrePayment)}
+            />
+            <CallDetailShopTitle 
+              title="잔여금액(분할)"
+              value={costFormat(callInfo.ulSplitPostPayment)}
+            />
+            {/* <CallDetailShopTitle title="물건가격" value={costFormat(callInfo.ulGoodsPrice)} /> */}
             <CallDetailShopTitle
               title="픽업지연락처"
               value={getCellNoFormat(callInfo.acOriginCellNo)}
@@ -133,7 +145,7 @@ const CallListModal: FC<Props> = (props: Props) => {
             />
           </div>
           <div style={{ backgroundColor: "#fff280" }}>
-            <CallDetailShopTitle title="목적지연락처" value={callInfo.acDestCellNo} />
+            <CallDetailShopTitle title="목적지연락처" value={getCellNoFormat(callInfo.acDestCellNo)} />
             <CallDetailShopTitle title="목적지업체명" value={callInfo.acDestCompany} />
             <CallDetailShopTitle title="목적지요청사항" value={callInfo.acDestMemo} />
             <CallDetailShopTitle
