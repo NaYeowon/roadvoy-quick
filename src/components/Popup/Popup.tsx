@@ -21,6 +21,8 @@ import { RiderInfo } from "../shop/types";
 import ErrandAllocType from "src/helpers/ErrandAllocType";
 import AddressAPIService from "src/util/kakao";
 import DistanceHelper from "src/helpers/DistanceHelper";
+import NumberUtil from "src/util/NumberUtil";
+import AddressDetail from "./AddressDetail";
 
 interface Props {
   callInfo: CallInfo | undefined;
@@ -171,11 +173,14 @@ const Popup = (props: Props) => {
   const [ucErrandFeeRate, setUcErrandFeeRate] = useState(0);
   const [ulErrandCharge, setUlErrandCharge] = useState(0);
   const [ulGoodsPrice, setUlGoodsPrice] = useState(0);
+  const [ulSplitPostPayment, setUlSplitPostPayment] = useState(0);
+  const [ulSplitPrePayment, setUlSplitPrePayment] = useState(0);
   const [ucErrandSettlementType, setUcErrandSettlementType] = useState(0);
   const [ucAllocType, setUcAllocType] = useState(1);
   const [ucTripType, setUcTripType] = useState(0);
-  const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState("");
+  const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState(0);
   const [ulErrandDispatchAgencyFee, setUlErrandDispatchAgencyFee] = useState("");
+  const [ulErrandFeeCourier, setUlErrandFeeCourier] = useState("");
 
   const CallSign = async () => {
     const form = new FormData();
@@ -241,6 +246,14 @@ const Popup = (props: Props) => {
     }
   };
 
+  function onChange(e) {
+    setUlErrandFeeAmount(e.target.value)
+  }
+  // 상세주소
+  const renderDestAddress = () => {
+
+  }
+  
   const handleClickSwap = () => {
     setAcOriginCompany(acDestCompany);
     setAcOriginCellNo(acDestCellNo);
@@ -273,18 +286,10 @@ const Popup = (props: Props) => {
     );
   }
 
+  // 픽업지 목적지 거리계산
   let originToDestDistance;
   if (ulOriginLatiPos !== 0 && ucErrandType !== ErrandType.SAME && ulDestLatiPos !== 0) {
     originToDestDistance = DistanceHelper.getDistanceText(
-      ulOriginLatiPos,
-      ulOriginLongPos,
-      ulDestLatiPos,
-      ulDestLongPos
-    );
-
-    console.log(originToDestDistance + "originToDestDistance");
-
-    const distance = DistanceHelper.getDistance(
       ulOriginLatiPos,
       ulOriginLongPos,
       ulDestLatiPos,
@@ -368,7 +373,8 @@ const Popup = (props: Props) => {
                   style={modalStyle}
                 />
               ) : null}
-              <div>{fullAddress}</div>
+            
+              {fullAddress}
             </Form.Item>
 
             <Form.Item label="픽업지 상세주소">
@@ -405,11 +411,7 @@ const Popup = (props: Props) => {
                   <Stopover />
                 </Panel>
               </Collapse>
-              <Collapse ghost>
-                <Panel header={<Button>경유지 추가 3</Button>} key="3" showArrow={false}>
-                  <Stopover />
-                </Panel>
-              </Collapse>
+              
             </div>
             <Form.Item label="목적지 업체명">
               <Input
@@ -499,7 +501,7 @@ const Popup = (props: Props) => {
                 onChange={e => setUcLimitTime(e.target.value)}
               >
                 <Row>
-                  <LeftAlignedCol span={8}>
+                  <LeftAlignedCol span={20}>
                     <Radio value={0}>즉시</Radio>
                   </LeftAlignedCol>
                   <LeftAlignedCol span={8}>
@@ -551,7 +553,7 @@ const Popup = (props: Props) => {
                 name="ucPaymentMode"
                 value={ucPaymentMode}
                 onChange={e => setUcPaymentMode(e.target.value)}
-                style={{ float: "left" }}
+                style={{ float: "left", width:'300px' }}
               >
                 <Radio value={3}>현금</Radio>
                 <Radio value={4}>선결제</Radio>
@@ -560,7 +562,7 @@ const Popup = (props: Props) => {
               </Radio.Group>
             </Form.Item>
 
-            <Form.Item label="현금결제금액">
+            <Form.Item label="물건가격">
               <Input
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
@@ -571,7 +573,7 @@ const Popup = (props: Props) => {
               />
             </Form.Item>
 
-            <Form.Item label="배달비">
+            <Form.Item label="배달비용">
               <Input
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
@@ -581,6 +583,21 @@ const Popup = (props: Props) => {
                   setUlErrandCharge(parseInt(e.target.value));
                 }}
               />
+            </Form.Item>
+
+            <Form.Item label="분할결제 선지급액">
+              <Input
+                style={{ width: "50%", float: "left" }}
+                placeholder="0"
+                type="number"
+                name="ulSplitPrePayment"
+                onChange={e => setUlSplitPrePayment(parseInt(e.target.value))}
+                disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT}
+              />
+            </Form.Item>
+
+            <Form.Item label="분할결제 잔여금액" name="ulSplitPostPayment">
+              {NumberUtil.formatNumberWithText(ulErrandCharge - ulSplitPrePayment)} 
             </Form.Item>
 
             <Form.Item label="정산유형">
@@ -602,8 +619,8 @@ const Popup = (props: Props) => {
                 onChange={e => setUcErrandFeeType(e.target.value)}
                 style={{ float: "left" }}
               >
-                <Radio value={1}>수수료 금액</Radio>
-                <Radio value={2}>수수료 율(%)</Radio>
+                <Radio value={1}>정액제(원)</Radio>
+                <Radio value={2}>정률제(%)</Radio>
               </Radio.Group>
             </Form.Item>
 
@@ -633,15 +650,20 @@ const Popup = (props: Props) => {
               />
             </Form.Item>
 
-            <Form.Item label="배차대행 수수료">
-              <Input
+            <Form.Item label="배차대행 수수료" name="ulErrandDispatchAgencyFee" >
+            <Input
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
                 type="number"
-                value={ulErrandDispatchAgencyFee}
                 name="ulErrandDispatchAgencyFee"
-                onChange={e => setUlErrandDispatchAgencyFee(e.target.value)}
+                value={ulErrandDispatchAgencyFee}
+                onChange={(e) => setUlErrandDispatchAgencyFee(e.target.value)
+                }
               />
+            </Form.Item>
+
+            <Form.Item label="배달기사 수수료" name="ulErrandFeeCourier">
+              {NumberUtil.formatNumberWithText(ulErrandCharge - parseInt(ulErrandDispatchAgencyFee))}
             </Form.Item>
 
             <Form.Item label="직권배차">
