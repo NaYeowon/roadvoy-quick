@@ -22,6 +22,7 @@ import ErrandAllocType from "src/helpers/ErrandAllocType";
 import AddressAPIService from "src/util/kakao";
 import DistanceHelper from "src/helpers/DistanceHelper";
 import { costFormat } from "src/util/FormatUtil";
+import { CallDetailShopTitle } from "../CallList";
 
 interface Props {
   callInfo: CallInfo | undefined;
@@ -59,18 +60,6 @@ const Popup = (props: Props) => {
   const [isDispatchListVisible, setIsDispatchListVisible] = useState(false);
 
   const [stForceDispatchRider, setStForceDispatchRider] = useState<RiderInfo | null>(null);
-
-  useEffect(() => {
-    //console.log("useEffect");
-    window.onkeydown = e => {
-      console.log(e);
-      if (e.key === "Escape") {
-        //console.log(e.key);
-        setIsDaumPost(false);
-        setIsDaumPost2(false);
-      }
-    };
-  }, []);
 
   const handleAddress = async data => {
     let AllAddress = data.address;
@@ -157,6 +146,7 @@ const Popup = (props: Props) => {
   const [ucMemCourId, setUcMemCourId] = useState("");
   const [ucErrandType, setUcErrandType] = useState(ErrandType.DIFFERENT_DESTINATION);
 
+  const [ulErrandSeqNo, setUlErrandSeqNo] = useState("");
   const [acDestCompany, setAcDestCompany] = useState("");
   const [acDestCellNo, setAcDestCellNo] = useState("");
   const [acDestMemo, setAcDestMemo] = useState("");
@@ -177,7 +167,7 @@ const Popup = (props: Props) => {
   const [ucErrandSettlementType, setUcErrandSettlementType] = useState(0);
   const [ucAllocType, setUcAllocType] = useState(1);
   const [ucTripType, setUcTripType] = useState(0);
-  const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState(0);
+  const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState("");
   const [ulErrandDispatchAgencyFee, setUlErrandDispatchAgencyFee] = useState("");
   const [ulErrandFeeCourier, setUlErrandFeeCourier] = useState("");
 
@@ -295,12 +285,16 @@ const Popup = (props: Props) => {
   }
 
   // 대행수수료
-  let flatAndFixedRateSystem
-  if(ucErrandFeeType === 1) {
-    const flatAndFixedRateSystem = (e) => {
-      setUlErrandDispatchAgencyFee(e.target.ulErrandFeeAmount)
-    }
-  } 
+    const flatAndFixedRateSystem = (e:React.ChangeEvent<HTMLInputElement>) => {
+      if(ucErrandFeeType === 1) {
+        setUlErrandFeeAgency(e.target.value)
+        setUlErrandFeeAmount(e.target.value)
+      } else {
+        setUlErrandFeeAgency(e.target.value)
+        setUcErrandFeeRate(parseInt(e.target.value))
+      }
+    } 
+   
 
   return (
     <>
@@ -318,6 +312,9 @@ const Popup = (props: Props) => {
               rate: 3.5
             }}
           >
+            <Form.Item label="접수 번호">
+              
+            </Form.Item>
             <Form.Item label="심부름 종류">
               <Col style={{ textAlign: "left" }}>
                 <Checkbox
@@ -630,33 +627,51 @@ const Popup = (props: Props) => {
               </Radio.Group>
             </Form.Item>
 
-            <Form.Item label="수수료(원)">
+            <Form.Item label="정액제(원)">
               <Input
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
                 type="number"
                 value={ulErrandFeeAmount}
                 name="ulErrandFeeAmount"
-                onChange={e => setUlErrandFeeAmount(e.target.value)}
+                //onChange={e => setUlErrandFeeAmount(e.target.value)}
+                onChange={flatAndFixedRateSystem}
                 disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
               />
             </Form.Item>
 
-            <Form.Item label="수수료 율(%)">
+            <Form.Item label="정률제(%)">
               <Input
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
                 type="number"
                 name="ucErrandFeeRate"
                 value={ucErrandFeeRate}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setUcErrandFeeRate(parseInt(e.target.value))
-                }
+                // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                //   setUcErrandFeeRate(e.target.value)
+                // }
+                onChange={flatAndFixedRateSystem}
                 disabled={ucErrandFeeType !== ErrandFeeType.RATE}
               />
             </Form.Item>
 
-            <Form.Item label="배차대행 수수료" name="ulErrandDispatchAgencyFee" >
+            <Form.Item label="배차대행 수수료" >
+            <Input
+                style={{ width: "50%", float: "left" }}
+                placeholder="0"
+                type="number"
+                name="ulErrandFeeAgency"
+                value={ulErrandFeeAgency}
+                onChange={(e) => setUlErrandFeeAmount(e.target.value)}
+                readOnly
+              />
+            </Form.Item>
+
+            <Form.Item label="배달기사 수수료" name="ulErrandFeeCourier">
+              {costFormat(ulErrandCharge - parseInt(ulErrandFeeAgency))}
+            </Form.Item>
+
+            <Form.Item label="타사 지급 수수료" name="ulErrandDispatchAgencyFee" >
             <Input
                 style={{ width: "50%", float: "left" }}
                 placeholder="0"
@@ -665,10 +680,6 @@ const Popup = (props: Props) => {
                 value={ulErrandDispatchAgencyFee}
                 onChange={(e) => setUlErrandDispatchAgencyFee(e.target.value)}
               />
-            </Form.Item>
-
-            <Form.Item label="배달기사 수수료" name="ulErrandFeeCourier">
-              {costFormat(ulErrandCharge - parseInt(ulErrandDispatchAgencyFee))}
             </Form.Item>
 
             <Form.Item label="직권배차">
