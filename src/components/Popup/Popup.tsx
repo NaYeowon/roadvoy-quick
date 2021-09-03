@@ -21,8 +21,7 @@ import { RiderInfo } from "../shop/types";
 import ErrandAllocType from "src/helpers/ErrandAllocType";
 import AddressAPIService from "src/util/kakao";
 import DistanceHelper from "src/helpers/DistanceHelper";
-import NumberUtil from "src/util/NumberUtil";
-import AddressDetail from "./AddressDetail";
+import { costFormat } from "src/util/FormatUtil";
 
 interface Props {
   callInfo: CallInfo | undefined;
@@ -246,14 +245,6 @@ const Popup = (props: Props) => {
     }
   };
 
-  function onChange(e) {
-    setUlErrandFeeAmount(e.target.value)
-  }
-  // 상세주소
-  const renderDestAddress = () => {
-
-  }
-  
   const handleClickSwap = () => {
     setAcOriginCompany(acDestCompany);
     setAcOriginCellNo(acDestCellNo);
@@ -296,6 +287,21 @@ const Popup = (props: Props) => {
       ulDestLongPos
     );
   }
+
+  // 분할결제 선지급액
+  let splitAdvancePayment
+  if(ulSplitPrePayment !== 0) {
+    splitAdvancePayment = ulErrandCharge - ulSplitPrePayment
+  }
+
+  // 대행수수료
+  let flatAndFixedRateSystem
+  if(ucErrandFeeType === 1) {
+    const flatAndFixedRateSystem = (e) => {
+      setUlErrandDispatchAgencyFee(e.target.ulErrandFeeAmount)
+    }
+  } 
+
   return (
     <>
       <Row style={{ borderBottom: "1px solid #f5f5f5" }}>
@@ -597,7 +603,7 @@ const Popup = (props: Props) => {
             </Form.Item>
 
             <Form.Item label="분할결제 잔여금액" name="ulSplitPostPayment">
-              {NumberUtil.formatNumberWithText(ulErrandCharge - ulSplitPrePayment)} 
+              {costFormat(splitAdvancePayment)}
             </Form.Item>
 
             <Form.Item label="정산유형">
@@ -657,13 +663,12 @@ const Popup = (props: Props) => {
                 type="number"
                 name="ulErrandDispatchAgencyFee"
                 value={ulErrandDispatchAgencyFee}
-                onChange={(e) => setUlErrandDispatchAgencyFee(e.target.value)
-                }
+                onChange={(e) => setUlErrandDispatchAgencyFee(e.target.value)}
               />
             </Form.Item>
 
             <Form.Item label="배달기사 수수료" name="ulErrandFeeCourier">
-              {NumberUtil.formatNumberWithText(ulErrandCharge - parseInt(ulErrandDispatchAgencyFee))}
+              {costFormat(ulErrandCharge - parseInt(ulErrandDispatchAgencyFee))}
             </Form.Item>
 
             <Form.Item label="직권배차">
