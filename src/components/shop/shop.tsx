@@ -12,7 +12,6 @@ import axios from "axios";
 import { ColumnsType } from "antd/lib/table";
 import MemberHelper from "src/helpers/MemberHelper";
 
-import NumberUtil from "../../util/NumberUtil";
 import LoginHelper from "../../pages/shared/LoginHelper";
 import { costFormat } from "../../util/FormatUtil";
 import SelectPage from "../Layout/SelectPage";
@@ -101,7 +100,7 @@ const columns: ColumnsType<ShopInfo> = [
         //   return format.toLocaleString()+'원'
         // }
         render: (string: any, record: ShopInfo) =>
-          NumberUtil.formatNumberWithText(
+          costFormat(
             Number(record.ulVirAccDeposit) +
               Number(record.lVirAccBalance) -
               Number(record.ulVirAccDeduct)
