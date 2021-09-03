@@ -22,6 +22,7 @@ export const getCellNoFormat = phone => {
 // };
 
 export const costFormat = (cost: number) => {
+  if(!cost) cost = 0
   const format = Number(cost);
   return `${format.toLocaleString()} 원`;
 };
