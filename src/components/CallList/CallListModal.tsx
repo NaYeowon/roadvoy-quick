@@ -98,8 +98,10 @@ const CallListModal: FC<Props> = (props: Props) => {
         <div>
           <div style={{ marginBottom: "10px" }}>
             <CallDetailModalShopName>{callInfo.acOriginCompany}</CallDetailModalShopName>
+            <p>접수번호: {callInfo.ulErrandSeqNo}</p>
             <p>주문시간: {callInfo.acOrderDateTime}</p>
             <p>픽업제한시간: {callInfo.ucLimitTime}분</p>
+
           </div>
           <div style={{ marginBottom: "10px" }}>
             <CallDetailShopTitle title="기사" value={callInfo.acCourPresident} />
