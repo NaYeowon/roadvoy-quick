@@ -159,7 +159,7 @@ const Popup = (props: Props) => {
   const [ucPaymentMode, setUcPaymentMode] = useState(0);
   const [ucErrandFeeType, setUcErrandFeeType] = useState(0);
   const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState("");
-  const [ucErrandFeeRate, setUcErrandFeeRate] = useState(0);
+  const [ucErrandFeeRate, setUcErrandFeeRate] = useState("");
   const [ulErrandCharge, setUlErrandCharge] = useState(0);
   const [ulGoodsPrice, setUlGoodsPrice] = useState(0);
   const [ulSplitPostPayment, setUlSplitPostPayment] = useState(0);
@@ -284,19 +284,23 @@ const Popup = (props: Props) => {
     splitAdvancePayment = ulErrandCharge - ulSplitPrePayment
   }
 
-  // 대행수수료
-    const flatAndFixedRateSystem = (e:React.ChangeEvent<HTMLInputElement>) => {
-      if(ucErrandFeeType === 1) {
-        setUlErrandFeeAgency(e.target.value)
-        setUlErrandFeeAmount(e.target.value)
-      } else {
-        setUlErrandFeeAgency(e.target.value)
-        setUcErrandFeeRate(parseInt(e.target.value))
-      }
-    } 
-   
+  // 배차 대행 수수료
+  let calcErrandFeeAgency
+  if(ucErrandFeeType === 1) {
+    calcErrandFeeAgency = ulErrandFeeAmount
+  } else {
+    calcErrandFeeAgency = (ulErrandCharge * (parseInt(ucErrandFeeRate) / 100));
+  }
 
-  return (
+  // 배달기사 수수료
+  let riderFee
+  if(ucErrandType == 1) {
+    riderFee = ulErrandCharge - calcErrandFeeAgency
+  } else {
+    riderFee = ulErrandCharge - calcErrandFeeAgency
+  }
+
+return (
     <>
       <Row style={{ borderBottom: "1px solid #f5f5f5" }}>
         <TitleCol>심부름 접수</TitleCol>
@@ -634,8 +638,7 @@ const Popup = (props: Props) => {
                 type="number"
                 value={ulErrandFeeAmount}
                 name="ulErrandFeeAmount"
-                //onChange={e => setUlErrandFeeAmount(e.target.value)}
-                onChange={flatAndFixedRateSystem}
+                onChange={e => setUlErrandFeeAmount(e.target.value)}
                 disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
               />
             </Form.Item>
@@ -647,28 +650,19 @@ const Popup = (props: Props) => {
                 type="number"
                 name="ucErrandFeeRate"
                 value={ucErrandFeeRate}
-                // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                //   setUcErrandFeeRate(e.target.value)
-                // }
-                onChange={flatAndFixedRateSystem}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setUcErrandFeeRate(e.target.value)
+                }
                 disabled={ucErrandFeeType !== ErrandFeeType.RATE}
               />
             </Form.Item>
 
-            <Form.Item label="배차대행 수수료" >
-            <Input
-                style={{ width: "50%", float: "left" }}
-                placeholder="0"
-                type="number"
-                name="ulErrandFeeAgency"
-                value={ulErrandFeeAgency}
-                onChange={(e) => setUlErrandFeeAmount(e.target.value)}
-                readOnly
-              />
+            <Form.Item label="배차대행 수수료" name="ulErrandFeeAgency">
+              {costFormat(calcErrandFeeAgency)}
             </Form.Item>
 
             <Form.Item label="배달기사 수수료" name="ulErrandFeeCourier">
-              {costFormat(ulErrandCharge - parseInt(ulErrandFeeAgency))}
+              {costFormat(riderFee)}
             </Form.Item>
 
             <Form.Item label="타사 지급 수수료" name="ulErrandDispatchAgencyFee" >
