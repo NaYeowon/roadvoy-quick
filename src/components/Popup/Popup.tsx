@@ -6,8 +6,10 @@ import { Form, Radio, Button, Input, Col, Row, message, Checkbox, Collapse } fro
 import { CloseCircleTwoTone } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import DaumPostcode from "react-daum-postcode";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import NumberFormat from 'react-number-format'
 
+import './Popup.css'
 import styled from "styled-components";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import PaymentMode from "../../helpers/PaymentMode";
@@ -158,8 +160,8 @@ const Popup = (props: Props) => {
   const [ucLimitTime, setUcLimitTime] = useState(0);
   const [ucPaymentMode, setUcPaymentMode] = useState(0);
   const [ucErrandFeeType, setUcErrandFeeType] = useState(0);
-  const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState("");
-  const [ucErrandFeeRate, setUcErrandFeeRate] = useState("");
+  const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState(0);
+  const [ucErrandFeeRate, setUcErrandFeeRate] = useState(0);
   const [ulErrandCharge, setUlErrandCharge] = useState(0);
   const [ulGoodsPrice, setUlGoodsPrice] = useState(0);
   const [ulSplitPostPayment, setUlSplitPostPayment] = useState(0);
@@ -168,7 +170,7 @@ const Popup = (props: Props) => {
   const [ucAllocType, setUcAllocType] = useState(1);
   const [ucTripType, setUcTripType] = useState(0);
   const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState("");
-  const [ulErrandDispatchAgencyFee, setUlErrandDispatchAgencyFee] = useState("");
+  const [ulErrandDispatchAgencyFee, setUlErrandDispatchAgencyFee] = useState(0);
   const [ulErrandFeeCourier, setUlErrandFeeCourier] = useState("");
 
   const CallSign = async () => {
@@ -231,7 +233,8 @@ const Popup = (props: Props) => {
       console.log(response);
       window.close();
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError
+      message.error(error.message);
     }
   };
 
@@ -281,23 +284,26 @@ const Popup = (props: Props) => {
   // 분할결제 선지급액
   let splitAdvancePayment
   if(ulSplitPrePayment !== 0) {
-    splitAdvancePayment = ulErrandCharge - ulSplitPrePayment
+    splitAdvancePayment = (ulErrandCharge) - ulSplitPrePayment
   }
 
   // 배차 대행 수수료
+
   let calcErrandFeeAgency
-  if(ucErrandFeeType === 1) {
+  if(ucErrandFeeType == 1) {
     calcErrandFeeAgency = ulErrandFeeAmount
   } else {
-    calcErrandFeeAgency = (ulErrandCharge * (parseInt(ucErrandFeeRate) / 100));
+    calcErrandFeeAgency = ((ulErrandCharge) * (ucErrandFeeRate) / 100);
   }
+  
+  console.log(typeof(ulErrandFeeAmount),ulErrandCharge,ucErrandFeeRate)
 
   // 배달기사 수수료
   let riderFee
   if(ucErrandType == 1) {
-    riderFee = ulErrandCharge - calcErrandFeeAgency
+    riderFee = (ulErrandCharge) - calcErrandFeeAgency
   } else {
-    riderFee = ulErrandCharge - calcErrandFeeAgency
+    riderFee = (ulErrandCharge) - calcErrandFeeAgency
   }
 
 return (
@@ -570,35 +576,39 @@ return (
             </Form.Item>
 
             <Form.Item label="물건가격">
-              <Input
-                style={{ width: "50%", float: "left" }}
+              <NumberFormat
+                className="input-number-format"
                 placeholder="0"
-                type="number"
                 name="ulGoodsPrice"
-                onChange={e => setUlGoodsPrice(parseInt(e.target.value))}
+                onValueChange={(value: any) => {
+                  setUlGoodsPrice(parseInt(value.value))
+                }}
                 disabled={ucPaymentMode !== PaymentMode.CASH}
+                thousandSeparator={true}
               />
             </Form.Item>
 
             <Form.Item label="배달비용">
-              <Input
-                style={{ width: "50%", float: "left" }}
+              <NumberFormat
+                className="input-number-format"
                 placeholder="0"
-                type="number"
                 name="ulErrandCharge"
-                onChange={e => {
-                  setUlErrandCharge(parseInt(e.target.value));
+                thousandSeparator={true}
+                onValueChange={(value: any) => {
+                  setUlErrandCharge(parseInt(value.value))
                 }}
               />
             </Form.Item>
 
             <Form.Item label="분할결제 선지급액">
-              <Input
-                style={{ width: "50%", float: "left" }}
+              <NumberFormat
+                className="input-number-format"
                 placeholder="0"
-                type="number"
+                thousandSeparator={true}
                 name="ulSplitPrePayment"
-                onChange={e => setUlSplitPrePayment(parseInt(e.target.value))}
+                onValueChange={(value: any) => {
+                  setUlSplitPrePayment(parseInt(value.value))
+                }}
                 disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT}
               />
             </Form.Item>
@@ -632,27 +642,27 @@ return (
             </Form.Item>
 
             <Form.Item label="정액제(원)">
-              <Input
-                style={{ width: "50%", float: "left" }}
+              <NumberFormat
+                className="input-number-format"
                 placeholder="0"
-                type="number"
-                value={ulErrandFeeAmount}
+                thousandSeparator={true}
                 name="ulErrandFeeAmount"
-                onChange={e => setUlErrandFeeAmount(e.target.value)}
+                onValueChange={(values: any) => {
+                  setUlErrandFeeAmount(parseInt(values.value))
+                }}
                 disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
               />
             </Form.Item>
 
             <Form.Item label="정률제(%)">
-              <Input
-                style={{ width: "50%", float: "left" }}
+              <NumberFormat
+                className="input-number-format"
                 placeholder="0"
-                type="number"
+                thousandSeparator={true}
                 name="ucErrandFeeRate"
-                value={ucErrandFeeRate}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setUcErrandFeeRate(e.target.value)
-                }
+                onValueChange={(value: any) => {
+                  setUcErrandFeeRate(parseInt(value.value))
+                }}
                 disabled={ucErrandFeeType !== ErrandFeeType.RATE}
               />
             </Form.Item>
@@ -666,13 +676,14 @@ return (
             </Form.Item>
 
             <Form.Item label="타사 지급 수수료" name="ulErrandDispatchAgencyFee" >
-            <Input
-                style={{ width: "50%", float: "left" }}
+            <NumberFormat
+                className="input-number-format"
                 placeholder="0"
-                type="number"
+                thousandSeparator={true}
                 name="ulErrandDispatchAgencyFee"
-                value={ulErrandDispatchAgencyFee}
-                onChange={(e) => setUlErrandDispatchAgencyFee(e.target.value)}
+                onValueChange={(value: any) => {
+                  setUlErrandDispatchAgencyFee(parseInt(value.value))
+                }}
               />
             </Form.Item>
 
