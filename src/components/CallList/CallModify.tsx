@@ -16,6 +16,9 @@ import DirectDispatch from "./DirectDispatch";
 import ErrandAllocType from "src/helpers/ErrandAllocType";
 import { RiderInfo } from "../shop/types";
 import { CloseCircleTwoTone } from "@ant-design/icons";
+import DistanceHelper from "src/helpers/DistanceHelper";
+import AddressAPIService from "src/util/kakao";
+import { costFormat } from "src/util/FormatUtil";
 
 const { Panel } = Collapse;
 
@@ -85,7 +88,7 @@ const CallModify: FC<Props> = (props: Props) => {
   const [ucPaymentMode, setUcPaymentMode] = useState(Number(callInfo?.ucPaymentMode));
   const [ucErrandFeeType, setUcErrandFeeType] = useState(Number(callInfo?.ucErrandFeeType));
   const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState(callInfo?.ulErrandFeeAmount);
-  const [ucErrandFeeRate, setUcErrandFeeRate] = useState(callInfo?.ucErrandFeeRate);
+  const [ucErrandFeeRate, setUcErrandFeeRate] = useState(Number(callInfo?.ucErrandFeeRate));
   const [ulErrandCharge, setUlErrandCharge] = useState(callInfo?.ulErrandCharge);
   const [ulGoodsPrice, setUlGoodsPrice] = useState(Number(callInfo?.ulGoodsPrice));
   const [ucErrandSettlementType, setUcErrandSettlementType] = useState(
@@ -94,6 +97,8 @@ const CallModify: FC<Props> = (props: Props) => {
   const [ucAllocType, setUcAllocType] = useState(callInfo?.ucAllocType);
   const [ucTripType, setUcTripType] = useState(Number(callInfo?.ucTripType));
   const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState(callInfo?.ulErrandFeeAgency);
+  const [ulSplitPrePayment, setUlSplitPrePayment] = useState(callInfo?.ulSplitPrePayment);
+  const [ulErrandDispatchAgencyFee, setUlErrandDispatchAgencyFee] = useState(callInfo?.ulErrandDispatchAgencyFee);
 
   useEffect(() => {
     if (!callInfo) return;
@@ -125,13 +130,14 @@ const CallModify: FC<Props> = (props: Props) => {
     setUcPaymentMode(Number(callInfo?.ucPaymentMode));
     setUcErrandFeeType(Number(callInfo?.ucErrandFeeType));
     setUlErrandFeeAmount(callInfo?.ulErrandFeeAmount);
-    setUcErrandFeeRate(callInfo?.ucErrandFeeRate);
+    setUcErrandFeeRate(Number(callInfo?.ucErrandFeeRate));
     setUlErrandCharge(callInfo?.ulErrandCharge);
     setUlGoodsPrice(Number(callInfo?.ulGoodsPrice));
     setUcErrandSettlementType(Number(callInfo?.ucErrandSettlementType));
     setUcTripType(Number(callInfo?.ucTripType));
     setUlErrandFeeAgency(callInfo?.ulErrandFeeAgency);
     setUcAllocType(callInfo?.ucAllocType);
+    setUlErrandDispatchAgencyFee(callInfo?.ulErrandDispatchAgencyFee)
   };
 
   const handleCancel = () => {
@@ -147,10 +153,17 @@ const CallModify: FC<Props> = (props: Props) => {
     onInitail();
   };
 
-  const handleAddress = data => {
+  const handleAddress = async data => {
     let AllAddress = data.address;
     let extraAddress = "";
     const zoneCodes = data.zonecode;
+
+    const kakaos = await AddressAPIService.getAddressByKakaoAddress(data.address);
+    if(kakaos.length > 0) {
+      let kakao = kakaos[0];
+      setUlOriginLatiPos(kakao.y)
+      setUlOriginLongPos(kakao.x)
+    }
 
     if (data.addressType === "R") {
       if (data.bname !== "") {
@@ -168,10 +181,17 @@ const CallModify: FC<Props> = (props: Props) => {
     setIsDaumPost(false);
   };
 
-  const handleAddress2 = data => {
+  const handleAddress2 = async data => {
     let AllAddress2 = data.address;
     let extraAddress2 = "";
     const zoneCodes2 = data.zonecode;
+
+    const kakaos = await AddressAPIService.getAddressByKakaoAddress(data.address);
+    if(kakaos.length > 0) {
+      let kakao = kakaos[0];
+      setUlOriginLatiPos(kakao.y)
+      setUlOriginLongPos(kakao.x)
+    }
 
     if (data.addressType === "R") {
       if (data.bname !== "") {
@@ -188,17 +208,36 @@ const CallModify: FC<Props> = (props: Props) => {
     setAcDestOldAddr(AllAddress2);
     setIsDaumPost2(false);
   };
-  const _renderDispatchedRider = (): JSX.Element => {
-    if (!stForceDispatchRider) {
-      return <></>;
-    }
+  
+  const handleOpenPost = useCallback(
+    (SearchAddressType: SearchAddressType) => {
+      setIsDaumPost(!isDaumPost);
+    },
+    [!isDaumPost]
+  );
 
-    return <span>{stForceDispatchRider!!.acPresident}</span>;
-  };
-
+  const handleOpenPost2 = useCallback(
+    (SearchAddressType: SearchAddressType) => {
+      setIsDaumPost2(!isDaumPost2);
+    },
+    [!isDaumPost2]
+  );
   const handleClickCancelSelectDispatchRider = () => {
     setUcAllocType(ErrandAllocType.NORMAL), setStForceDispatchRider(null);
   };
+
+    //픽업지 목적지 거리계산
+   let originToDestDistance;
+   if ( ulOriginLatiPos && ulDestLatiPos ) {
+   if (ulOriginLatiPos !== 0 && ucErrandType !== ErrandType.SAME && ulDestLatiPos !== 0) {
+     originToDestDistance = DistanceHelper.getDistanceText(
+       ulOriginLatiPos,
+       ulOriginLongPos,
+       ulDestLatiPos,
+       ulDestLongPos
+     );
+   }
+  }
 
   let forceAllocRiderBody;
   if (stForceDispatchRider) {
@@ -209,6 +248,22 @@ const CallModify: FC<Props> = (props: Props) => {
       </span>
     );
   }
+
+    // 배차 대행 수수료
+    let calcErrandFeeAgency
+    if(ucErrandFeeType === 1) {
+      calcErrandFeeAgency = ulErrandFeeAmount
+    } else {
+      calcErrandFeeAgency = (ulErrandCharge! * ((ucErrandFeeRate!) / 100));
+    }
+
+    // 배달기사 수수료
+    let riderFee
+    if(ucErrandType == 1) {
+      riderFee = ulErrandCharge! - calcErrandFeeAgency
+    } else {
+      riderFee = ulErrandCharge! - calcErrandFeeAgency
+    }
   return (
     <div>
       <Modal
@@ -229,6 +284,9 @@ const CallModify: FC<Props> = (props: Props) => {
                 rate: 3.5
               }}
             >
+              <Form.Item label="접수 번호">
+                {callInfo?.ulErrandSeqNo}
+              </Form.Item>
               <Form.Item label="심부름 종류">
                 <Col style={{ textAlign: "left" }}>
                   <Checkbox
@@ -266,10 +324,7 @@ const CallModify: FC<Props> = (props: Props) => {
               <Form.Item label="픽업지 주소">
                 <Button
                   type="primary"
-                  //onClick={() => handleOpenPost(SearchAddressType.ERRAND_ORIGIN)}
-                  onClick={() => {
-                    setIsDaumPost(!isDaumPost);
-                  }}
+                  onClick={() => handleOpenPost(SearchAddressType.ERRAND_ORIGIN)}
                   style={{ width: "100%" }}
                   name={acOriginNewAddr}
                   value={acOriginAddrDesc}
@@ -323,11 +378,7 @@ const CallModify: FC<Props> = (props: Props) => {
                     <Stopover />
                   </Panel>
                 </Collapse>
-                <Collapse ghost>
-                  <Panel header={<Button>경유지 추가 3</Button>} key="3" showArrow={false}>
-                    <Stopover />
-                  </Panel>
-                </Collapse>
+           
               </div>
               <Form.Item label="목적지 업체명">
                 <Input
@@ -351,10 +402,7 @@ const CallModify: FC<Props> = (props: Props) => {
                 <Button
                   type="primary"
                   block
-                  //onClick={() => handleOpenPost2(SearchAddressType.ERRAND_DEST)}
-                  onClick={() => {
-                    setIsDaumPost2(!isDaumPost2);
-                  }}
+                  onClick={() => handleOpenPost2(SearchAddressType.ERRAND_DEST)}
                   style={{ width: "100%" }}
                   name="acDestOldAddr"
                   value={acDestOldAddr}
@@ -393,11 +441,7 @@ const CallModify: FC<Props> = (props: Props) => {
                   value={acDestMemo}
                 />
               </Form.Item>
-              <Form.Item label="픽업 ↔ 목적지">
-                <span>
-                  <b />
-                </span>
-              </Form.Item>
+              <Form.Item label="픽업 ↔ 목적지">{originToDestDistance}</Form.Item>
             </Form>
           </Col>
           <Col span={12} pull={1} style={{ right: "0px" }}>
@@ -418,7 +462,7 @@ const CallModify: FC<Props> = (props: Props) => {
                   onChange={e => setUcLimitTime(Number(e.target.value))}
                 >
                   <Row>
-                    <LeftAlignedCol span={8}>
+                    <LeftAlignedCol span={20}>
                       <Radio value={0}>즉시</Radio>
                     </LeftAlignedCol>
                     <LeftAlignedCol span={8}>
@@ -484,7 +528,7 @@ const CallModify: FC<Props> = (props: Props) => {
                 </Radio.Group>
               </Form.Item>
 
-              <Form.Item label="현금결제금액">
+              <Form.Item label="물건가격">
                 <Input
                   style={{ width: "50%", float: "left" }}
                   placeholder="0"
@@ -495,7 +539,7 @@ const CallModify: FC<Props> = (props: Props) => {
                 />
               </Form.Item>
 
-              <Form.Item label="배달비">
+              <Form.Item label="배달비용">
                 <Input
                   style={{ width: "50%", float: "left" }}
                   placeholder="0"
@@ -506,6 +550,21 @@ const CallModify: FC<Props> = (props: Props) => {
                   }}
                 />
               </Form.Item>
+
+              <Form.Item label="분할결제 선지급액">
+              <Input
+                style={{ width: "50%", float: "left" }}
+                placeholder="0"
+                type="number"
+                name="ulSplitPrePayment"
+                onChange={e => setUlSplitPrePayment(parseInt(e.target.value))}
+                disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT}
+              />
+            </Form.Item>
+
+            <Form.Item label="분할결제 잔여금액">
+              {/* {costFormat(ulErrandCharge - ulSplitPrePayment)} */}
+            </Form.Item>
 
               <Form.Item label="정산유형">
                 <Radio.Group
@@ -526,12 +585,12 @@ const CallModify: FC<Props> = (props: Props) => {
                   onChange={e => setUcErrandFeeType(Number(e.target.value))}
                   style={{ float: "left" }}
                 >
-                  <Radio value={1}>수수료 금액</Radio>
-                  <Radio value={2}>수수료 율(%)</Radio>
+                  <Radio value={1}>정액제(원)</Radio>
+                  <Radio value={2}>정률제(%)</Radio>
                 </Radio.Group>
               </Form.Item>
 
-              <Form.Item label="수수료(원)">
+              <Form.Item label="정액제(원)">
                 <Input
                   style={{ width: "50%", float: "left" }}
                   placeholder="0"
@@ -543,30 +602,37 @@ const CallModify: FC<Props> = (props: Props) => {
                 />
               </Form.Item>
 
-              <Form.Item label="수수료 율(%)">
+              <Form.Item label="정률제(%)">
                 <Input
                   style={{ width: "50%", float: "left" }}
                   placeholder="0"
                   type="number"
                   name="ucErrandFeeRate"
                   value={ucErrandFeeRate}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setUcErrandFeeRate(parseInt(e.target.value))
-                  }
+                  onChange={(e) => {setUcErrandFeeRate(parseInt(e.target.value))}}
                   disabled={ucErrandFeeType !== ErrandFeeType.RATE}
                 />
               </Form.Item>
 
-              <Form.Item label="배차대행 수수료">
-                <Input
+              <Form.Item label="배차대행 수수료" name="ulErrandFeeAgency">
+                {costFormat(calcErrandFeeAgency)}
+              </Form.Item>
+
+              <Form.Item label="배달기사 수수료" name="ulErrandFeeCourier">
+                {costFormat(riderFee)}
+              </Form.Item>
+
+              <Form.Item label="타사 지급 수수료" name="ulErrandDispatchAgencyFee" >
+              <Input
                   style={{ width: "50%", float: "left" }}
                   placeholder="0"
                   type="number"
-                  value={ulErrandFeeAgency}
-                  name="ulErrandFeeAgency"
-                  onChange={e => setUlErrandFeeAgency(Number(e.target.value))}
+                  name="ulErrandDispatchAgencyFee"
+                  value={ulErrandDispatchAgencyFee}
+                  onChange={(e) => setUlErrandDispatchAgencyFee(parseInt(e.target.value))}
                 />
               </Form.Item>
+
 
               <Form.Item label="직권배차">
                 {forceAllocRiderBody}
