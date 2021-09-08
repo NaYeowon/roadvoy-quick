@@ -21,7 +21,7 @@ const Header = () => {
 
   window.onkeydown = e => {
     if (e.key === "F2") {
-      window.open("/Popup/", "_blank", "top=100, left=500, width=1000, height=700");
+      window.open("/Popup/", "_blank", "top=100, left=500, width=1000, height=800");
     } else if (e.key === "F3") {
       document.location.href = "#";
     } else if (e.key === "F4") {
@@ -95,6 +95,9 @@ const Header = () => {
         <a href="void:0" className="item" onClick={OnCallRegister}>
           콜등록(F2)
         </a>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <NavLink to="/CallHistory">콜 이력 현황</NavLink>
       </Menu.Item>
     </Menu>
   );
