@@ -122,36 +122,40 @@ const CallListModal: FC<Props> = (props: Props) => {
 
           </div>
           <div style={{ marginBottom: "10px" }}>
-            <CallDetailShopTitle title="기사" value={callInfo.acCourPresident} />
-            <CallDetailShopTitle 
-              title="기사연락처"
-              value={getCellNoFormat(callInfo.acCourCellNo)}
-            />
-            <CallDetailShopTitle title="배달비용" value={costFormat(callInfo.ulErrandCharge)} />
-            <CallDetailShopTitle
-              title="배차대행 수수료"
-              value={<FlatFixedRateSystem callInfo={callInfo}/>}
-            />
-            <CallDetailShopTitle
-              title="배달기사 수수료"
-              value={costFormat(riderFee)}
-            />
-            <CallDetailShopTitle 
-              title="타사 지급 수수료"
-              value={costFormat(callInfo.ulErrandDispatchAgencyFee)}
-            />
-            <CallDetailShopTitle
-              title="물건가격"
-              value={<PaymentModeAndAmount callInfo={callInfo} />}
-            />
-            <CallDetailShopTitle 
-              title="선지급액(분할)"
-              value={costFormat(callInfo.ulSplitPrePayment)}
-            />
-            <CallDetailShopTitle 
-              title="잔여금액(분할)"
-              value={costFormat(callInfo.ulSplitPostPayment)}
-            />
+            <div style={{ paddingBottom: '10px'}}>
+              <CallDetailShopTitle title="기사" value={callInfo.acCourPresident} />
+              <CallDetailShopTitle 
+                title="기사연락처"
+                value={getCellNoFormat(callInfo.acCourCellNo)}
+              />
+              <CallDetailShopTitle title="배달비용" value={costFormat(callInfo.ulErrandCharge)} />
+              <CallDetailShopTitle
+                title="배차대행 수수료"
+                value={<FlatFixedRateSystem callInfo={callInfo}/>}
+              />
+              <CallDetailShopTitle
+                title="배달기사 수수료"
+                value={costFormat(riderFee)}
+              />
+            </div>
+            <div style={{ paddingBottom: '10px'}}>
+              <CallDetailShopTitle 
+                title="타사 지급 수수료"
+                value={costFormat(callInfo.ulErrandDispatchAgencyFee)}
+              />
+              <CallDetailShopTitle
+                title="물건가격"
+                value={<PaymentModeAndAmount callInfo={callInfo} />}
+              />
+              <CallDetailShopTitle 
+                title="선지급액(분할)"
+                value={costFormat(callInfo.ulSplitPrePayment)}
+              />
+              <CallDetailShopTitle 
+                title="잔여금액(분할)"
+                value={costFormat(callInfo.ulSplitPostPayment)}
+              />
+            </div>
             {/* <CallDetailShopTitle title="물건가격" value={costFormat(callInfo.ulGoodsPrice)} /> */}
             <CallDetailShopTitle
               title="픽업지연락처"
