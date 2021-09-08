@@ -7,6 +7,8 @@
     border-radius: 2px;
     font-feature-settings: 'tnum', "tnum" ;
     position: relative;
+    width: 100%;
+    text-align: right;
 }
 
 .input-number-format:hover {
