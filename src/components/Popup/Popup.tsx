@@ -3,7 +3,7 @@
 import * as React from "react";
 import "./CallSignPopup.css";
 import { useState, useCallback, useEffect } from "react";
-import { Form, Radio, Button, Input, Col, Row, message, Checkbox, Collapse } from "antd";
+import { Form, Radio, Button, Input, Col, Row, message, Checkbox, Collapse, Popconfirm } from "antd";
 import { CloseCircleTwoTone } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import DaumPostcode from "react-daum-postcode";
@@ -24,7 +24,7 @@ import { RiderInfo } from "../shop/types";
 import ErrandAllocType from "src/helpers/ErrandAllocType";
 import AddressAPIService from "src/util/kakao";
 import DistanceHelper from "src/helpers/DistanceHelper";
-import { costFormat } from "src/util/FormatUtil";
+import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 import { CallDetailShopTitle } from "../CallList";
 
 interface Props {
@@ -284,12 +284,13 @@ const Popup = (props: Props) => {
 
   // 분할결제 선지급액
   let splitAdvancePayment
-  if(ulSplitPrePayment !== 0) {
-    splitAdvancePayment = (ulErrandCharge) - ulSplitPrePayment
-  }
+  if(ucPaymentMode === 5) {
+    if(ulSplitPrePayment !== 0) {
+      splitAdvancePayment = (ulErrandCharge) - ulSplitPrePayment
+    }
+  } 
 
   // 배차 대행 수수료
-
   let calcErrandFeeAgency
   if(ucErrandFeeType == 1) {
     calcErrandFeeAgency = ulErrandFeeAmount
@@ -297,14 +298,44 @@ const Popup = (props: Props) => {
     calcErrandFeeAgency = ((ulErrandCharge) * (ucErrandFeeRate) / 100);
   }
   
-  console.log(typeof(ulErrandFeeAmount),ulErrandCharge,ucErrandFeeRate)
-
   // 배달기사 수수료
   let riderFee
   if(ucErrandType == 1) {
     riderFee = (ulErrandCharge) - calcErrandFeeAgency
   } else {
     riderFee = (ulErrandCharge) - calcErrandFeeAgency
+  }
+
+  // 전화번호 
+  useEffect(() => {
+    if(acDestCellNo.length === 13) {
+      setAcDestCellNo(acDestCellNo.replace(/-/g, '').replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'));   
+     } else 
+       setAcDestCellNo(acDestCellNo.replace(/(\d{2,3})(\d{3,4})(\d{4})/, '$1-$2-$3'))
+    },[acDestCellNo])
+
+  useEffect(() => {
+    if(acOriginCellNo.length === 13) {
+      setAcOriginCellNo(acOriginCellNo.replace(/-/g, '').replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'));   
+     } else
+      setAcOriginCellNo(acOriginCellNo.replace(/(\d{2,3})(\d{3,4})(\d{4})/, '$1-$2-$3'))
+    },[acOriginCellNo])
+
+  // 정액제 
+  const flatRateSystem = (e) => {
+    setUlErrandFeeAmount(parseInt(e.value))
+    if(ulErrandFeeAmount >= ulErrandCharge) {
+      alert('금액이 배달비용 금액보다 클 수 없습니다.')
+    }
+  }
+
+
+  // 정률제
+  const fixedRateSystem = (e) => {
+    setUcErrandFeeRate(e.value)
+    if(ucErrandFeeRate >= 100) {
+      alert('100% 보다 클 수 없습니다.')
+    }
   }
 
 return (
@@ -323,9 +354,7 @@ return (
               rate: 3.5
             }}
           >
-            <Form.Item label="접수 번호">
-              
-            </Form.Item>
+            <Form.Item label="접수 번호" />
             <Form.Item label="심부름 종류">
               <Col style={{ textAlign: "left" }}>
                 <Checkbox
@@ -337,8 +366,8 @@ return (
                   }}
                   checked={ucErrandType === ErrandType.SAME}
                 />
-                바로목적지로
-                <Button style={{ left: "63px" }} onClick={handleClickSwap}>
+                <span style={{paddingRight: '5.7vh'}}>바로목적지로</span>
+                <Button onClick={handleClickSwap}>
                   픽업지 ↔ 목적지
                 </Button>
               </Col>
@@ -416,12 +445,20 @@ return (
             </Form.Item>
             <div style={{ textAlign: "center" }}>
               <Collapse ghost>
-                <Panel header={<Button>경유지 추가 1</Button>} key="1" showArrow={false}>
+                <Panel 
+                  header={<Button disabled={ucErrandType === ErrandType.SAME}>경유지 추가 1</Button>} 
+                  key="1" 
+                  showArrow={false}
+                  >
                   <Stopover />
                 </Panel>
               </Collapse>
               <Collapse ghost>
-                <Panel header={<Button>경유지 추가 2</Button>} key="2" showArrow={false}>
+                <Panel 
+                  header={<Button disabled={ucErrandType === ErrandType.SAME}>경유지 추가 2</Button>} 
+                  key="2" 
+                  showArrow={false}
+                  >
                   <Stopover />
                 </Panel>
               </Collapse>
@@ -509,10 +546,10 @@ return (
           >
             <Form.Item label="제한시간">
               <Radio.Group
-                style={{ float: "left" }}
                 value={ucLimitTime}
                 name="ucLimitTime"
                 onChange={e => setUcLimitTime(e.target.value)}
+                style={{width:'100%'}}
               >
                 <Row>
                   <LeftAlignedCol span={20}>
@@ -554,11 +591,19 @@ return (
                 name="ucTripType"
                 value={ucTripType}
                 onChange={e => setUcTripType(e.target.value)}
-                style={{ float: "left" }}
+                style={{ float: "left", width:'100%'}}
               >
-                <Radio value={1}>편도</Radio>
-                <Radio value={2}>왕복</Radio>
-                <Radio value={3}>경유</Radio>
+                <Row>
+                  <LeftAlignedCol span={8}>
+                    <Radio value={1}>편도</Radio>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
+                    <Radio value={2}>왕복</Radio>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
+                    <Radio value={3}>경유</Radio>
+                  </LeftAlignedCol>
+                  </Row>
               </Radio.Group>
             </Form.Item>
 
@@ -567,12 +612,19 @@ return (
                 name="ucPaymentMode"
                 value={ucPaymentMode}
                 onChange={e => setUcPaymentMode(e.target.value)}
-                style={{ float: "left", width:'300px' }}
+                style={{ float: "left", width:'100%'}}
               >
-                <Radio value={3}>현금</Radio>
-                <Radio value={4}>선결제</Radio>
-                <Radio value={5}>후결제</Radio>
-                <Radio value={6}>분할</Radio>
+                 <Row>
+                  <LeftAlignedCol span={8}>
+                    <Radio value={3}>현금</Radio>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
+                    <Radio value={4}>선결제</Radio>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
+                    <Radio value={5}>분할</Radio>
+                  </LeftAlignedCol>
+                  </Row>
               </Radio.Group>
             </Form.Item>
 
@@ -584,8 +636,9 @@ return (
                 onValueChange={(value: any) => {
                   setUlGoodsPrice(parseInt(value.value))
                 }}
-                disabled={ucPaymentMode !== PaymentMode.CASH}
                 thousandSeparator={true}
+                maxLength={9}
+                suffix=" 원"
               />
             </Form.Item>
 
@@ -598,6 +651,7 @@ return (
                 onValueChange={(value: any) => {
                   setUlErrandCharge(parseInt(value.value))
                 }}
+                suffix=" 원"
               />
             </Form.Item>
 
@@ -611,6 +665,7 @@ return (
                   setUlSplitPrePayment(parseInt(value.value))
                 }}
                 disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT}
+                suffix=" 원"
               />
             </Form.Item>
 
@@ -623,10 +678,16 @@ return (
                 name="ucErrandSettlementType"
                 value={ucErrandSettlementType}
                 onChange={e => setUcErrandSettlementType(e.target.value)}
-                style={{ float: "left" }}
+                style={{ float: "left", width:'100%'}}
               >
-                <Radio value={1}>수기정산</Radio>
-                <Radio value={2}>자동정산</Radio>
+                <Row>
+                  <LeftAlignedCol span={8}>
+                    <Radio value={1}>수기정산</Radio>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
+                    <Radio value={2}>자동정산</Radio>
+                  </LeftAlignedCol>
+                </Row>
               </Radio.Group>
             </Form.Item>
 
@@ -635,10 +696,16 @@ return (
                 name="ucErrandFeeType"
                 value={ucErrandFeeType}
                 onChange={e => setUcErrandFeeType(e.target.value)}
-                style={{ float: "left" }}
+                style={{ float: "left", width:'100%'}}
               >
-                <Radio value={1}>정액제(원)</Radio>
-                <Radio value={2}>정률제(%)</Radio>
+                <Row>
+                  <LeftAlignedCol span={8}>
+                    <Radio value={1}>정액제</Radio>
+                  </LeftAlignedCol>
+                  <LeftAlignedCol span={8}>
+                    <Radio value={2}>정률제</Radio>
+                  </LeftAlignedCol>
+                </Row>
               </Radio.Group>
             </Form.Item>
 
@@ -648,10 +715,12 @@ return (
                 placeholder="0"
                 thousandSeparator={true}
                 name="ulErrandFeeAmount"
-                onValueChange={(values: any) => {
-                  setUlErrandFeeAmount(parseInt(values.value))
-                }}
+                // onValueChange={(values: any) => {
+                //   setUlErrandFeeAmount(parseInt(values.value))
+                // }}
+                onValueChange={flatRateSystem}
                 disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
+                suffix=" 원"
               />
             </Form.Item>
 
@@ -661,10 +730,12 @@ return (
                 placeholder="0"
                 thousandSeparator={true}
                 name="ucErrandFeeRate"
-                onValueChange={(value: any) => {
-                  setUcErrandFeeRate(parseInt(value.value))
-                }}
+                // onValueChange={(value: any) => {
+                //   setUcErrandFeeRate(parseInt(value.value))
+                // }}
+                onValueChange={fixedRateSystem}
                 disabled={ucErrandFeeType !== ErrandFeeType.RATE}
+                suffix=" %"
               />
             </Form.Item>
 
@@ -685,6 +756,7 @@ return (
                 onValueChange={(value: any) => {
                   setUlErrandDispatchAgencyFee(parseInt(value.value))
                 }}
+                suffix=" 원"
               />
             </Form.Item>
 
@@ -713,9 +785,16 @@ return (
                 <></>
               )}
               <Row style={{ float: "right" }}>
-                <Button style={{ marginTop: "30px" }} type="ghost" onClick={CallSign}>
-                  접수
-                </Button>
+                <Popconfirm 
+                  title="심부름을 접수하시겠습니까?"
+                  okText="네"
+                  cancelText="아니요"
+                  onConfirm={CallSign}
+                >
+                  <Button style={{ marginTop: "30px" }} type="ghost">
+                    접수
+                  </Button>
+                </Popconfirm>
               </Row>
             </Form.Item>
           </Form>
