@@ -7,13 +7,13 @@ import "./CallListModal.css";
 import { CallDetailShopTitle } from "./index";
 import { CallInfo } from "./CallListComponent";
 import { costFormat, getCellNoFormat, getDateFormat } from "src/util/FormatUtil";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
 import CallTimeLine from "./CallTimeLine";
 import CallModify from "./CallModify";
 import PaymentModeAndAmount from "src/util/PaymentModeAndAmount";
-import TradeAPIService from "src/util/TradeAPIService";
+import FlatFixedRateSystem from "src/util/FlatFixedRateSystem";
 
 const { Step } = Steps;
 interface Props {
@@ -59,7 +59,8 @@ const CallListModal: FC<Props> = (props: Props) => {
       console.log(response);
       message.success("콜이 취소되었습니다.");
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError
+      message.error(error.message);
     }
   };
 
@@ -89,9 +90,26 @@ const CallListModal: FC<Props> = (props: Props) => {
       console.log(response);
       message.success("배차가 취소되었습니다.");
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError
+      message.error(error.message);
     }
   };
+
+    // 배차 대행 수수료
+    let calcErrandFeeAgency
+    if(callInfo.ucErrandFeeType === 1) {
+      calcErrandFeeAgency = callInfo.ulErrandFeeAmount
+    } else {
+      calcErrandFeeAgency = (callInfo.ulErrandCharge * ((callInfo.ucErrandFeeRate!) / 100));
+    }
+
+     // 배달기사 수수료
+    let riderFee
+    if(callInfo.ucErrandType == 1) {
+      riderFee = callInfo.ulErrandCharge - calcErrandFeeAgency
+    } else {
+      riderFee = callInfo.ulErrandCharge - calcErrandFeeAgency
+    }
   return (
     <>
       <Modal title="콜 상세" visible={visible} onCancel={handleCancel} onOk={handleOk}>
@@ -111,16 +129,16 @@ const CallListModal: FC<Props> = (props: Props) => {
             />
             <CallDetailShopTitle title="배달비용" value={costFormat(callInfo.ulErrandCharge)} />
             <CallDetailShopTitle
-              title="대행 수수료"
-              value={costFormat(callInfo.ulErrandFeeAgency)}
-            />
-            <CallDetailShopTitle
               title="배차대행 수수료"
-              value={costFormat(callInfo.ulErrandDispatchAgencyFee)}
+              value={<FlatFixedRateSystem callInfo={callInfo}/>}
             />
             <CallDetailShopTitle
               title="배달기사 수수료"
-              value={costFormat(callInfo.ulErrandCharge - callInfo.ulErrandDispatchAgencyFee)}
+              value={costFormat(riderFee)}
+            />
+            <CallDetailShopTitle 
+              title="타사 지급 수수료"
+              value={costFormat(callInfo.ulErrandDispatchAgencyFee)}
             />
             <CallDetailShopTitle
               title="물건가격"
