@@ -75,7 +75,7 @@ const Header = () => {
   };
 
   const OnCallRegister = () => {
-    window.open("/Popup/", "_blank", "top=100, left=500, width=1000, height=700");
+    window.open("/Popup/", "_blank", "top=100, left=500, width=1000, height=800");
   };
 
   const Logout = () => {
