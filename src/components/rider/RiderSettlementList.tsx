@@ -4,7 +4,7 @@ import { Col, Descriptions, Table, Button } from "antd";
 import RiderInfo1, { RiderInfo } from "../shop/types";
 import moment from "moment";
 import { CircularProgress } from "@material-ui/core";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import LoginHelper from "../../pages/shared/LoginHelper";
 import RiderDailyTotal from "../../dto/RiderDailyTotal";
 import RiderDaily from "../../dto/RiderDaily";
@@ -339,8 +339,8 @@ const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) =
 
       setAstRiderDaily(data.lstRiderDaily);
       setStRiderDailyTotal(data.stRiderDailyTotal);
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      const error = e as AxiosError
       if (error.response && error.response.data && error.response.data.msg) {
         throw new Error(error.response.data.msg);
       } else {
