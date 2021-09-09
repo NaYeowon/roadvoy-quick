@@ -26,6 +26,7 @@ import AddressAPIService from "src/util/kakao";
 import DistanceHelper from "src/helpers/DistanceHelper";
 import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 import { CallDetailShopTitle } from "../CallList";
+import ErrandAddressType from "src/helpers/ErrandAddressType";
 
 interface Props {
   callInfo: CallInfo | undefined;
@@ -257,6 +258,16 @@ const Popup = (props: Props) => {
     setAcDestMemo(acOriginMemo);
   };
 
+  // const handleSearchAddressByCompanyName = async (acQuery: string, rrandAddressType:ErrandAddressType) => {
+  //   const astErrandCompany: CallInfo[] = await ErrandAPIService.getCompanyListByName(acQuery)
+  //   if(astErrandCompany && astErrandCompany.length > 0) {
+  //     if(astErrandCompany.length === 1) {
+  //       // 1 개인 경우 바로 집어넣는다
+        
+  //     }
+  //   }
+  // }
+
   const handleClickCancelSelectDispatchRider = () => {
     setUcAllocType(ErrandAllocType.NORMAL), setStForceDispatchRider(null);
   };
@@ -320,29 +331,26 @@ const Popup = (props: Props) => {
     },[acOriginCellNo])
 
   // 정액제 
-  const flatRateSystem = (e) => {
-    setUlErrandFeeAmount(parseInt(e.value))
+  useEffect(() => {
     if(ulErrandFeeAmount >= ulErrandCharge) {
-      alert('금액이 배달비용 금액보다 클 수 없습니다.')
+      alert('배달비용 금액보다 클 수 없습니다.')
     }
-  }
-
-
+  }, [ulErrandFeeAmount])
   // 정률제
-  const fixedRateSystem = (e) => {
-    setUcErrandFeeRate(e.value)
-    if(ucErrandFeeRate >= 100) {
+  useEffect(() => {
+    if(ucErrandFeeRate > 100) {
       alert('100% 보다 클 수 없습니다.')
     }
-  }
+  }, [ucErrandFeeRate])
 
   // 타사 지급 수수료
-  const dispatchAgencyFee = (e) => {
-    setUlErrandDispatchAgencyFee(parseInt(e.value))
-    if(ulErrandDispatchAgencyFee > ulErrandCharge) {
-      alert('타사 지급 수수료가 배달비용보다 클 수 없습니다.')
+  useEffect(() => {
+    if(ulErrandDispatchAgencyFee >= ulErrandCharge) {
+      alert('배달비용 금액보다 클 수 없습니다.')
     }
-  }
+  }, [ulErrandDispatchAgencyFee])
+ 
+
 return (
     <>
       <Row style={{ borderBottom: "1px solid #f5f5f5" }}>
@@ -379,8 +387,12 @@ return (
             </Form.Item>
 
             <Form.Item label="픽업지 업체명">
-              <Input
+              <Search
                 placeholder="업체명을 입력하세요"
+                enterButton="검색"
+                onSearch={(val) => {
+                  //handleSearchAddressByCompanyName(val, ErrandAddressType.ORIGIN)
+                }}
                 value={acOriginCompany}
                 name="acOriginCompany"
                 onChange={e => {
@@ -391,8 +403,9 @@ return (
             </Form.Item>
 
             <Form.Item label="픽업지 연락처">
-              <Input
+              <Search
                 placeholder="연락처를 입력하세요"
+                enterButton="검색"
                 value={acOriginCellNo}
                 name="acOriginCellNo"
                 onChange={e => {
@@ -470,8 +483,13 @@ return (
               
             </div>
             <Form.Item label="목적지 업체명">
-              <Input
+              <Search
                 placeholder="업체명을 입력하세요"
+                enterButton="검색"
+                onSearch={(val: string) => {
+                
+                }}
+                tabIndex={2}
                 name="acDestCompany"
                 value={acDestCompany}
                 onChange={e => {
@@ -480,8 +498,9 @@ return (
               />
             </Form.Item>
             <Form.Item label="목적지 연락처">
-              <Input
+              <Search
                 placeholder="연락처를 입력하세요"
+                enterButton="검색"
                 name="acDestCellNo"
                 value={acDestCellNo}
                 onChange={e => {
@@ -721,10 +740,9 @@ return (
                 placeholder="0"
                 thousandSeparator={true}
                 name="ulErrandFeeAmount"
-                // onValueChange={(values: any) => {
-                //   setUlErrandFeeAmount(parseInt(values.value))
-                // }}
-                onValueChange={flatRateSystem}
+                onValueChange={(values: any) => {
+                  setUlErrandFeeAmount(parseInt(values.value))
+                }}
                 disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
                 suffix=" 원"
               />
@@ -736,10 +754,9 @@ return (
                 placeholder="0"
                 thousandSeparator={true}
                 name="ucErrandFeeRate"
-                // onValueChange={(value: any) => {
-                //   setUcErrandFeeRate(parseInt(value.value))
-                // }}
-                onValueChange={fixedRateSystem}
+                onValueChange={(e) => {
+                  setUcErrandFeeRate(parseInt(e.value))
+                }}
                 disabled={ucErrandFeeType !== ErrandFeeType.RATE}
                 suffix=" %"
               />
@@ -759,10 +776,9 @@ return (
                 placeholder="0"
                 thousandSeparator={true}
                 name="ulErrandDispatchAgencyFee"
-                // onValueChange={(value: any) => {
-                //   setUlErrandDispatchAgencyFee(parseInt(value.value))
-                // }}
-                onValueChange={dispatchAgencyFee}
+                onValueChange={(e) => {
+                  setUlErrandDispatchAgencyFee(parseInt(e.value))
+                }}
                 suffix=" 원"
               />
             </Form.Item>
