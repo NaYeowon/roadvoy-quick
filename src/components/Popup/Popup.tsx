@@ -284,11 +284,9 @@ const Popup = (props: Props) => {
 
   // 분할결제 선지급액
   let splitAdvancePayment
-  if(ucPaymentMode === 5) {
-    if(ulSplitPrePayment !== 0) {
-      splitAdvancePayment = (ulErrandCharge) - ulSplitPrePayment
-    }
-  } 
+  if(ucPaymentMode === PaymentMode.INSTALLMENT_PAYMENT) {
+    splitAdvancePayment = (ulErrandCharge) - ulSplitPrePayment
+  }
 
   // 배차 대행 수수료
   let calcErrandFeeAgency
@@ -338,6 +336,13 @@ const Popup = (props: Props) => {
     }
   }
 
+  // 타사 지급 수수료
+  const dispatchAgencyFee = (e) => {
+    setUlErrandDispatchAgencyFee(parseInt(e.value))
+    if(ulErrandDispatchAgencyFee > ulErrandCharge) {
+      alert('타사 지급 수수료가 배달비용보다 클 수 없습니다.')
+    }
+  }
 return (
     <>
       <Row style={{ borderBottom: "1px solid #f5f5f5" }}>
@@ -622,7 +627,7 @@ return (
                     <Radio value={4}>선결제</Radio>
                   </LeftAlignedCol>
                   <LeftAlignedCol span={8}>
-                    <Radio value={5}>분할</Radio>
+                    <Radio value={5}>분할결제</Radio>
                   </LeftAlignedCol>
                   </Row>
               </Radio.Group>
@@ -637,7 +642,7 @@ return (
                   setUlGoodsPrice(parseInt(value.value))
                 }}
                 thousandSeparator={true}
-                maxLength={9}
+                maxLength={10}
                 suffix=" 원"
               />
             </Form.Item>
@@ -652,6 +657,7 @@ return (
                   setUlErrandCharge(parseInt(value.value))
                 }}
                 suffix=" 원"
+                maxLength={9}
               />
             </Form.Item>
 
@@ -664,7 +670,7 @@ return (
                 onValueChange={(value: any) => {
                   setUlSplitPrePayment(parseInt(value.value))
                 }}
-                disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT}
+                disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT }
                 suffix=" 원"
               />
             </Form.Item>
@@ -753,9 +759,10 @@ return (
                 placeholder="0"
                 thousandSeparator={true}
                 name="ulErrandDispatchAgencyFee"
-                onValueChange={(value: any) => {
-                  setUlErrandDispatchAgencyFee(parseInt(value.value))
-                }}
+                // onValueChange={(value: any) => {
+                //   setUlErrandDispatchAgencyFee(parseInt(value.value))
+                // }}
+                onValueChange={dispatchAgencyFee}
                 suffix=" 원"
               />
             </Form.Item>
