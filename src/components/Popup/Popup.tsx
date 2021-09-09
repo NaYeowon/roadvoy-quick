@@ -332,7 +332,7 @@ const Popup = (props: Props) => {
 
   // 정액제 
   useEffect(() => {
-    if(ulErrandFeeAmount >= ulErrandCharge) {
+    if(ulErrandFeeAmount > ulErrandCharge) {
       alert('배달비용 금액보다 클 수 없습니다.')
     }
   }, [ulErrandFeeAmount])
@@ -345,7 +345,7 @@ const Popup = (props: Props) => {
 
   // 타사 지급 수수료
   useEffect(() => {
-    if(ulErrandDispatchAgencyFee >= ulErrandCharge) {
+    if(ulErrandDispatchAgencyFee > ulErrandCharge) {
       alert('배달비용 금액보다 클 수 없습니다.')
     }
   }, [ulErrandDispatchAgencyFee])
