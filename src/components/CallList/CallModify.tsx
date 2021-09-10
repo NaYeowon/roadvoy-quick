@@ -19,6 +19,7 @@ import { CloseCircleTwoTone } from "@ant-design/icons";
 import DistanceHelper from "src/helpers/DistanceHelper";
 import AddressAPIService from "src/util/kakao";
 import { costFormat } from "src/util/FormatUtil";
+import NumberFormat from "react-number-format";
 
 const { Panel } = Collapse;
 
@@ -229,16 +230,90 @@ const CallModify: FC<Props> = (props: Props) => {
     //픽업지 목적지 거리계산
    let originToDestDistance;
    if ( ulOriginLatiPos && ulDestLatiPos ) {
-   if (ulOriginLatiPos !== 0 && ucErrandType !== ErrandType.SAME && ulDestLatiPos !== 0) {
-     originToDestDistance = DistanceHelper.getDistanceText(
-       ulOriginLatiPos,
-       ulOriginLongPos,
-       ulDestLatiPos,
-       ulDestLongPos
-     );
-   }
+    if (ulOriginLatiPos !== 0 && ucErrandType !== ErrandType.SAME && ulDestLatiPos !== 0) {
+      originToDestDistance = DistanceHelper.getDistanceText(
+        ulOriginLatiPos,
+        ulOriginLongPos,
+        ulDestLatiPos,
+        ulDestLongPos
+      );
+    }
   }
 
+  // 분할결제 선지급액
+  let splitAdvancePayment
+  if(ulErrandCharge && ulSplitPrePayment) {
+    if(ucPaymentMode === PaymentMode.INSTALLMENT_PAYMENT) {
+      splitAdvancePayment = (ulErrandCharge) - ulSplitPrePayment
+    }
+  }
+
+  // 배차 대행 수수료
+  let calcErrandFeeAgency
+  if(ucErrandFeeType == ErrandFeeType.AMOUNT) {
+    calcErrandFeeAgency = ulErrandFeeAmount
+  } else {
+    calcErrandFeeAgency = ((ulErrandCharge!) * (ucErrandFeeRate) / 100);
+  }
+
+  useEffect(() => {
+    if(ucErrandFeeType != ErrandFeeType.RATE) {
+      setUcErrandFeeRate(0)
+    }
+    if(ucErrandFeeType != ErrandFeeType.AMOUNT) {
+      setUlErrandFeeAmount(0)
+    }
+  },[ucErrandFeeType])
+
+  // 배달기사 수수료
+  let riderFee
+    riderFee = (ulErrandCharge!) - calcErrandFeeAgency
+
+  // 전화번호 
+  useEffect(() => {
+    if(acOriginCellNo)
+      setAcOriginCellNo(acOriginCellNo.replace(/[^0-9]/g, '').replace(/(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/, '$1-$2-$3').replace('--', '-'))
+    },[acOriginCellNo])
+  useEffect(() => {
+    if(acDestCellNo)
+    setAcDestCellNo(acDestCellNo.replace(/[^0-9]/g, '').replace(/(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/, '$1-$2-$3').replace('--', '-'))
+    },[acDestCellNo])
+
+    
+  // 분할결제 선지급액
+  useEffect(() => {
+    if(ulSplitPrePayment! > ulErrandCharge!) {
+      alert('배달비용 금액보다 클 수 없습니다.')
+    }
+  }, [ulSplitPrePayment])
+
+  // 정액제 
+  useEffect(() => {
+    if(ulErrandFeeAmount! > ulErrandCharge!) {
+      alert('배달비용 금액보다 클 수 없습니다.')
+    }
+  }, [ulErrandFeeAmount])
+  // 정률제
+  useEffect(() => {
+    if(ucErrandFeeRate > 100) {
+      alert('100% 보다 클 수 없습니다.')
+    }
+  }, [ucErrandFeeRate])
+
+  // 타사 지급 수수료
+  useEffect(() => {
+    if(ulErrandDispatchAgencyFee! > ulErrandCharge!) {
+      alert('배달비용 금액보다 클 수 없습니다.')
+    }
+  }, [ulErrandDispatchAgencyFee])
+ 
+  // disable 0으로 초기화
+  useEffect(() => {
+    if ( ucPaymentMode != PaymentMode.INSTALLMENT_PAYMENT ) {
+      setUlSplitPrePayment(0)
+    }
+  }, [ucPaymentMode])
+  
   let forceAllocRiderBody;
   if (stForceDispatchRider) {
     forceAllocRiderBody = (
@@ -249,25 +324,20 @@ const CallModify: FC<Props> = (props: Props) => {
     );
   }
 
-    // 배차 대행 수수료
-    let calcErrandFeeAgency
-    if(ucErrandFeeType === 1) {
-      calcErrandFeeAgency = ulErrandFeeAmount
-    } else {
-      calcErrandFeeAgency = (ulErrandCharge! * ((ucErrandFeeRate!) / 100));
+  useEffect(() => {
+    if ( ucErrandType === ErrandType.SAME ) {
+      setAcOriginCompany("")
+      setAcOriginCellNo("")
+      setAcOriginOldAddr("")
+      setAcOriginAddrDesc("")
+      setFullAddress("")
+      setAcOriginMemo("")
     }
-
-    // 배달기사 수수료
-    let riderFee
-    if(ucErrandType == 1) {
-      riderFee = ulErrandCharge! - calcErrandFeeAgency
-    } else {
-      riderFee = ulErrandCharge! - calcErrandFeeAgency
-    }
+  }, [ucErrandType])
   return (
     <div>
       <Modal
-        width={1000}
+        width={1050}
         title="심부름 수정"
         visible={visible}
         onCancel={handleCancel}
@@ -369,12 +439,20 @@ const CallModify: FC<Props> = (props: Props) => {
               </Form.Item>
               <div style={{ textAlign: "center" }}>
                 <Collapse ghost>
-                  <Panel header={<Button>경유지 추가 1</Button>} key="1" showArrow={false}>
+                  <Panel 
+                    header={<Button disabled={ucErrandType === ErrandType.SAME}>경유지 추가 1</Button>} 
+                    key="1" 
+                    showArrow={false}
+                  >
                     <Stopover />
                   </Panel>
                 </Collapse>
                 <Collapse ghost>
-                  <Panel header={<Button>경유지 추가 2</Button>} key="2" showArrow={false}>
+                  <Panel 
+                    header={<Button disabled={ucErrandType === ErrandType.SAME}>경유지 추가 2</Button>} 
+                    key="2" 
+                    showArrow={false}
+                  >                    
                     <Stopover />
                   </Panel>
                 </Collapse>
@@ -493,11 +571,6 @@ const CallModify: FC<Props> = (props: Props) => {
                       <Radio value={120}>120분</Radio>
                     </LeftAlignedCol>
                   </Row>
-                  {/* <Row>
-                  {LimitTimes.map((limitTime, index) => (
-                    <LimitTime key={index} time={limitTime} />
-                  ))}
-                </Row> */}
                 </Radio.Group>
               </Form.Item>
 
@@ -505,65 +578,92 @@ const CallModify: FC<Props> = (props: Props) => {
                 <Radio.Group
                   name="ucTripType"
                   value={ucTripType}
-                  onChange={e => setUcTripType(Number(e.target.value))}
-                  style={{ float: "left" }}
+                  onChange={e => setUcTripType(e.target.value)}
+                  style={{ float: "left", width:'100%'}}
                 >
-                  <Radio value={1}>편도</Radio>
-                  <Radio value={2}>왕복</Radio>
-                  <Radio value={3}>경유</Radio>
+                  <Row>
+                    <LeftAlignedCol span={8}>
+                      <Radio value={1}>편도</Radio>
+                    </LeftAlignedCol>
+                    <LeftAlignedCol span={8}>
+                      <Radio value={2}>왕복</Radio>
+                    </LeftAlignedCol>
+                    <LeftAlignedCol span={8}>
+                      <Radio value={3}>경유</Radio>
+                    </LeftAlignedCol>
+                  </Row>
                 </Radio.Group>
               </Form.Item>
+
 
               <Form.Item label="결제유형">
                 <Radio.Group
                   name="ucPaymentMode"
                   value={ucPaymentMode}
                   onChange={e => setUcPaymentMode(Number(e.target.value))}
-                  style={{ textAlign: "left", width: "300px" }}
+                  style={{ textAlign: "left", width: '100%' }}
                 >
-                  <Radio value={3}>현금</Radio>
-                  <Radio value={4}>선결제</Radio>
-                  <Radio value={5}>후결제</Radio>
-                  <Radio value={6}>분할</Radio>
+                  <Row>
+                    <LeftAlignedCol span={8}>
+                      <Radio value={3}>현금</Radio>
+                    </LeftAlignedCol>
+                    <LeftAlignedCol span={8}>
+                      <Radio value={4}>선결제</Radio>
+                    </LeftAlignedCol>
+                    <LeftAlignedCol span={8}>
+                      <Radio value={5}>분할결제</Radio>
+                    </LeftAlignedCol>
+                  </Row>
                 </Radio.Group>
               </Form.Item>
 
               <Form.Item label="물건가격">
-                <Input
-                  style={{ width: "50%", float: "left" }}
-                  placeholder="0"
-                  type="number"
-                  value={ulGoodsPrice}
-                  onChange={e => setUlGoodsPrice(Number(e.target.value))}
-                  disabled={ucPaymentMode !== PaymentMode.CASH}
+                <NumberFormat
+                className="input-number-format"
+                placeholder="0"
+                name="ulGoodsPrice"
+                value={ulGoodsPrice}
+                onValueChange={(value: any) => {
+                  setUlGoodsPrice(parseInt(value.value))
+                }}
+                thousandSeparator={true}
+                maxLength={10}
+                suffix=" 원"
                 />
               </Form.Item>
 
               <Form.Item label="배달비용">
-                <Input
-                  style={{ width: "50%", float: "left" }}
-                  placeholder="0"
-                  type="number"
-                  value={ulErrandCharge}
-                  onChange={e => {
-                    setUlErrandCharge(parseInt(e.target.value));
-                  }}
-                />
+              <NumberFormat
+                className="input-number-format"
+                placeholder="0"
+                name="ulErrandCharge"
+                value={ulErrandCharge}
+                thousandSeparator={true}
+                onValueChange={(value: any) => {
+                  setUlErrandCharge(parseInt(value.value))
+                }}
+                suffix=" 원"
+                maxLength={9}
+              />
               </Form.Item>
 
               <Form.Item label="분할결제 선지급액">
-              <Input
-                style={{ width: "50%", float: "left" }}
-                placeholder="0"
-                type="number"
-                name="ulSplitPrePayment"
-                onChange={e => setUlSplitPrePayment(parseInt(e.target.value))}
-                disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT}
-              />
+                <NumberFormat
+                  className="input-number-format"
+                  placeholder="0"
+                  thousandSeparator={true}
+                  name="ulSplitPrePayment"
+                  onValueChange={(value: any) => {
+                    setUlSplitPrePayment(parseInt(value.value))
+                  }}
+                  disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT }
+                  suffix=" 원"
+                  value={ulSplitPrePayment}
+                />
             </Form.Item>
 
             <Form.Item label="분할결제 잔여금액">
-              {/* {costFormat(ulErrandCharge - ulSplitPrePayment)} */}
+              {costFormat(splitAdvancePayment)}
             </Form.Item>
 
               <Form.Item label="정산유형">
@@ -583,34 +683,46 @@ const CallModify: FC<Props> = (props: Props) => {
                   name="ucErrandFeeType"
                   value={ucErrandFeeType}
                   onChange={e => setUcErrandFeeType(Number(e.target.value))}
-                  style={{ float: "left" }}
+                  style={{ float: "left", width: "100%" }}
                 >
-                  <Radio value={1}>정액제(원)</Radio>
-                  <Radio value={2}>정률제(%)</Radio>
+                  <Row>
+                    <LeftAlignedCol span={8}>
+                      <Radio value={1}>정액제</Radio>
+                    </LeftAlignedCol>
+                    <LeftAlignedCol span={8}>
+                      <Radio value={2}>정률제</Radio>
+                    </LeftAlignedCol>
+                  </Row>
                 </Radio.Group>
               </Form.Item>
 
               <Form.Item label="정액제(원)">
-                <Input
-                  style={{ width: "50%", float: "left" }}
+                <NumberFormat
+                  className="input-number-format"
                   placeholder="0"
-                  type="number"
-                  value={ulErrandFeeAmount}
+                  thousandSeparator={true}
                   name="ulErrandFeeAmount"
-                  onChange={e => setUlErrandFeeAmount(parseInt(e.target.value))}
+                  onValueChange={(values: any) => {
+                    setUlErrandFeeAmount(parseInt(values.value))
+                  }}
                   disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
+                  suffix=" 원"
+                  value={ulErrandFeeAmount}
                 />
               </Form.Item>
 
               <Form.Item label="정률제(%)">
-                <Input
-                  style={{ width: "50%", float: "left" }}
+                <NumberFormat
+                  className="input-number-format"
                   placeholder="0"
-                  type="number"
+                  thousandSeparator={true}
                   name="ucErrandFeeRate"
-                  value={ucErrandFeeRate}
-                  onChange={(e) => {setUcErrandFeeRate(parseInt(e.target.value))}}
+                  onValueChange={(e) => {
+                    setUcErrandFeeRate(parseInt(e.value))
+                  }}
                   disabled={ucErrandFeeType !== ErrandFeeType.RATE}
+                  suffix=" %"
+                  value={ucErrandFeeRate}
                 />
               </Form.Item>
 
@@ -622,15 +734,18 @@ const CallModify: FC<Props> = (props: Props) => {
                 {costFormat(riderFee)}
               </Form.Item>
 
-              <Form.Item label="타사 지급 수수료" name="ulErrandDispatchAgencyFee" >
-              <Input
-                  style={{ width: "50%", float: "left" }}
-                  placeholder="0"
-                  type="number"
-                  name="ulErrandDispatchAgencyFee"
-                  value={ulErrandDispatchAgencyFee}
-                  onChange={(e) => setUlErrandDispatchAgencyFee(parseInt(e.target.value))}
-                />
+              <Form.Item label="타사 지급 수수료">
+                <NumberFormat
+                    className="input-number-format"
+                    placeholder="0"
+                    thousandSeparator={true}
+                    name="ulErrandDispatchAgencyFee"
+                    value={ulErrandDispatchAgencyFee}
+                    onValueChange={(e) => {
+                      setUlErrandDispatchAgencyFee(parseInt(e.value))
+                    }}
+                    suffix=" 원"
+                  />
               </Form.Item>
 
 
