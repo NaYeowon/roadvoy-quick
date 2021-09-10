@@ -3,7 +3,7 @@
 import * as React from "react";
 import "./CallSignPopup.css";
 import { useState, useCallback, useEffect } from "react";
-import { Form, Radio, Button, Input, Col, Row, message, Checkbox, Collapse, Popconfirm } from "antd";
+import { Form, Radio, Button, Input, Col, Row, message, Checkbox, Collapse, Popconfirm, AutoComplete } from "antd";
 import { CloseCircleTwoTone } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import DaumPostcode from "react-daum-postcode";
@@ -27,6 +27,9 @@ import DistanceHelper from "src/helpers/DistanceHelper";
 import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 import { CallDetailShopTitle } from "../CallList";
 import ErrandAddressType from "src/helpers/ErrandAddressType";
+import ErrandAPIService from "src/helpers/ErrandAPIService";
+import ErrandCompany from "src/util/ErrandCompany";
+import { useForm } from "antd/lib/form/Form";
 
 interface Props {
   callInfo: CallInfo | undefined;
@@ -258,16 +261,6 @@ const Popup = (props: Props) => {
     setAcDestMemo(acOriginMemo);
   };
 
-  // const handleSearchAddressByCompanyName = async (acQuery: string, rrandAddressType:ErrandAddressType) => {
-  //   const astErrandCompany: CallInfo[] = await ErrandAPIService.getCompanyListByName(acQuery)
-  //   if(astErrandCompany && astErrandCompany.length > 0) {
-  //     if(astErrandCompany.length === 1) {
-  //       // 1 개인 경우 바로 집어넣는다
-        
-  //     }
-  //   }
-  // }
-
   const handleClickCancelSelectDispatchRider = () => {
     setUcAllocType(ErrandAllocType.NORMAL), setStForceDispatchRider(null);
   };
@@ -301,34 +294,39 @@ const Popup = (props: Props) => {
 
   // 배차 대행 수수료
   let calcErrandFeeAgency
-  if(ucErrandFeeType == 1) {
+  if(ucErrandFeeType == ErrandFeeType.AMOUNT) {
     calcErrandFeeAgency = ulErrandFeeAmount
   } else {
     calcErrandFeeAgency = ((ulErrandCharge) * (ucErrandFeeRate) / 100);
   }
-  
+
+  useEffect(() => {
+    if(ucErrandFeeType != ErrandFeeType.RATE) {
+      setUcErrandFeeRate(0)
+    }
+    if(ucErrandFeeType != ErrandFeeType.AMOUNT) {
+      setUlErrandFeeAmount(0)
+    }
+  },[ucErrandFeeType])
+
   // 배달기사 수수료
   let riderFee
-  if(ucErrandType == 1) {
     riderFee = (ulErrandCharge) - calcErrandFeeAgency
-  } else {
-    riderFee = (ulErrandCharge) - calcErrandFeeAgency
-  }
 
   // 전화번호 
   useEffect(() => {
-    if(acDestCellNo.length === 13) {
-      setAcDestCellNo(acDestCellNo.replace(/-/g, '').replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'));   
-     } else 
-       setAcDestCellNo(acDestCellNo.replace(/(\d{2,3})(\d{3,4})(\d{4})/, '$1-$2-$3'))
+      setAcOriginCellNo(acOriginCellNo.replace(/[^0-9]/g, '').replace(/(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/, '$1-$2-$3').replace('--', '-'))
+    },[acOriginCellNo])
+  useEffect(() => {
+    setAcDestCellNo(acDestCellNo.replace(/[^0-9]/g, '').replace(/(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/, '$1-$2-$3').replace('--', '-'))
     },[acDestCellNo])
 
+  // 분할결제 선지급액
   useEffect(() => {
-    if(acOriginCellNo.length === 13) {
-      setAcOriginCellNo(acOriginCellNo.replace(/-/g, '').replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'));   
-     } else
-      setAcOriginCellNo(acOriginCellNo.replace(/(\d{2,3})(\d{3,4})(\d{4})/, '$1-$2-$3'))
-    },[acOriginCellNo])
+    if(ulSplitPrePayment > ulErrandCharge) {
+      alert('배달비용 금액보다 클 수 없습니다.')
+    }
+  }, [ulSplitPrePayment])
 
   // 정액제 
   useEffect(() => {
@@ -350,6 +348,23 @@ const Popup = (props: Props) => {
     }
   }, [ulErrandDispatchAgencyFee])
  
+  // disable 0으로 초기화
+  useEffect(() => {
+    if ( ucPaymentMode != PaymentMode.INSTALLMENT_PAYMENT ) {
+      setUlSplitPrePayment(0)
+    }
+  }, [ucPaymentMode])
+
+  useEffect(() => {
+    if ( ucErrandType === ErrandType.SAME ) {
+      setAcOriginCompany("")
+      setAcOriginCellNo("")
+      setAcOriginOldAddr("")
+      setAcOriginAddrDesc("")
+      setFullAddress("")
+      setAcOriginMemo("")
+    }
+  }, [ucErrandType])
 
 return (
     <>
@@ -379,15 +394,17 @@ return (
                   }}
                   checked={ucErrandType === ErrandType.SAME}
                 />
-                <span style={{paddingRight: '5.7vh'}}>바로목적지로</span>
-                <Button onClick={handleClickSwap}>
-                  픽업지 ↔ 목적지
-                </Button>
+                <span>바로목적지로</span>
+                <span style={{paddingLeft:'60px'}}>
+                  <Button onClick={handleClickSwap}>
+                    픽업지 ↔ 목적지
+                  </Button>
+                </span>
               </Col>
             </Form.Item>
 
             <Form.Item label="픽업지 업체명">
-              <Search
+              {/* <Search
                 placeholder="업체명을 입력하세요"
                 enterButton="검색"
                 onSearch={(val) => {
@@ -398,6 +415,16 @@ return (
                 onChange={e => {
                   setAcOriginCompany(e.target.value);
                 }}
+                disabled={ucErrandType === ErrandType.SAME}
+              /> */}
+              <AutoComplete 
+                style={{textAlign:'left'}}
+                placeholder="업체명을 입력하세요"
+                filterOption={(inputValue, option) =>
+                  option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                }
+                value={acOriginCompany}
+                onChange={(value) => setAcOriginCompany(value)}
                 disabled={ucErrandType === ErrandType.SAME}
               />
             </Form.Item>
@@ -555,7 +582,11 @@ return (
               />
             </Form.Item>
 
-            <Form.Item label="픽업 ↔ 목적지">{originToDestDistance}</Form.Item>
+            <Form.Item label="픽업 ↔ 목적지">
+              <span className="originToDestDistance">
+                {originToDestDistance}
+              </span>
+            </Form.Item>
           </Form>
         </Col>
         <Col span={12} pull={1}>
@@ -638,17 +669,17 @@ return (
                 onChange={e => setUcPaymentMode(e.target.value)}
                 style={{ float: "left", width:'100%'}}
               >
-                 <Row>
-                  <LeftAlignedCol span={8}>
-                    <Radio value={3}>현금</Radio>
-                  </LeftAlignedCol>
-                  <LeftAlignedCol span={8}>
-                    <Radio value={4}>선결제</Radio>
-                  </LeftAlignedCol>
-                  <LeftAlignedCol span={8}>
-                    <Radio value={5}>분할결제</Radio>
-                  </LeftAlignedCol>
-                  </Row>
+                <Row>
+                <LeftAlignedCol span={8}>
+                  <Radio value={3}>현금</Radio>
+                </LeftAlignedCol>
+                <LeftAlignedCol span={8}>
+                  <Radio value={4}>선결제</Radio>
+                </LeftAlignedCol>
+                <LeftAlignedCol span={8}>
+                  <Radio value={5}>분할결제</Radio>
+                </LeftAlignedCol>
+                </Row>
               </Radio.Group>
             </Form.Item>
 
@@ -662,6 +693,7 @@ return (
                 }}
                 thousandSeparator={true}
                 maxLength={10}
+                value={ulGoodsPrice}
                 suffix=" 원"
               />
             </Form.Item>
@@ -676,6 +708,7 @@ return (
                   setUlErrandCharge(parseInt(value.value))
                 }}
                 suffix=" 원"
+                value={ulErrandCharge}
                 maxLength={9}
               />
             </Form.Item>
@@ -691,11 +724,14 @@ return (
                 }}
                 disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT }
                 suffix=" 원"
+                value={ulSplitPrePayment}
               />
             </Form.Item>
 
             <Form.Item label="분할결제 잔여금액" name="ulSplitPostPayment">
+              <span style={{paddingRight:'11px'}}>
               {costFormat(splitAdvancePayment)}
+              </span>
             </Form.Item>
 
             <Form.Item label="정산유형">
@@ -745,6 +781,7 @@ return (
                 }}
                 disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
                 suffix=" 원"
+                value={ulErrandFeeAmount}
               />
             </Form.Item>
 
@@ -759,19 +796,24 @@ return (
                 }}
                 disabled={ucErrandFeeType !== ErrandFeeType.RATE}
                 suffix=" %"
+                value={ucErrandFeeRate}
               />
             </Form.Item>
 
             <Form.Item label="배차대행 수수료" name="ulErrandFeeAgency">
-              {costFormat(calcErrandFeeAgency)}
+              <span style={{paddingRight:'11px'}}>
+                {costFormat(calcErrandFeeAgency)}
+              </span>
             </Form.Item>
 
             <Form.Item label="배달기사 수수료" name="ulErrandFeeCourier">
-              {costFormat(riderFee)}
+              <span style={{paddingRight:'11px'}}>
+                {costFormat(riderFee)}
+              </span>
             </Form.Item>
 
-            <Form.Item label="타사 지급 수수료" name="ulErrandDispatchAgencyFee" >
-            <NumberFormat
+            <Form.Item label="타사 지급 수수료" >
+              <NumberFormat
                 className="input-number-format"
                 placeholder="0"
                 thousandSeparator={true}
@@ -780,6 +822,7 @@ return (
                   setUlErrandDispatchAgencyFee(parseInt(e.value))
                 }}
                 suffix=" 원"
+                value={ulErrandDispatchAgencyFee}
               />
             </Form.Item>
 
