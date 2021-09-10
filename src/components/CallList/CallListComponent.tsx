@@ -14,8 +14,22 @@ import { costFormat, getCellNoFormat, getDateFormat } from "../../util/FormatUti
 import moment from "moment";
 import ErrandType from "src/helpers/ErrandType";
 import CallListModal from "./CallListModal";
+import ErrandHelper from "src/helpers/ErrandHelper";
 
 export interface CallInfo {
+  acErrandDate: string;
+  ucAreaNo: string;
+  ucDistribId: string;
+  ucAgencyId: string;
+  ucMemCourId: string;
+  acTradeDate: string;
+  ulTradeSeqNo: string;
+
+  ulSplitPostPayment: number;
+  ulSplitPrePayment: number;
+
+  ulErrandDispatchAgencyFee: number;
+  acCourCellNo: string;
   acOriginCompany: string;
   acDestMemo: string;
   ulErrandFeeAmount: number;
@@ -70,11 +84,11 @@ export interface CallInfo {
 const columns: ColumnsType<CallInfo> = [
   {
     title: "상점명",
-    dataIndex: "acDestCompany",
-    key: "acDestCompany",
+    dataIndex: "acOriginCompany",
+    key: "acOriginCompany",
     className: "deli-status",
     width: 120,
-    render: (text: string, record: CallInfo) => record.acDestCompany
+    render: (text: string, record: CallInfo) => record.acOriginCompany
   },
   {
     title: "접수",
@@ -99,29 +113,30 @@ const columns: ColumnsType<CallInfo> = [
     className: "deli-status",
     width: 200,
     render: (text: string, call: CallInfo) => {
-      if (call.ucErrandType == ErrandType.DIFFERENT_DESTINATION) {
-        const originAddr = call.acOriginOldAddr ? call.acOriginOldAddr : call.acOriginNewAddr;
-        const destAddr = call.acDestOldAddr ? call.acDestOldAddr : call.acDestNewAddr;
-        return (
-          <div>
-            <div>
-              <Tag color="volcano">픽업지</Tag>
-              {originAddr} {call.acOriginAddrDesc}
-            </div>
-            <div>
-              <Tag color="purple">목적지</Tag>
-              {destAddr}
-            </div>
-          </div>
-        );
-      } else {
-        return (
-          <div>
-            <Tag color="purple">목적지</Tag>
-            {call.acDestOldAddr} {call.acDestAddrDesc}
-          </div>
-        );
-      }
+      // if (call.ucErrandType == ErrandType.DIFFERENT_DESTINATION) {
+      //   const originAddr = call.acOriginOldAddr ? call.acOriginOldAddr : call.acOriginNewAddr;
+      //   const destAddr = call.acDestOldAddr ? call.acDestOldAddr : call.acDestNewAddr;
+      //   return (
+      //     <div>
+      //       <div>
+      //         <Tag color="volcano">픽업지</Tag>
+      //         {originAddr} {call.acOriginAddrDesc}
+      //       </div>
+      //       <div>
+      //         <Tag color="purple">목적지</Tag>
+      //         {destAddr}
+      //       </div>
+      //     </div>
+      //   );
+      // } else {
+      //   return (
+      //     <div>
+      //       <Tag color="purple">목적지</Tag>
+      //       {call.acDestOldAddr} {call.acDestAddrDesc}
+      //     </div>
+      //   );
+      // }
+      return ErrandHelper.formatAddress(call)
     }
   },
   {

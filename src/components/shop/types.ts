@@ -93,7 +93,6 @@ export interface RiderInfo {
   acUserId: number;
   acPassword: number;
   acCellNo: number;
-  acteamName: string;
   acBankAccount: number;
   ucCourierTag: number;
   conCallLimit: number;

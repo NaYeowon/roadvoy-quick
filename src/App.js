@@ -31,6 +31,7 @@ import DistributorApproval from "./components/HeadOffice/DistributorApproval";
 import { CallFee } from "./components/Distributor/CallFee";
 import { CallQuantity } from "./components/Distributor/CallQuantity";
 import { ProgramUsageFee } from "./components/Distributor/ProgramUsageFee";
+import RiderCallHistory from "./components/rider/RiderCallHistory";
 
 class App extends Component {
   render() {
@@ -65,6 +66,7 @@ class App extends Component {
           <Route path="/AgencySiginupModal" component={AgencySiginupModal} />
           <Route path="/DistributorSettlement" component={DistributorSettlement} />
           <Route path="/DistributorApproval" component={DistributorApproval} />
+          <Route path="/RiderCallHistory" component={RiderCallHistory} />
           <Redirect from="/" to="/CallListComponent" />
         </Switch>
       </Router>

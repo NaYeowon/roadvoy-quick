@@ -13,7 +13,7 @@ class APIHelper {
       case ReleaseMode.OMG_DEV:
         return "http://omg-dev-api.roadvoy.net";
       default:
-        return "http://api-roadvoy.net";
+        return "http://api.roadvoy.net";
     }
   }
 

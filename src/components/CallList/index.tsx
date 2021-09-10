@@ -1,6 +1,7 @@
 /* eslint-disable */
-import { Col, Row } from "antd";
+import { Col, Row, Tag } from "antd";
 import styled from "styled-components";
+import { CallInfo } from "./CallListComponent";
 
 const Title = styled.span`
   color: #000;
@@ -9,16 +10,16 @@ const Title = styled.span`
 
 interface Props {
   title: string;
-  value: string;
+  value: any;
 }
 
 export const CallDetailShopTitle = (props: Props) => {
   return (
     <Row>
-      <Col span={6} style={{ textAlign: "left" }}>
+      <Col span={8} style={{ textAlign: "left" }}>
         <Title>{props.title}</Title>
       </Col>
-      <Col>{props.value}</Col>
+      <Col span={16} style={{ textAlign: "left" }}>{props.value}</Col>
     </Row>
   );
 };
