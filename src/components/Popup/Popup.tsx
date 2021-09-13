@@ -29,7 +29,7 @@ import { CallDetailShopTitle } from "../CallList";
 import ErrandAddressType from "src/helpers/ErrandAddressType";
 import ErrandAPIService from "src/helpers/ErrandAPIService";
 import ErrandCompany from "src/util/ErrandCompany";
-import { useForm } from "antd/lib/form/Form";
+import { useForm } from 'react-hook-form'
 
 interface Props {
   callInfo: CallInfo | undefined;
@@ -174,9 +174,9 @@ const Popup = (props: Props) => {
   const [ucErrandSettlementType, setUcErrandSettlementType] = useState(0);
   const [ucAllocType, setUcAllocType] = useState(1);
   const [ucTripType, setUcTripType] = useState(0);
-  const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState("");
+  const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState(0);
   const [ulErrandDispatchAgencyFee, setUlErrandDispatchAgencyFee] = useState(0);
-  const [ulErrandFeeCourier, setUlErrandFeeCourier] = useState("");
+  const [ulErrandFeeCourier, setUlErrandFeeCourier] = useState(0);
 
   const CallSign = async () => {
     const form = new FormData();
@@ -394,11 +394,11 @@ return (
                   }}
                   checked={ucErrandType === ErrandType.SAME}
                 />
+                <span>
                 <span>바로목적지로</span>
-                <span style={{paddingLeft:'60px'}}>
-                  <Button onClick={handleClickSwap}>
-                    픽업지 ↔ 목적지
-                  </Button>
+                <Button onClick={handleClickSwap} style={{float:'right'}}>
+                  픽업지 ↔ 목적지
+                </Button>
                 </span>
               </Col>
             </Form.Item>
@@ -430,16 +430,16 @@ return (
             </Form.Item>
 
             <Form.Item label="픽업지 연락처">
-              <Search
+              <Search 
                 placeholder="연락처를 입력하세요"
                 enterButton="검색"
                 value={acOriginCellNo}
-                name="acOriginCellNo"
+                //name="acOriginCellNo"
                 onChange={e => {
                   setAcOriginCellNo(e.target.value);
                 }}
                 disabled={ucErrandType === ErrandType.SAME}
-              />
+                />
             </Form.Item>
 
             <Form.Item label="픽업지 주소">
@@ -693,7 +693,7 @@ return (
                 }}
                 thousandSeparator={true}
                 maxLength={10}
-                value={ulGoodsPrice}
+                value={Math.abs(ulGoodsPrice)}
                 suffix=" 원"
               />
             </Form.Item>
@@ -708,7 +708,7 @@ return (
                   setUlErrandCharge(parseInt(value.value))
                 }}
                 suffix=" 원"
-                value={ulErrandCharge}
+                value={Math.abs(ulErrandCharge)}
                 maxLength={9}
               />
             </Form.Item>
@@ -724,7 +724,7 @@ return (
                 }}
                 disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT }
                 suffix=" 원"
-                value={ulSplitPrePayment}
+                value={Math.abs(ulSplitPrePayment)}
               />
             </Form.Item>
 
@@ -781,7 +781,7 @@ return (
                 }}
                 disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
                 suffix=" 원"
-                value={ulErrandFeeAmount}
+                value={Math.abs(ulErrandFeeAmount)}
               />
             </Form.Item>
 
@@ -796,10 +796,9 @@ return (
                 }}
                 disabled={ucErrandFeeType !== ErrandFeeType.RATE}
                 suffix=" %"
-                value={ucErrandFeeRate}
+                value={Math.abs(ucErrandFeeRate)}
               />
             </Form.Item>
-
             <Form.Item label="배차대행 수수료" name="ulErrandFeeAgency">
               <span style={{paddingRight:'11px'}}>
                 {costFormat(calcErrandFeeAgency)}
@@ -822,7 +821,7 @@ return (
                   setUlErrandDispatchAgencyFee(parseInt(e.value))
                 }}
                 suffix=" 원"
-                value={ulErrandDispatchAgencyFee}
+                value={Math.abs(ulErrandDispatchAgencyFee)}
               />
             </Form.Item>
 
