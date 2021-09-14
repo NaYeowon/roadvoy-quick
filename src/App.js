@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-d
 import CallListComponent from "./components/CallList/CallListComponent";
 import map from "./components/map/map";
 import shop from "./components/shop/shop";
+import CallHistory from "./components/CallList/CallHistory"
 import rider from "./components/rider/rider";
 import Popup from "./components/Popup/Popup";
 import Login from "./pages/shared/Login";
@@ -40,6 +41,7 @@ class App extends Component {
         <Switch>
           <Route path="/" exact component={Login} />
           <Route path="/CallListComponent" component={CallListComponent} />
+          <Route path="/CallHistory" component={CallHistory} />
           <Route path="/map" component={map} />
           <Route path="/shop" component={shop} />
           <Route path="/rider" component={rider} />
