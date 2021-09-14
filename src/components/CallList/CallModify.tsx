@@ -11,7 +11,8 @@ import styled from "styled-components";
 import PaymentMode from "src/helpers/PaymentMode";
 import ErrandFeeType from "src/helpers/ErrandFeeType";
 import { Script } from "vm";
-import Stopover from "../Popup/Stopover";
+import Stopover1 from "../Popup/Stopover1";
+import Stopover2 from "../Popup/Stopover2";
 import DirectDispatch from "./DirectDispatch";
 import ErrandAllocType from "src/helpers/ErrandAllocType";
 import { RiderInfo } from "../shop/types";
@@ -444,7 +445,7 @@ const CallModify: FC<Props> = (props: Props) => {
                     key="1" 
                     showArrow={false}
                   >
-                    <Stopover />
+                    <Stopover1 callInfo={callInfo}/>
                   </Panel>
                 </Collapse>
                 <Collapse ghost>
@@ -453,7 +454,7 @@ const CallModify: FC<Props> = (props: Props) => {
                     key="2" 
                     showArrow={false}
                   >                    
-                    <Stopover />
+                    <Stopover2 callInfo={callInfo}/>
                   </Panel>
                 </Collapse>
            
