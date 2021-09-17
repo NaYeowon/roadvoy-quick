@@ -3,11 +3,14 @@
 import PaymentMode from "src/helpers/PaymentMode";
 
 export interface Errand {
+  acErrandDate: string
   ulErrandSeqNo: number;
   ucAreaNo: number;
   ucDistribId: number;
   ucAgencyId: number;
   ucMemCourId: number;
+
+  ucDeliStatus: number;
 
   acTradeDate: string;
   ulTradeSeqNo: number;
