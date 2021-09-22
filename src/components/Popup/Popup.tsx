@@ -318,13 +318,6 @@ const Popup = (props: Props) => {
     }
   }, [form.ucErrandFeeRate]);
 
-  // 타사 지급 수수료
-  useEffect(() => {
-    if (form.ulErrandDispatchAgencyFee > form.ulErrandCharge) {
-      alert("배달비용 금액보다 클 수 없습니다.");
-    }
-  }, [form.ulErrandDispatchAgencyFee]);
-
   useEffect(() => {
     if (form.ucErrandType === ErrandType.SAME) {
       setForm({
@@ -702,9 +695,15 @@ const Popup = (props: Props) => {
                 placeholder="0"
                 thousandSeparator={true}
                 onValueChange={(value: NumberFormatValues) => {
+                  const val = parseInt(value.value);
+                  if (val > form.ulErrandCharge) {
+                    alert("배달비용 금액보다 클 수 없습니다.");
+                    return;
+                  }
+
                   setForm({
                     ...form,
-                    ulErrandDispatchAgencyFee: parseInt(value.value),
+                    ulErrandDispatchAgencyFee: val,
                   });
                 }}
                 suffix=" 원"
