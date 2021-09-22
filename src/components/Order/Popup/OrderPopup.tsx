@@ -295,22 +295,6 @@ const OrderPopup = (props: Props) => {
     }
   }, [form.ucErrandFeeRate]);
 
-  useEffect(() => {
-    if (form.ucErrandType === ErrandType.SAME) {
-      setForm({
-        ...form,
-        acOriginCompany: "",
-        acOriginCellNo: "",
-        acOriginMemo: "",
-        ulOriginLatiPos: 0,
-        ulOriginLongPos: 0,
-        acOriginOldAddr: "",
-        acOriginNewAddr: "",
-        acOriginAddrDesc: "",
-      });
-    }
-  }, [form.ucErrandType]);
-
   return (
     <>
       <Row style={{ borderBottom: "1px solid #f5f5f5" }}>
@@ -333,11 +317,26 @@ const OrderPopup = (props: Props) => {
                 <Checkbox
                   style={{ paddingRight: "10px" }}
                   onChange={e => {
+                    const ucErrandType = e.target.checked
+                      ? ErrandType.SAME
+                      : ErrandType.DIFFERENT_DESTINATION;
+
+                    if (ucErrandType === ErrandType.SAME) {
+                      setForm({
+                        ...form,
+                        acOriginCompany: "",
+                        acOriginCellNo: "",
+                        acOriginMemo: "",
+                        ulOriginLatiPos: 0,
+                        ulOriginLongPos: 0,
+                        acOriginOldAddr: "",
+                        acOriginNewAddr: "",
+                        acOriginAddrDesc: "",
+                      });
+                    }
                     setForm({
                       ...form,
-                      ucErrandType: e.target.checked
-                        ? ErrandType.SAME
-                        : ErrandType.DIFFERENT_DESTINATION,
+                      ucErrandType: ucErrandType,
                     });
                   }}
                   checked={form.ucErrandType === ErrandType.SAME}
