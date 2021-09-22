@@ -7,7 +7,6 @@ import map from "./components/map/map";
 import shop from "./components/shop/shop";
 import CallHistory from "./components/CallList/CallHistory";
 import rider from "./components/rider/rider";
-import Popup from "./components/Popup/Popup";
 import Login from "./pages/shared/Login";
 import FileUpload from "./components/file/FileUpload";
 import shopSignupModal from "./components/shop/shopSignupModal";
@@ -33,6 +32,7 @@ import { CallFee } from "./components/Distributor/CallFee";
 import { CallQuantity } from "./components/Distributor/CallQuantity";
 import { ProgramUsageFee } from "./components/Distributor/ProgramUsageFee";
 import RiderCallHistory from "./components/rider/RiderCallHistory";
+import { OrderPopup } from "./components/Order/Popup";
 
 class App extends Component {
   render() {
@@ -45,7 +45,7 @@ class App extends Component {
           <Route path="/map" component={map} />
           <Route path="/shop" component={shop} />
           <Route path="/rider" component={rider} />
-          <Route path="/Popup" component={Popup} />
+          <Route path="/order/popup" component={OrderPopup} />
           <Route path="/fileUpload" component={FileUpload} />
           <Route path="/shopSignupModal" component={shopSignupModal} />
           <Route path="/riderSignupModal" component={riderSignupModal} />

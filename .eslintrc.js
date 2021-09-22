@@ -30,7 +30,7 @@ module.exports = {
     // React.memo, React.forwardRef에서 사용하는 경우도 막고 있어서
     "react/display-name": "off",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "error",
+    "react-hooks/exhaustive-deps": "warn",
     // 탭내빙 어택 방지
     "react/jsx-no-target-blank": "error",
     // TypeScript에서 이미 잡고 있는 문제이기 때문에 + location, document 등의 global variable도 잡아서

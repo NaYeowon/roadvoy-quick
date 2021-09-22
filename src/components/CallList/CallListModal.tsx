@@ -11,7 +11,6 @@ import axios, { AxiosError } from "axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
 import CallTimeLine from "./CallTimeLine";
-import CallModify from "./CallModify";
 import PaymentModeAndAmount from "src/util/PaymentModeAndAmount";
 import FlatFixedRateSystem from "src/util/FlatFixedRateSystem";
 
@@ -53,13 +52,13 @@ const CallListModal: FC<Props> = (props: Props) => {
         data: form,
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${LoginHelper.getToken()}`
-        }
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
       });
       console.log(response);
       message.success("콜이 취소되었습니다.");
     } catch (e) {
-      const error = e as AxiosError
+      const error = e as AxiosError;
       message.error(error.message);
     }
   };
@@ -84,32 +83,32 @@ const CallListModal: FC<Props> = (props: Props) => {
         data: form,
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${LoginHelper.getToken()}`
-        }
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
       });
       console.log(response);
       message.success("배차가 취소되었습니다.");
     } catch (e) {
-      const error = e as AxiosError
+      const error = e as AxiosError;
       message.error(error.message);
     }
   };
 
-    // 배차 대행 수수료
-    let calcErrandFeeAgency
-    if(callInfo.ucErrandFeeType === 1) {
-      calcErrandFeeAgency = callInfo.ulErrandFeeAmount
-    } else {
-      calcErrandFeeAgency = (callInfo.ulErrandCharge * ((callInfo.ucErrandFeeRate!) / 100));
-    }
+  // 배차 대행 수수료
+  let calcErrandFeeAgency;
+  if (callInfo.ucErrandFeeType === 1) {
+    calcErrandFeeAgency = callInfo.ulErrandFeeAmount;
+  } else {
+    calcErrandFeeAgency = callInfo.ulErrandCharge * (callInfo.ucErrandFeeRate! / 100);
+  }
 
-     // 배달기사 수수료
-    let riderFee
-    if(callInfo.ucErrandType == 1) {
-      riderFee = callInfo.ulErrandCharge - calcErrandFeeAgency
-    } else {
-      riderFee = callInfo.ulErrandCharge - calcErrandFeeAgency
-    }
+  // 배달기사 수수료
+  let riderFee;
+  if (callInfo.ucErrandType == 1) {
+    riderFee = callInfo.ulErrandCharge - calcErrandFeeAgency;
+  } else {
+    riderFee = callInfo.ulErrandCharge - calcErrandFeeAgency;
+  }
   return (
     <>
       <Modal title="콜 상세" visible={visible} onCancel={handleCancel} onOk={handleOk}>
@@ -119,27 +118,23 @@ const CallListModal: FC<Props> = (props: Props) => {
             <p>접수번호: {callInfo.ulErrandSeqNo}</p>
             <p>주문시간: {callInfo.acOrderDateTime}</p>
             <p>픽업제한시간: {callInfo.ucLimitTime}분</p>
-
           </div>
           <div style={{ marginBottom: "10px" }}>
-            <div style={{ paddingBottom: '10px'}}>
+            <div style={{ paddingBottom: "10px" }}>
               <CallDetailShopTitle title="기사" value={callInfo.acCourPresident} />
-              <CallDetailShopTitle 
+              <CallDetailShopTitle
                 title="기사연락처"
                 value={getCellNoFormat(callInfo.acCourCellNo)}
               />
               <CallDetailShopTitle title="배달비용" value={costFormat(callInfo.ulErrandCharge)} />
               <CallDetailShopTitle
                 title="배차대행 수수료"
-                value={<FlatFixedRateSystem callInfo={callInfo}/>}
+                value={<FlatFixedRateSystem callInfo={callInfo} />}
               />
-              <CallDetailShopTitle
-                title="배달기사 수수료"
-                value={costFormat(riderFee)}
-              />
+              <CallDetailShopTitle title="배달기사 수수료" value={costFormat(riderFee)} />
             </div>
-            <div style={{ paddingBottom: '10px'}}>
-              <CallDetailShopTitle 
+            <div style={{ paddingBottom: "10px" }}>
+              <CallDetailShopTitle
                 title="타사 지급 수수료"
                 value={costFormat(callInfo.ulErrandDispatchAgencyFee)}
               />
@@ -147,11 +142,11 @@ const CallListModal: FC<Props> = (props: Props) => {
                 title="물건가격"
                 value={<PaymentModeAndAmount callInfo={callInfo} />}
               />
-              <CallDetailShopTitle 
+              <CallDetailShopTitle
                 title="선지급액(분할)"
                 value={costFormat(callInfo.ulSplitPrePayment)}
               />
-              <CallDetailShopTitle 
+              <CallDetailShopTitle
                 title="잔여금액(분할)"
                 value={costFormat(callInfo.ulSplitPostPayment)}
               />
@@ -169,7 +164,10 @@ const CallListModal: FC<Props> = (props: Props) => {
             />
           </div>
           <div style={{ backgroundColor: "#fff280" }}>
-            <CallDetailShopTitle title="목적지연락처" value={getCellNoFormat(callInfo.acDestCellNo)} />
+            <CallDetailShopTitle
+              title="목적지연락처"
+              value={getCellNoFormat(callInfo.acDestCellNo)}
+            />
             <CallDetailShopTitle title="목적지업체명" value={callInfo.acDestCompany} />
             <CallDetailShopTitle title="목적지요청사항" value={callInfo.acDestMemo} />
             <CallDetailShopTitle
@@ -208,12 +206,13 @@ const CallListModal: FC<Props> = (props: Props) => {
           </Button>
         </Popconfirm>
       </Modal>
+      {/*
       <CallModify
         visible={isModalVisible}
         onOk={CallOk}
         onCancel={CallCancel}
         callInfo={callModalInfo}
-      />
+      />*/}
     </>
   );
 };

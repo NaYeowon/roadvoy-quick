@@ -21,7 +21,7 @@ const Header = () => {
 
   window.onkeydown = e => {
     if (e.key === "F2") {
-      window.open("/Popup/", "_blank", "top=100, left=500, width=1100, height=800");
+      window.open("/order/popup", "_blank", "top=100, left=500, width=1100, height=800");
     } else if (e.key === "F3") {
       document.location.href = "#";
     } else if (e.key === "F4") {
@@ -75,7 +75,7 @@ const Header = () => {
   };
 
   const OnCallRegister = () => {
-    window.open("/Popup/", "_blank", "top=100, left=500, width=1100, height=800");
+    window.open("/order/popup", "_blank", "top=100, left=500, width=1100, height=800");
   };
 
   const Logout = () => {

@@ -1,38 +1,13 @@
-/* eslint-disable */
-/* eslint-disable */
-import * as React from "react";
-import "./CallSignPopup.css";
-import { useState, useCallback, useEffect } from "react";
-import {
-  Form,
-  Radio,
-  Button,
-  Input,
-  Col,
-  Row,
-  message,
-  Checkbox,
-  Collapse,
-  Popconfirm,
-  AutoComplete,
-} from "antd";
+import { useState, useEffect } from "react";
+import { Form, Radio, Button, Col, Row, message, Checkbox, Collapse, Popconfirm } from "antd";
 import { CloseCircleTwoTone } from "@ant-design/icons";
-import TextArea from "antd/lib/input/TextArea";
-import DaumPostcode from "react-daum-postcode";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import NumberFormat, { NumberFormatValues } from "react-number-format";
 
-import "./Popup.css";
+import "./_styles.css";
 import styled from "styled-components";
 import LoginHelper from "src/pages/shared/LoginHelper";
-import SearchAddressType from "../../helpers/SearchAddressType";
-import { CallInfo } from "../CallList/CallListComponent";
-import DirectDispatch from "../CallList/DirectDispatch";
-import Stopover1 from "./Stopover1";
-import Stopover2 from "./Stopover2";
-import { RiderInfo } from "../shop/types";
 import ErrandAllocType from "src/helpers/ErrandAllocType";
-import AddressAPIService from "src/util/kakao";
 import DistanceHelper from "src/helpers/DistanceHelper";
 import { costFormat } from "src/util/FormatUtil";
 import {
@@ -40,10 +15,12 @@ import {
   ErrandType,
   IErrandOrderRequest,
   PaymentMode,
-} from "../../domain/Errand/model";
-import { Place } from "../Place";
-import { IPlace } from "../Place/Place";
-import api from "../../config/axios";
+} from "../../../domain/Errand/model";
+import { Place } from "../../Place";
+import { IPlace } from "../../Place/Place";
+import api from "../../../config/axios";
+import { CallInfo } from "../../CallList/CallListComponent";
+import { RiderInfo } from "../../shop/types";
 
 interface Props {
   callInfo: CallInfo | undefined;
@@ -59,7 +36,7 @@ const formItemLayout = {
   },
 };
 
-const Popup = (props: Props) => {
+const OrderPopup = (props: Props) => {
   const [form, setForm] = useState<IErrandOrderRequest>({
     ucAreaNo: 0,
     ucDistribId: 0,
@@ -253,7 +230,6 @@ const Popup = (props: Props) => {
 
     if (form.ulOriginLatiPos === 0) {
       setAcOriginToDestDistance("");
-
       return;
     }
 
@@ -270,7 +246,7 @@ const Popup = (props: Props) => {
         form.ulDestLongPos
       )
     );
-  }, [form.ulOriginLatiPos, form.ulDestLatiPos]);
+  }, [form.ulOriginLatiPos, form.ulOriginLongPos, form.ulDestLatiPos, form.ulDestLongPos]);
 
   // 분할결제 선지급액
   /*let splitAdvancePayment;
@@ -279,13 +255,13 @@ const Popup = (props: Props) => {
   }*/
 
   useEffect(() => {
-    if (form.ucErrandFeeType != ErrandFeeType.RATE) {
+    if (form.ucErrandFeeType !== ErrandFeeType.RATE) {
       setForm({
         ...form,
         ucErrandFeeRate: 0,
       });
     }
-    if (form.ucErrandFeeType != ErrandFeeType.AMOUNT) {
+    if (form.ucErrandFeeType !== ErrandFeeType.AMOUNT) {
       setForm({
         ...form,
         ulErrandFeeAmount: 0,
@@ -294,7 +270,7 @@ const Popup = (props: Props) => {
   }, [form.ucErrandFeeType]);
 
   useEffect(() => {
-    if (form.ucErrandFeeType == ErrandFeeType.AMOUNT) {
+    if (form.ucErrandFeeType === ErrandFeeType.AMOUNT) {
       setUlCalculatedErrandFeeAgency(form.ulErrandFeeAmount);
     } else {
       setUlCalculatedErrandFeeAgency((form.ulErrandCharge * form.ucErrandFeeRate) / 100);
@@ -310,7 +286,7 @@ const Popup = (props: Props) => {
     if (form.ulErrandFeeAmount > form.ulErrandCharge) {
       alert("배달비용 금액보다 클 수 없습니다.");
     }
-  }, [form.ulErrandFeeAmount]);
+  }, [form.ulErrandFeeAmount, form.ulErrandCharge]);
 
   // 정률제
   useEffect(() => {
@@ -754,7 +730,7 @@ const Popup = (props: Props) => {
     </>
   );
 };
-export default Popup;
+export default OrderPopup;
 const LeftAlignedCol = styled(Col)`
   text-align: left;
 `;
