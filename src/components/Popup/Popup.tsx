@@ -20,15 +20,12 @@ import { CloseCircleTwoTone } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import DaumPostcode from "react-daum-postcode";
 import axios, { AxiosError } from "axios";
-import NumberFormat from "react-number-format";
+import NumberFormat, { NumberFormatValues } from "react-number-format";
 
 import "./Popup.css";
 import styled from "styled-components";
 import LoginHelper from "src/pages/shared/LoginHelper";
-import PaymentMode from "../../helpers/PaymentMode";
 import SearchAddressType from "../../helpers/SearchAddressType";
-import ErrandFeeType from "src/helpers/ErrandFeeType";
-import ErrandType from "src/helpers/ErrandType";
 import { CallInfo } from "../CallList/CallListComponent";
 import DirectDispatch from "../CallList/DirectDispatch";
 import Stopover1 from "./Stopover1";
@@ -38,13 +35,20 @@ import ErrandAllocType from "src/helpers/ErrandAllocType";
 import AddressAPIService from "src/util/kakao";
 import DistanceHelper from "src/helpers/DistanceHelper";
 import { costFormat } from "src/util/FormatUtil";
+import {
+  ErrandFeeType,
+  ErrandType,
+  IErrandOrderRequest,
+  PaymentMode,
+} from "../../domain/Errand/model";
+import { Place } from "../Place";
+import { IPlace } from "../Place/Place";
 
 interface Props {
   callInfo: CallInfo | undefined;
   stForceDispatchRider: RiderInfo;
 }
 const { Panel } = Collapse;
-const { Search } = Input;
 const formItemLayout = {
   labelCol: {
     span: 7,
@@ -54,285 +58,143 @@ const formItemLayout = {
   },
 };
 
-const modalStyle: React.CSSProperties = {
-  position: "absolute",
-  top: 30,
-  left: "-100px",
-  zIndex: 100,
-  border: "1px solid #000000",
-  overflow: "hidden",
-};
-
 const Popup = (props: Props) => {
-  const [fullAddress, setFullAddress] = useState("");
-  const [zoneCode, setZoneCode] = useState("");
-  const [isDaumPost, setIsDaumPost] = useState(false);
+  const [form, setForm] = useState<IErrandOrderRequest>({
+    ucAreaNo: 0,
+    ucDistribId: 0,
+    ucAgencyId: 0,
+    ucMemCourId: 0,
+    ucErrandType: ErrandType.DIFFERENT_DESTINATION,
 
-  const [fullAddress2, setFullAddress2] = useState("");
-  const [zoneCode2, setZoneCode2] = useState("");
-  const [isDaumPost2, setIsDaumPost2] = useState(false);
+    // 출발지
+    acOriginCompany: "",
+    acOriginCellNo: "",
+    acOriginMemo: "",
+    ulOriginLatiPos: 0,
+    ulOriginLongPos: 0,
+    acOriginOldAddr: "",
+    acOriginNewAddr: "",
+    acOriginAddrDesc: "",
 
-  const [isDispatchListVisible, setIsDispatchListVisible] = useState(false);
+    // 목적지
+    acDestCompany: "",
+    acDestCellNo: "",
+    acDestMemo: "",
+    ulDestLatiPos: 0,
+    ulDestLongPos: 0,
+    acDestOldAddr: "",
+    acDestNewAddr: "",
+    acDestAddrDesc: "",
 
+    ucLimitTime: 0,
+    ucPaymentMode: PaymentMode.UNDEFINED,
+    ucErrandFeeType: ErrandFeeType.AMOUNT,
+    ulErrandFeeAmount: 0,
+    ucErrandFeeRate: 0,
+    ulErrandCharge: 0,
+    ulGoodsPrice: 0,
+    ucErrandSettlementType: 0,
+    ucAllocType: ErrandAllocType.NORMAL,
+    ucTripType: 0,
+    ulErrandFeeAgency: 0,
+    ulErrandDispatchAgencyFee: 0,
+
+    // 경유지
+    acStop1Company: "",
+    acStop1CellNo: "",
+    acStop1Memo: "",
+    ulStop1LatiPos: 0,
+    ulStop1LongPos: 0,
+    acStop1OldAddr: "",
+    acStop1NewAddr: "",
+    acStop1AddrDesc: "",
+
+    acStop2Company: "",
+    acStop2CellNo: "",
+    acStop2Memo: "",
+    ulStop2LatiPos: 0,
+    ulStop2LongPos: 0,
+    acStop2OldAddr: "",
+    acStop2NewAddr: "",
+    acStop2AddrDesc: "",
+
+    ucAcptAreaNo: 0,
+    ucAcptDistribId: 0,
+    ucAcptAgencyId: 0,
+    ucAcptMemCourId: 0,
+  });
   const [stForceDispatchRider, setStForceDispatchRider] = useState<RiderInfo | null>(null);
 
-  const handleAddress = async data => {
-    let AllAddress = data.address;
-    let extraAddress = "";
-    const zoneCodes = data.zonecode;
-
-    const kakaos = await AddressAPIService.getAddressByKakaoAddress(data.address);
-    if (kakaos.length > 0) {
-      let kakao = kakaos[0];
-      setUlOriginLatiPos(kakao.y);
-      setUlOriginLongPos(kakao.x);
-    }
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== "") {
-        extraAddress += extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
-      }
-      AllAddress += extraAddress !== "" ? `(${extraAddress})` : "";
-    }
-    console.log(data);
-    console.log(ulOriginLatiPos);
-
-    setFullAddress(AllAddress);
-    setZoneCode(zoneCodes);
-    setAcOriginOldAddr(AllAddress);
-    setIsDaumPost(false);
-  };
-
-  const handleAddress2 = async data => {
-    let AllAddress2 = data.address;
-    let extraAddress2 = "";
-    const zoneCodes2 = data.zonecode;
-    const kakaos = await AddressAPIService.getAddressByKakaoAddress(data.address);
-    if (kakaos.length > 0) {
-      let kakao = kakaos[0];
-      setUlDestLatiPos(kakao.y);
-      setUlDestLongPos(kakao.x);
-    }
-
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
-        extraAddress2 += data.bname;
-      }
-      if (data.buildingName !== "") {
-        extraAddress2 += extraAddress2 !== "" ? `, ${data.buildingName}` : data.buildingName;
-      }
-      AllAddress2 += extraAddress2 !== "" ? `(${extraAddress2})` : "";
-    }
-
-    setFullAddress2(AllAddress2);
-    setZoneCode2(zoneCodes2);
-    setAcDestOldAddr(AllAddress2);
-    setIsDaumPost2(false);
-  };
-
-  const handleOpenPost = useCallback(
-    (SearchAddressType: SearchAddressType) => {
-      setIsDaumPost(!isDaumPost);
-    },
-    [!isDaumPost]
-  );
-
-  const handleOpenPost2 = useCallback(
-    (SearchAddressType: SearchAddressType) => {
-      setIsDaumPost2(!isDaumPost2);
-    },
-    [!isDaumPost2]
-  );
-
-  const [acOriginCompany, setAcOriginCompany] = useState("");
-  const [acOriginCellNo, setAcOriginCellNo] = useState("");
-  const [acOriginMemo, setAcOriginMemo] = useState("");
-  const [ulOriginLatiPos, setUlOriginLatiPos] = useState(0);
-  const [ulOriginLongPos, setUlOriginLongPos] = useState(0);
-  const [acOriginOldAddr, setAcOriginOldAddr] = useState("");
-  const [acOriginNewAddr, setAcOriginNewAddr] = useState("");
-  const [acOriginAddrDesc, setAcOriginAddrDesc] = useState("");
-
-  const [ucAreaNo, setUcAreaNo] = useState("");
-  const [ucDistribId, setUcDistribId] = useState("");
-  const [ucAgencyId, setUcAgencyId] = useState("");
-  const [ucMemCourId, setUcMemCourId] = useState("");
-  const [ucErrandType, setUcErrandType] = useState(ErrandType.DIFFERENT_DESTINATION);
-
-  const [ulErrandSeqNo, setUlErrandSeqNo] = useState("");
-  const [acDestCompany, setAcDestCompany] = useState("");
-  const [acDestCellNo, setAcDestCellNo] = useState("");
-  const [acDestMemo, setAcDestMemo] = useState("");
-  const [ulDestLatiPos, setUlDestLatiPos] = useState(0);
-  const [ulDestLongPos, setUlDestLongPos] = useState(0);
-  const [acDestOldAddr, setAcDestOldAddr] = useState("");
-  const [acDestNewAddr, setAcDestNewAddr] = useState("");
-  const [acDestAddrDesc, setAcDestAddrDesc] = useState("");
-  const [ucLimitTime, setUcLimitTime] = useState(0);
-  const [ucPaymentMode, setUcPaymentMode] = useState(0);
-  const [ucErrandFeeType, setUcErrandFeeType] = useState(0);
-  const [ulErrandFeeAmount, setUlErrandFeeAmount] = useState(0);
-  const [ucErrandFeeRate, setUcErrandFeeRate] = useState(0);
-  const [ulErrandCharge, setUlErrandCharge] = useState(0);
-  const [ulGoodsPrice, setUlGoodsPrice] = useState(0);
-  const [ulSplitPostPayment, setUlSplitPostPayment] = useState(0);
-  const [ulSplitPrePayment, setUlSplitPrePayment] = useState(0);
-  const [ucErrandSettlementType, setUcErrandSettlementType] = useState(0);
-  const [ucAllocType, setUcAllocType] = useState(1);
-  const [ucTripType, setUcTripType] = useState(0);
-  const [ulErrandFeeAgency, setUlErrandFeeAgency] = useState(0);
-  const [ulErrandDispatchAgencyFee, setUlErrandDispatchAgencyFee] = useState(0);
-  const [ulErrandFeeCourier, setUlErrandFeeCourier] = useState(0);
-
-  // 경유지
-  const [acStop1CellNo, setAcStop1CellNo] = useState("");
-  const [acStop1Company, setAcStop1Company] = useState("");
-  const [acStop1Name, setAcStop1Name] = useState("");
-  const [acStop1Memo, setAcStop1Memo] = useState("");
-  const [ulStop1LatiPos, setUlStop1LatiPos] = useState(0);
-  const [ulStop1LongPos, setUlStop1LongPos] = useState(0);
-  const [acStop1OldAddr, setAcStop1OldAddr] = useState("");
-  const [acStop1NewAddr, setAcStop1NewAddr] = useState("");
-  const [acStop1AddrDesc, setAacStop1AddrDesc] = useState("");
-  const [acStop2CellNo, setAcStop2CellNo] = useState("");
-  const [acStop2Company, setAcStop2Company] = useState("");
-  const [acStop2Name, setAcStop2Name] = useState("");
-  const [acStop2Memo, setAcStop2Memo] = useState("");
-  const [ulStop2LatiPos, setUlStop2LatiPos] = useState(0);
-  const [ulStop2LongPos, setUlStop2LongPos] = useState(0);
-  const [acStop2OldAddr, setAcStop2OldAddr] = useState("");
-  const [acStop2NewAddr, setAcStop2NewAddr] = useState("");
-  const [acStop2AddrDesc, setAacStop2AddrDesc] = useState("");
+  // 로컬에서만 보여주는 겉값
+  const [ulCalculatedErrandFeeAgency, setUlCalculatedErrandFeeAgency] = useState<number>(0);
+  const [ulCalculatedRiderFee, setUlCalculatedRiderFee] = useState<number>(0);
+  const [acOriginToDestDistance, setAcOriginToDestDistance] = useState<string>("");
 
   const ensureValidData = () => {
-    if (ucErrandType === ErrandType.DIFFERENT_DESTINATION) {
-      if (!acOriginCompany) {
+    if (!form) {
+      throw new Error("데이터를 찾지 못했습니다");
+    }
+
+    if (form.ucErrandType === ErrandType.DIFFERENT_DESTINATION) {
+      if (!form.acOriginCompany) {
         throw new Error("픽업지 업체명을 입력하세요");
-      } else if (!acOriginCellNo) {
+      } else if (!form.acOriginCellNo) {
         throw new Error("픽업지 연락처를 입력하세요");
-      } else if (!ulOriginLatiPos) {
+      } else if (!form.ulOriginLatiPos) {
         throw new Error("픽업지 주소를 입력하세요");
       }
     }
 
-    if (!acDestCompany) {
+    if (!form.acDestCompany) {
       throw new Error("목적지 업체명을 입력하세요");
     }
-    if (!acDestCellNo) {
+    if (!form.acDestCellNo) {
       throw new Error("목적지 연락처를 입력하세요");
     }
-    if (!ulDestLatiPos) {
+    if (!form.ulDestLatiPos) {
       throw new Error("목적지 주소를 입력하세요");
     }
-    if (ucPaymentMode === PaymentMode.CASH && ulGoodsPrice < 0) {
-      throw new Error("현금결제금액은 0원보다 작을 수 없습니다");
-    }
-    if (!ucTripType || ucTripType === 0) {
-      throw new Error("주행유형을 선택하세요");
-    }
-    if (!ucPaymentMode || ucPaymentMode === 0) {
+    if (!form.ucPaymentMode) {
       throw new Error("결제유형을 선택하세요");
     }
-    if (!ucErrandSettlementType || ucErrandSettlementType === 0) {
+    if (form.ucPaymentMode === PaymentMode.CASH && form.ulGoodsPrice < 0) {
+      throw new Error("현금결제금액은 0원보다 작을 수 없습니다");
+    }
+    if (!form.ucTripType || form.ucTripType === 0) {
+      throw new Error("주행유형을 선택하세요");
+    }
+    if (!form.ucErrandSettlementType || form.ucErrandSettlementType === 0) {
       throw new Error("정산유형을 선택하세요");
     }
-    if (!ucErrandFeeType || ucErrandFeeType === 0) {
+    if (!form.ucErrandFeeType) {
       throw new Error("대행 수수료를 선택하세요");
     }
-    if (ucErrandFeeType === ErrandFeeType.AMOUNT && ulErrandFeeAmount < 0) {
+    if (form.ucErrandFeeType === ErrandFeeType.AMOUNT && form.ulErrandFeeAmount < 0) {
       throw new Error("대행수수료(정액제)는 0원보다 작을 수 없습니다");
     }
-    if (ucErrandFeeType === ErrandFeeType.RATE && ucErrandFeeRate < 0) {
+    if (form.ucErrandFeeType === ErrandFeeType.RATE && form.ucErrandFeeRate < 0) {
       throw new Error("대행수수료(정률제)는 0%보다 작을 수 없습니다");
     }
-    if (ucErrandFeeType === ErrandFeeType.RATE && ucErrandFeeRate > 101) {
+    if (form.ucErrandFeeType === ErrandFeeType.RATE && form.ucErrandFeeRate > 100) {
       throw new Error("대행수수료(정률제)는 100%보다 클 수 없습니다");
     }
-    if (ucErrandFeeType === ErrandFeeType.AMOUNT && ulErrandFeeAmount > ulErrandCharge) {
+    if (
+      form.ucErrandFeeType === ErrandFeeType.AMOUNT &&
+      form.ulErrandFeeAmount > form.ulErrandCharge
+    ) {
       throw new Error("대행수수료는 배달비보다 클 수 없습니다");
     }
-
-    console.log(ucErrandFeeType, ErrandFeeType.AMOUNT, ulErrandFeeAmount, ulErrandCharge);
-    throw new Error("success");
   };
-  const CallSign = async () => {
+
+  const executeCreateOrder = async () => {
     try {
       ensureValidData();
 
-      const form = new FormData();
-
-      form.append("ucAreaNo", String(ucAreaNo));
-      form.append("ucDistribId", String(ucDistribId));
-      form.append("ucAgencyId", String(ucAgencyId));
-      form.append("ucMemCourId", String(ucMemCourId));
-      form.append("ucErrandType", String(ucErrandType));
-      form.append("acDestCellNo", acDestCellNo);
-      form.append("acDestCompany", acDestCompany);
-      form.append("acDestMemo", acDestMemo);
-
-      form.append("acOriginCompany", acOriginCompany);
-      form.append("acOriginCellNo", acOriginCellNo);
-      form.append("acOriginMemo", acOriginMemo);
-      form.append("ulOriginLatiPos", String(ulOriginLatiPos));
-      form.append("ulOriginLongPos", String(ulOriginLongPos));
-      form.append("acOriginOldAddr", acOriginOldAddr);
-      form.append("acOriginNewAddr", acOriginNewAddr);
-      form.append("acOriginAddrDesc", acOriginAddrDesc);
-
-      form.append("ulDestLatiPos", String(ulDestLatiPos));
-      form.append("ulDestLongPos", String(ulDestLongPos));
-      form.append("acDestOldAddr", acDestOldAddr);
-      form.append("acDestNewAddr", acDestNewAddr);
-      form.append("acDestAddrDesc", acDestAddrDesc);
-
-      form.append("ucLimitTime", String(ucLimitTime));
-      form.append("ucPaymentMode", String(ucPaymentMode));
-      form.append("ucErrandFeeType", String(ucErrandFeeType));
-      form.append("ulErrandFeeAmount", String(ulErrandFeeAmount));
-      form.append("ucErrandFeeRate", String(ucErrandFeeRate));
-      form.append("ulErrandCharge", String(ulErrandCharge));
-      form.append("ulGoodsPrice", String(ulGoodsPrice));
-      form.append("ucErrandSettlementType", String(ucErrandSettlementType));
-      form.append("ucAllocType", String(ucAllocType));
-      form.append("ucTripType", String(ucTripType));
-      form.append("ulErrandFeeAgency", String(ulErrandFeeAgency));
-      form.append("ulErrandDispatchAgencyFee", String(ulErrandDispatchAgencyFee));
-
-      // 경유지
-      form.append("acStop1CellNo", acStop1CellNo);
-      form.append("acStop1Company", acStop1Company);
-      form.append("acStop1Name", acStop1Name);
-      form.append("ulStop1LatiPos", String(ulStop1LatiPos));
-      form.append("ulStop1LongPos", String(ulStop1LongPos));
-      form.append("acStop1OldAddr", acStop1OldAddr);
-      form.append("acStop1NewAddr", acStop1NewAddr);
-      form.append("acStop1AddrDesc", acStop1AddrDesc);
-      form.append("acStop1Memo", acStop1Memo);
-      form.append("acStop2CellNo", acStop2CellNo);
-      form.append("acStop2Company", acStop2Company);
-      form.append("acStop2Name", acStop2Name);
-      form.append("ulStop2LatiPos", String(ulStop2LatiPos));
-      form.append("ulStop2LongPos", String(ulStop2LongPos));
-      form.append("acStop2OldAddr", acStop2OldAddr);
-      form.append("acStop2NewAddr", acStop2NewAddr);
-      form.append("acStop2AddrDesc", acStop2AddrDesc);
-      form.append("acStop2Memo", acStop2Memo);
-
-      if (ucAllocType === ErrandAllocType.FORCE_DISPATCH && stForceDispatchRider) {
-        form.append("ucAcptAreaNo", String(stForceDispatchRider.ucAreaNo));
-        form.append("ucAcptDistribId", String(stForceDispatchRider.ucDistribId));
-        form.append("ucAcptAgencyId", String(stForceDispatchRider.ucAgencyId));
-        form.append("ucAcptMemCourId", String(stForceDispatchRider.ucMemCourId));
-      }
-
       const response = await axios({
         method: "post",
-        url: "https://api.roadvoy.net/agency/errand/order.v3.php",
+        url: "https://api.roadvoy.net/agency/errand/execute-command/create-order.php",
         data: form,
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${LoginHelper.getToken()}`,
         },
       });
@@ -345,25 +207,31 @@ const Popup = (props: Props) => {
   };
 
   const handleClickSwap = () => {
-    setAcOriginCompany(acDestCompany);
-    setAcOriginCellNo(acDestCellNo);
-    setAcOriginOldAddr(acDestOldAddr);
-    setAcOriginNewAddr(acDestNewAddr);
-    setFullAddress(fullAddress2);
-    setAcOriginAddrDesc(acDestAddrDesc);
-    setAcOriginMemo(acDestMemo);
+    setForm({
+      ...form,
 
-    setAcDestCompany(acOriginCompany);
-    setAcDestCellNo(acOriginCellNo);
-    setAcDestOldAddr(acOriginOldAddr);
-    setAcDestNewAddr(acOriginNewAddr);
-    setFullAddress2(fullAddress);
-    setAcDestAddrDesc(acOriginAddrDesc);
-    setAcDestMemo(acOriginMemo);
+      acOriginCompany: form.acDestCompany,
+      acOriginCellNo: form.acDestCellNo,
+      acOriginMemo: form.acDestMemo,
+      ulOriginLatiPos: form.ulDestLatiPos,
+      ulOriginLongPos: form.ulDestLongPos,
+      acOriginOldAddr: form.acDestOldAddr,
+      acOriginNewAddr: form.acDestNewAddr,
+      acOriginAddrDesc: form.acDestAddrDesc,
+
+      acDestCompany: form.acOriginCompany,
+      acDestCellNo: form.acOriginCellNo,
+      acDestMemo: form.acOriginMemo,
+      ulDestLatiPos: form.ulOriginLatiPos,
+      ulDestLongPos: form.ulOriginLongPos,
+      acDestOldAddr: form.acOriginOldAddr,
+      acDestNewAddr: form.acOriginNewAddr,
+      acDestAddrDesc: form.acOriginAddrDesc,
+    });
   };
 
   const handleClickCancelSelectDispatchRider = () => {
-    setUcAllocType(ErrandAllocType.NORMAL), setStForceDispatchRider(null);
+    // setUcAllocType(ErrandAllocType.NORMAL), setStForceDispatchRider(null);
   };
 
   let forceAllocRiderBody;
@@ -376,106 +244,103 @@ const Popup = (props: Props) => {
     );
   }
 
-  // 픽업지 목적지 거리계산
-  let originToDestDistance;
-  if (ulOriginLatiPos !== 0 && ucErrandType !== ErrandType.SAME && ulDestLatiPos !== 0) {
-    originToDestDistance = DistanceHelper.getDistanceText(
-      ulOriginLatiPos,
-      ulOriginLongPos,
-      ulDestLatiPos,
-      ulDestLongPos
+  useEffect(() => {
+    if (form.ucErrandType !== ErrandType.DIFFERENT_DESTINATION) {
+      setAcOriginToDestDistance("");
+
+      return;
+    }
+
+    if (form.ulOriginLatiPos === 0) {
+      setAcOriginToDestDistance("");
+
+      return;
+    }
+
+    if (form.ulDestLatiPos !== 0) {
+      setAcOriginToDestDistance("");
+      return;
+    }
+
+    setAcOriginToDestDistance(
+      DistanceHelper.getDistanceText(
+        form.ulOriginLatiPos,
+        form.ulOriginLongPos,
+        form.ulDestLatiPos,
+        form.ulDestLongPos
+      )
     );
-  }
+  }, [form.ulOriginLatiPos, form.ulDestLatiPos]);
 
   // 분할결제 선지급액
-  let splitAdvancePayment;
+  /*let splitAdvancePayment;
   if (ucPaymentMode === PaymentMode.INSTALLMENT_PAYMENT) {
     splitAdvancePayment = ulErrandCharge - ulSplitPrePayment;
-  }
-
-  // 배차 대행 수수료
-  let calcErrandFeeAgency;
-  if (ucErrandFeeType == ErrandFeeType.AMOUNT) {
-    calcErrandFeeAgency = ulErrandFeeAmount;
-  } else {
-    calcErrandFeeAgency = (ulErrandCharge * ucErrandFeeRate) / 100;
-  }
+  }*/
 
   useEffect(() => {
-    if (ucErrandFeeType != ErrandFeeType.RATE) {
-      setUcErrandFeeRate(0);
+    if (form.ucErrandFeeType != ErrandFeeType.RATE) {
+      setForm({
+        ...form,
+        ucErrandFeeRate: 0,
+      });
     }
-    if (ucErrandFeeType != ErrandFeeType.AMOUNT) {
-      setUlErrandFeeAmount(0);
+    if (form.ucErrandFeeType != ErrandFeeType.AMOUNT) {
+      setForm({
+        ...form,
+        ulErrandFeeAmount: 0,
+      });
     }
-  }, [ucErrandFeeType]);
+  }, [form.ucErrandFeeType]);
 
-  // 배달기사 수수료
-  let riderFee;
-  riderFee = ulErrandCharge - calcErrandFeeAgency;
-
-  // 전화번호
   useEffect(() => {
-    setAcOriginCellNo(
-      acOriginCellNo
-        .replace(/[^0-9]/g, "")
-        .replace(/(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/, "$1-$2-$3")
-        .replace("--", "-")
-    );
-  }, [acOriginCellNo]);
-  useEffect(() => {
-    setAcDestCellNo(
-      acDestCellNo
-        .replace(/[^0-9]/g, "")
-        .replace(/(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/, "$1-$2-$3")
-        .replace("--", "-")
-    );
-  }, [acDestCellNo]);
-
-  // 분할결제 선지급액
-  useEffect(() => {
-    if (ulSplitPrePayment > ulErrandCharge) {
-      alert("배달비용 금액보다 클 수 없습니다.");
+    if (form.ucErrandFeeType == ErrandFeeType.AMOUNT) {
+      setUlCalculatedErrandFeeAgency(form.ulErrandFeeAmount);
+    } else {
+      setUlCalculatedErrandFeeAgency((form.ulErrandCharge * form.ucErrandFeeRate) / 100);
     }
-  }, [ulSplitPrePayment]);
+  }, [form.ulErrandFeeAmount, form.ulErrandCharge, form.ucErrandFeeRate, form.ucErrandFeeType]);
+
+  useEffect(() => {
+    setUlCalculatedRiderFee(form.ulErrandCharge - ulCalculatedErrandFeeAgency);
+  }, [form.ulErrandCharge, ulCalculatedErrandFeeAgency]);
 
   // 정액제
   useEffect(() => {
-    if (ulErrandFeeAmount > ulErrandCharge) {
+    if (form.ulErrandFeeAmount > form.ulErrandCharge) {
       alert("배달비용 금액보다 클 수 없습니다.");
     }
-  }, [ulErrandFeeAmount]);
+  }, [form.ulErrandFeeAmount]);
+
   // 정률제
   useEffect(() => {
-    if (ucErrandFeeRate > 100) {
+    if (form.ucErrandFeeRate > 100) {
       alert("100% 보다 클 수 없습니다.");
     }
-  }, [ucErrandFeeRate]);
+  }, [form.ucErrandFeeRate]);
 
   // 타사 지급 수수료
   useEffect(() => {
-    if (ulErrandDispatchAgencyFee > ulErrandCharge) {
+    if (form.ulErrandDispatchAgencyFee > form.ulErrandCharge) {
       alert("배달비용 금액보다 클 수 없습니다.");
     }
-  }, [ulErrandDispatchAgencyFee]);
-
-  // disable 0으로 초기화
-  useEffect(() => {
-    if (ucPaymentMode != PaymentMode.INSTALLMENT_PAYMENT) {
-      setUlSplitPrePayment(0);
-    }
-  }, [ucPaymentMode]);
+  }, [form.ulErrandDispatchAgencyFee]);
 
   useEffect(() => {
-    if (ucErrandType === ErrandType.SAME) {
-      setAcOriginCompany("");
-      setAcOriginCellNo("");
-      setAcOriginOldAddr("");
-      setAcOriginAddrDesc("");
-      setFullAddress("");
-      setAcOriginMemo("");
+    if (form.ucErrandType === ErrandType.SAME) {
+      setForm({
+        ...form,
+        acOriginCompany: "",
+        acOriginCellNo: "",
+        acOriginMemo: "",
+        ulOriginLatiPos: 0,
+        ulOriginLongPos: 0,
+        acOriginOldAddr: "",
+        acOriginNewAddr: "",
+        acOriginAddrDesc: "",
+      });
     }
-  }, [ucErrandType]);
+  }, [form.ucErrandType]);
 
   return (
     <>
@@ -499,11 +364,14 @@ const Popup = (props: Props) => {
                 <Checkbox
                   style={{ paddingRight: "10px" }}
                   onChange={e => {
-                    setUcErrandType(
-                      e.target.checked ? ErrandType.SAME : ErrandType.DIFFERENT_DESTINATION
-                    );
+                    setForm({
+                      ...form,
+                      ucErrandType: e.target.checked
+                        ? ErrandType.SAME
+                        : ErrandType.DIFFERENT_DESTINATION,
+                    });
                   }}
-                  checked={ucErrandType === ErrandType.SAME}
+                  checked={form.ucErrandType === ErrandType.SAME}
                 />
                 <span>
                   <span>바로목적지로</span>
@@ -513,189 +381,89 @@ const Popup = (props: Props) => {
                 </span>
               </Col>
             </Form.Item>
+            <Place
+              prefix="출발지"
+              place={{
+                acCompany: form.acOriginCompany,
+                acCellNo: form.acOriginCellNo,
+                acMemo: form.acOriginMemo,
+                ulLatiPos: form.ulOriginLatiPos,
+                ulLongPos: form.ulOriginLongPos,
+                acOldAddress: form.acOriginOldAddr,
+                acNewAddress: form.acOriginNewAddr,
+                acAddressDesc: form.acOriginAddrDesc,
+              }}
+              onChange={(place: IPlace) => {
+                setForm({
+                  ...form,
+                  acOriginCompany: place.acCompany,
+                  acOriginCellNo: place.acCellNo,
+                  acOriginMemo: place.acMemo,
+                  ulOriginLatiPos: place.ulLatiPos,
+                  ulOriginLongPos: place.ulLongPos,
+                  acOriginOldAddr: place.acOldAddress,
+                  acOriginNewAddr: place.acNewAddress,
+                  acOriginAddrDesc: place.acAddressDesc,
+                });
+              }}
+            />
 
-            <Form.Item label="픽업지 업체명">
-              {/* <Search
-                placeholder="업체명을 입력하세요"
-                enterButton="검색"
-                onSearch={(val) => {
-                  //handleSearchAddressByCompanyName(val, ErrandAddressType.ORIGIN)
-                }}
-                value={acOriginCompany}
-                name="acOriginCompany"
-                onChange={e => {
-                  setAcOriginCompany(e.target.value);
-                }}
-                disabled={ucErrandType === ErrandType.SAME}
-              /> */}
-              <AutoComplete
-                style={{ textAlign: "left" }}
-                placeholder="업체명을 입력하세요"
-                filterOption={(inputValue, option) =>
-                  option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                }
-                value={acOriginCompany}
-                onChange={value => setAcOriginCompany(value)}
-                disabled={ucErrandType === ErrandType.SAME}
-              />
-            </Form.Item>
-
-            <Form.Item label="픽업지 연락처">
-              <Search
-                placeholder="연락처를 입력하세요"
-                enterButton="검색"
-                value={acOriginCellNo}
-                //name="acOriginCellNo"
-                onChange={e => {
-                  setAcOriginCellNo(e.target.value);
-                }}
-                disabled={ucErrandType === ErrandType.SAME}
-              />
-            </Form.Item>
-
-            <Form.Item label="픽업지 주소">
-              <Button
-                type="primary"
-                onClick={() => handleOpenPost(SearchAddressType.ERRAND_ORIGIN)}
-                style={{ width: "100%" }}
-                value={acOriginOldAddr}
-                disabled={ucErrandType === ErrandType.SAME}
-              >
-                주소검색
-              </Button>
-              {isDaumPost ? (
-                <DaumPostcode
-                  onComplete={handleAddress}
-                  autoClose
-                  width={595}
-                  height={450}
-                  style={modalStyle}
-                />
-              ) : null}
-
-              {fullAddress}
-            </Form.Item>
-
-            <Form.Item label="픽업지 상세주소">
-              <Input
-                placeholder="상세주소를 입력하세요"
-                value={acOriginAddrDesc}
-                name="acOriginAddrDesc"
-                onChange={e => {
-                  setAcOriginAddrDesc(e.target.value);
-                }}
-                disabled={ucErrandType === ErrandType.SAME}
-              />
-            </Form.Item>
-
-            <Form.Item label="픽업지 요청사항">
-              <TextArea
-                rows={2}
-                value={acOriginMemo}
-                name="acOriginMemo"
-                onChange={e => {
-                  setAcOriginMemo(e.target.value);
-                }}
-                disabled={ucErrandType === ErrandType.SAME}
-              />
-            </Form.Item>
             <div style={{ textAlign: "center" }}>
               <Collapse ghost>
                 <Panel
                   header={
-                    <Button disabled={ucErrandType === ErrandType.SAME}>경유지 추가 1</Button>
+                    <Button disabled={form.ucErrandType === ErrandType.SAME}>경유지 추가 1</Button>
                   }
                   key="1"
                   showArrow={false}
                 >
-                  <Stopover1 callInfo={props.callInfo} />
+                  {/*
+                  <Stopover1 callInfo={props.callInfo} />                  
+                  */}
                 </Panel>
               </Collapse>
               <Collapse ghost>
                 <Panel
                   header={
-                    <Button disabled={ucErrandType === ErrandType.SAME}>경유지 추가 2</Button>
+                    <Button disabled={form.ucErrandType === ErrandType.SAME}>경유지 추가 2</Button>
                   }
                   key="2"
                   showArrow={false}
                 >
-                  <Stopover2 callInfo={props.callInfo} />
+                  {/*
+                  <Stopover2 callInfo={props.callInfo} />*/}
                 </Panel>
               </Collapse>
             </div>
-            <Form.Item label="목적지 업체명">
-              <Search
-                placeholder="업체명을 입력하세요"
-                enterButton="검색"
-                onSearch={(val: string) => {}}
-                tabIndex={2}
-                name="acDestCompany"
-                value={acDestCompany}
-                onChange={e => {
-                  setAcDestCompany(e.target.value);
-                }}
-              />
-            </Form.Item>
-            <Form.Item label="목적지 연락처">
-              <Search
-                placeholder="연락처를 입력하세요"
-                enterButton="검색"
-                name="acDestCellNo"
-                value={acDestCellNo}
-                onChange={e => {
-                  setAcDestCellNo(e.target.value);
-                }}
-              />
-            </Form.Item>
-
-            <Form.Item label="목적지 주소">
-              <Button
-                type="primary"
-                block
-                onClick={() => handleOpenPost2(SearchAddressType.ERRAND_DEST)}
-                style={{ width: "100%" }}
-                name="acDestOldAddr"
-                value={acDestOldAddr}
-              >
-                주소검색
-              </Button>
-
-              {isDaumPost2 ? (
-                <DaumPostcode
-                  onComplete={handleAddress2}
-                  autoClose
-                  width={595}
-                  height={450}
-                  style={modalStyle}
-                />
-              ) : null}
-              <div>{fullAddress2}</div>
-            </Form.Item>
-
-            <Form.Item label="목적지 상세주소">
-              <Input
-                placeholder="상세주소를 입력하세요"
-                name="acDestAddrDesc"
-                value={acDestAddrDesc}
-                onChange={e => {
-                  setAcDestAddrDesc(e.target.value);
-                }}
-              />
-            </Form.Item>
-
-            <Form.Item label="목적지 요청사항">
-              <TextArea
-                rows={2}
-                name="acDestMemo"
-                onChange={e => {
-                  setAcDestMemo(e.target.value);
-                }}
-                value={acDestMemo}
-              />
-            </Form.Item>
+            <Place
+              prefix="목적지"
+              place={{
+                acCompany: form.acDestCompany,
+                acCellNo: form.acDestCellNo,
+                acMemo: form.acDestMemo,
+                ulLatiPos: form.ulDestLatiPos,
+                ulLongPos: form.ulDestLongPos,
+                acOldAddress: form.acDestOldAddr,
+                acNewAddress: form.acDestNewAddr,
+                acAddressDesc: form.acDestAddrDesc,
+              }}
+              onChange={(place: IPlace) => {
+                setForm({
+                  ...form,
+                  acDestCompany: place.acCompany,
+                  acDestCellNo: place.acCellNo,
+                  acDestMemo: place.acMemo,
+                  ulDestLatiPos: place.ulLatiPos,
+                  ulDestLongPos: place.ulLongPos,
+                  acDestOldAddr: place.acOldAddress,
+                  acDestNewAddr: place.acNewAddress,
+                  acDestAddrDesc: place.acAddressDesc,
+                });
+              }}
+            />
 
             <Form.Item label="픽업 ↔ 목적지">
-              <span className="originToDestDistance">{originToDestDistance}</span>
+              <span className="originToDestDistance">{acOriginToDestDistance}</span>
             </Form.Item>
           </Form>
         </Col>
@@ -711,9 +479,13 @@ const Popup = (props: Props) => {
           >
             <Form.Item label="제한시간">
               <Radio.Group
-                value={ucLimitTime}
-                name="ucLimitTime"
-                onChange={e => setUcLimitTime(e.target.value)}
+                value={form.ucLimitTime}
+                onChange={e =>
+                  setForm({
+                    ...form,
+                    ucLimitTime: parseInt(e.target.value),
+                  })
+                }
                 style={{ width: "100%" }}
               >
                 <Row>
@@ -753,9 +525,13 @@ const Popup = (props: Props) => {
 
             <Form.Item label="주행유형">
               <Radio.Group
-                name="ucTripType"
-                value={ucTripType}
-                onChange={e => setUcTripType(e.target.value)}
+                value={form.ucTripType}
+                onChange={e =>
+                  setForm({
+                    ...form,
+                    ucTripType: parseInt(e.target.value),
+                  })
+                }
                 style={{ float: "left", width: "100%" }}
               >
                 <Row>
@@ -775,8 +551,13 @@ const Popup = (props: Props) => {
             <Form.Item label="결제유형">
               <Radio.Group
                 name="ucPaymentMode"
-                value={ucPaymentMode}
-                onChange={e => setUcPaymentMode(e.target.value)}
+                value={form.ucPaymentMode}
+                onChange={e =>
+                  setForm({
+                    ...form,
+                    ucPaymentMode: parseInt(e.target.value),
+                  })
+                }
                 style={{ float: "left", width: "100%" }}
               >
                 <Row>
@@ -798,12 +579,15 @@ const Popup = (props: Props) => {
                 className="input-number-format"
                 placeholder="0"
                 name="ulGoodsPrice"
-                onValueChange={(value: any) => {
-                  setUlGoodsPrice(parseInt(value.value));
+                onValueChange={(value: NumberFormatValues) => {
+                  setForm({
+                    ...form,
+                    ulGoodsPrice: parseInt(value.value),
+                  });
                 }}
                 thousandSeparator={true}
                 maxLength={10}
-                value={Math.abs(ulGoodsPrice)}
+                value={form.ulGoodsPrice}
                 suffix=" 원"
               />
             </Form.Item>
@@ -812,41 +596,28 @@ const Popup = (props: Props) => {
               <NumberFormat
                 className="input-number-format"
                 placeholder="0"
-                name="ulErrandCharge"
                 thousandSeparator={true}
-                onValueChange={(value: any) => {
-                  setUlErrandCharge(parseInt(value.value));
+                onValueChange={(value: NumberFormatValues) => {
+                  setForm({
+                    ...form,
+                    ulErrandCharge: parseInt(value.value),
+                  });
                 }}
                 suffix=" 원"
-                value={Math.abs(ulErrandCharge)}
+                value={form.ulErrandCharge}
                 maxLength={9}
               />
             </Form.Item>
 
-            <Form.Item label="분할결제 선지급액">
-              <NumberFormat
-                className="input-number-format"
-                placeholder="0"
-                thousandSeparator={true}
-                name="ulSplitPrePayment"
-                onValueChange={(value: any) => {
-                  setUlSplitPrePayment(parseInt(value.value));
-                }}
-                disabled={ucPaymentMode !== PaymentMode.INSTALLMENT_PAYMENT}
-                suffix=" 원"
-                value={Math.abs(ulSplitPrePayment)}
-              />
-            </Form.Item>
-
-            <Form.Item label="분할결제 잔여금액" name="ulSplitPostPayment">
-              <span style={{ paddingRight: "11px" }}>{costFormat(splitAdvancePayment)}</span>
-            </Form.Item>
-
             <Form.Item label="정산유형">
               <Radio.Group
-                name="ucErrandSettlementType"
-                value={ucErrandSettlementType}
-                onChange={e => setUcErrandSettlementType(e.target.value)}
+                value={form.ucErrandSettlementType}
+                onChange={e => {
+                  setForm({
+                    ...form,
+                    ucErrandSettlementType: parseInt(e.target.value),
+                  });
+                }}
                 style={{ float: "left", width: "100%" }}
               >
                 <Row>
@@ -862,9 +633,13 @@ const Popup = (props: Props) => {
 
             <Form.Item label="대행 수수료">
               <Radio.Group
-                name="ucErrandFeeType"
-                value={ucErrandFeeType}
-                onChange={e => setUcErrandFeeType(e.target.value)}
+                value={form.ucErrandFeeType}
+                onChange={e => {
+                  setForm({
+                    ...form,
+                    ucErrandFeeType: parseInt(e.target.value),
+                  });
+                }}
                 style={{ float: "left", width: "100%" }}
               >
                 <Row>
@@ -883,13 +658,15 @@ const Popup = (props: Props) => {
                 className="input-number-format"
                 placeholder="0"
                 thousandSeparator={true}
-                name="ulErrandFeeAmount"
-                onValueChange={(values: any) => {
-                  setUlErrandFeeAmount(parseInt(values.value));
+                onValueChange={(value: NumberFormatValues) => {
+                  setForm({
+                    ...form,
+                    ulErrandFeeAmount: parseInt(value.value),
+                  });
                 }}
-                disabled={ucErrandFeeType !== ErrandFeeType.AMOUNT}
+                disabled={form.ucErrandFeeType !== ErrandFeeType.AMOUNT}
                 suffix=" 원"
-                value={Math.abs(ulErrandFeeAmount)}
+                value={form.ulErrandFeeAmount}
               />
             </Form.Item>
 
@@ -899,20 +676,25 @@ const Popup = (props: Props) => {
                 placeholder="0"
                 thousandSeparator={true}
                 name="ucErrandFeeRate"
-                onValueChange={e => {
-                  setUcErrandFeeRate(parseInt(e.value));
+                onValueChange={(value: NumberFormatValues) => {
+                  setForm({
+                    ...form,
+                    ucErrandFeeRate: parseInt(value.value),
+                  });
                 }}
-                disabled={ucErrandFeeType !== ErrandFeeType.RATE}
+                disabled={form.ucErrandFeeType !== ErrandFeeType.RATE}
                 suffix=" %"
-                value={Math.abs(ucErrandFeeRate)}
+                value={form.ucErrandFeeRate}
               />
             </Form.Item>
             <Form.Item label="배차대행 수수료" name="ulErrandFeeAgency">
-              <span style={{ paddingRight: "11px" }}>{costFormat(calcErrandFeeAgency)}</span>
+              <span style={{ paddingRight: "11px" }}>
+                {costFormat(ulCalculatedErrandFeeAgency)}
+              </span>
             </Form.Item>
 
             <Form.Item label="배달기사 수수료" name="ulErrandFeeCourier">
-              <span style={{ paddingRight: "11px" }}>{costFormat(riderFee)}</span>
+              <span style={{ paddingRight: "11px" }}>{costFormat(ulCalculatedRiderFee)}</span>
             </Form.Item>
 
             <Form.Item label="타사지급 수수료">
@@ -920,15 +702,17 @@ const Popup = (props: Props) => {
                 className="input-number-format"
                 placeholder="0"
                 thousandSeparator={true}
-                name="ulErrandDispatchAgencyFee"
-                onValueChange={e => {
-                  setUlErrandDispatchAgencyFee(parseInt(e.value));
+                onValueChange={(value: NumberFormatValues) => {
+                  setForm({
+                    ...form,
+                    ulErrandDispatchAgencyFee: parseInt(value.value),
+                  });
                 }}
                 suffix=" 원"
-                value={Math.abs(ulErrandDispatchAgencyFee)}
+                value={form.ulErrandDispatchAgencyFee}
               />
             </Form.Item>
-
+            {/*
             <Form.Item label="직권배차">
               {forceAllocRiderBody}
               <Button
@@ -952,20 +736,19 @@ const Popup = (props: Props) => {
                 />
               ) : (
                 <></>
-              )}
-              <Row style={{ float: "right" }}>
-                <Popconfirm
-                  title="심부름을 접수하시겠습니까?"
-                  okText="네"
-                  cancelText="아니요"
-                  onConfirm={CallSign}
-                >
-                  <Button style={{ marginTop: "30px" }} type="ghost">
-                    접수
-                  </Button>
-                </Popconfirm>
-              </Row>
-            </Form.Item>
+              )}*/}
+            <Row style={{ float: "right" }}>
+              <Popconfirm
+                title="심부름을 접수하시겠습니까?"
+                okText="네"
+                cancelText="아니요"
+                onConfirm={executeCreateOrder}
+              >
+                <Button style={{ marginTop: "30px" }} type="ghost">
+                  접수
+                </Button>
+              </Popconfirm>
+            </Row>
           </Form>
         </Col>
       </Row>
