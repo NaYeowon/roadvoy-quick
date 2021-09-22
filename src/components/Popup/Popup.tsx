@@ -43,6 +43,7 @@ import {
 } from "../../domain/Errand/model";
 import { Place } from "../Place";
 import { IPlace } from "../Place/Place";
+import api from "../../config/axios";
 
 interface Props {
   callInfo: CallInfo | undefined;
@@ -190,9 +191,9 @@ const Popup = (props: Props) => {
     try {
       ensureValidData();
 
-      const response = await axios({
+      const response = await api({
         method: "post",
-        url: "https://api.roadvoy.net/agency/errand/execute-command/create-order.php",
+        url: "/agency/errand/execute-command/create-order.php",
         data: form,
         headers: {
           Authorization: `Bearer ${LoginHelper.getToken()}`,

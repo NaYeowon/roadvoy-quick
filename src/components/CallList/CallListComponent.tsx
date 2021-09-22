@@ -15,6 +15,7 @@ import moment from "moment";
 import ErrandType from "src/helpers/ErrandType";
 import CallListModal from "./CallListModal";
 import ErrandHelper from "src/helpers/ErrandHelper";
+import api from "../../config/axios";
 
 export interface CallInfo {
   acErrandDate: string;
@@ -88,14 +89,14 @@ const columns: ColumnsType<CallInfo> = [
     key: "acOriginCompany",
     className: "deli-status",
     width: 120,
-    render: (text: string, record: CallInfo) => record.acOriginCompany
+    render: (text: string, record: CallInfo) => record.acOriginCompany,
   },
   {
     title: "접수",
     dataIndex: "acOrderDateTime",
     className: "deli-status",
     width: 50,
-    render: (data: string, record: CallInfo) => getDateFormat(data)
+    render: (data: string, record: CallInfo) => getDateFormat(data),
   },
   {
     title: "진행/조리",
@@ -105,7 +106,7 @@ const columns: ColumnsType<CallInfo> = [
     render: (text: string, call: CallInfo) => {
       const diff = Math.abs(moment().valueOf() - moment(call.acOrderDateTime).valueOf());
       return Math.floor(diff / 1000 / 60) + "분/" + `${call.ucLimitTime}` + "분";
-    }
+    },
   },
   {
     title: "주소",
@@ -136,15 +137,15 @@ const columns: ColumnsType<CallInfo> = [
       //     </div>
       //   );
       // }
-      return ErrandHelper.formatAddress(call)
-    }
+      return ErrandHelper.formatAddress(call);
+    },
   },
   {
     title: "배달비",
     dataIndex: "ulErrandCharge",
     className: "deli-status",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "결제정보",
@@ -176,21 +177,21 @@ const columns: ColumnsType<CallInfo> = [
             </>
           );
       }
-    }
+    },
   },
   {
     title: "기사",
     dataIndex: "acCourPresident",
     className: "deli-status",
-    width: 90
+    width: 90,
   },
   {
     title: "고객연락처",
     dataIndex: "acDestCellNo",
     className: "deli-status",
     width: 90,
-    render: (phone: string) => getCellNoFormat(phone)
-  }
+    render: (phone: string) => getCellNoFormat(phone),
+  },
 ];
 
 const CallListComponent = () => {
@@ -220,15 +221,15 @@ const CallListComponent = () => {
 
   const fetchCallList = async () => {
     try {
-      const response = await axios({
+      const response = await api({
         method: "get",
-        url: "https://api.roadvoy.net/agency/errand/list.php",
+        url: "/agency/errand/list.php",
         headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
         },
         params: {
-          acErrandDate: moment().format("YYYY-MM-DD")
-        }
+          acErrandDate: moment().format("YYYY-MM-DD"),
+        },
       });
       const astErrand = response.data.astErrand as any[];
       setAstManageCall(
@@ -413,7 +414,7 @@ const CallListComponent = () => {
               setIsModalVisible(true);
               setSelectCall(callInfo);
               setCallInfo(callInfo);
-            }
+            },
           };
         }}
       />
