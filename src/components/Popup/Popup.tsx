@@ -257,7 +257,7 @@ const Popup = (props: Props) => {
       return;
     }
 
-    if (form.ulDestLatiPos !== 0) {
+    if (form.ulDestLatiPos === 0) {
       setAcOriginToDestDistance("");
       return;
     }

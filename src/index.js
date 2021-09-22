@@ -1,5 +1,4 @@
-/* eslint-disable */
-import React from "react";
+import "reflect-metadata";
 import ReactDOM from "react-dom";
 
 import "./index.css";
