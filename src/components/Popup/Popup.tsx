@@ -247,7 +247,6 @@ const Popup = (props: Props) => {
   useEffect(() => {
     if (form.ucErrandType !== ErrandType.DIFFERENT_DESTINATION) {
       setAcOriginToDestDistance("");
-
       return;
     }
 
