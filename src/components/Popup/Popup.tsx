@@ -374,7 +374,7 @@ const Popup = (props: Props) => {
               </Col>
             </Form.Item>
             <Place
-              prefix="출발지"
+              prefix="픽업지"
               place={{
                 acCompany: form.acOriginCompany,
                 acCellNo: form.acOriginCellNo,
