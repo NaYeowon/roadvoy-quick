@@ -48,7 +48,7 @@ export default function Place(props: IPlaceProps) {
           }
         />
       </Form.Item>
-      <Form.Item label="픽업지 연락처">
+      <Form.Item label={`${prefix} 연락처`}>
         <Search
           placeholder="연락처를 입력하세요"
           enterButton="검색"
