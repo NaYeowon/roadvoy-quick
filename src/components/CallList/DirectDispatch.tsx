@@ -3,13 +3,13 @@ import Search from "antd/lib/input/Search";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import APIHelper from "src/helpers/APIHelper";
 import { RiderInfo } from "../shop/types";
 import { CallInfo } from "./CallListComponent";
 import TradeAPIService from "src/util/TradeAPIService";
 import { message } from "antd";
 import { Errand } from "src/util/Errand";
 import DirectDispatchRiderItem from "./DirectDispatchRiderItem";
+import api from "../../config/axios";
 
 interface Props {
   call?: CallInfo;
@@ -30,7 +30,7 @@ const DirectDispatch = (props: Props) => {
   }, []);
 
   const fetchRiderList = async () => {
-    let response = await APIHelper.getInstance().get("agency/call/dispatchManagementRiderList.php");
+    let response = await api.get("agency/call/dispatchManagementRiderList.php");
     setRiderList(response.data.astRider);
   };
 
@@ -108,6 +108,6 @@ const DirectDispatch = (props: Props) => {
 };
 
 DirectDispatch.defaultProps = {
-  beforeOrderDispatch: false
+  beforeOrderDispatch: false,
 };
 export default DirectDispatch;

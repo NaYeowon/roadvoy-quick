@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import { RiderInfo } from "src/components/shop/types";
-import APIHelper from "src/helpers/APIHelper";
+import api from "../config/axios";
 import { Errand } from "./Errand";
 
 class TradeAPIService {
@@ -21,7 +21,7 @@ class TradeAPIService {
       form.append("ucAcptucAgencyId", String(stRider.ucAgencyId));
       form.append("ucAcptucMemCourId", String(stRider.ucMemCourId));
 
-      await APIHelper.getInstance().post("/agency/trade/dispatch/index.php", form);
+      await api.post("/agency/trade/dispatch/index.php", form);
     } catch (error) {
       if (error.response && error.response.data && error.response.data.msg) {
         throw new Error(error.response.data.msg);
@@ -47,7 +47,7 @@ class TradeAPIService {
       form.append("ucAcptAgencyId", String(stRider.ucAgencyId));
       form.append("ucAcptMemCourId", String(stRider.ucMemCourId));
 
-      await APIHelper.getInstance().post("/agency/trade/dispatch/index.php", form);
+      await api.post("/agency/trade/dispatch/index.php", form);
     } catch (error) {
       if (error.response && error.response.data && error.response.data.msg) {
         throw new Error(error.response.data.msg);
@@ -68,7 +68,7 @@ class TradeAPIService {
       form.append("acTradeDate", String(trade.acTradeDate));
       form.append("ulErrandSeqNo", String(trade.ulErrandSeqNo));
 
-      await APIHelper.getInstance().post("/agency/trade/dispatch/cancel.php", form);
+      await api.post("/agency/trade/dispatch/cancel.php", form);
     } catch (error) {
       if (error.response && error.response.data && error.reponse.data.msg) {
         throw new Error(error.response.data.msg);

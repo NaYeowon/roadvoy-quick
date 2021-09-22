@@ -11,7 +11,7 @@ import RiderDaily from "../../dto/RiderDaily";
 import { callFormat, costFormat } from "src/util/FormatUtil";
 import DateUtil from "src/util/DateUtil";
 import { NavLink } from "react-router-dom";
-import APIHelper from "src/helpers/APIHelper";
+import api from "../../config/axios";
 
 interface Props {
   riderInfo: RiderInfo;
@@ -27,7 +27,7 @@ const columns = [
     width: 100,
     render: date => {
       return DateUtil.formatShortDate(date);
-    }
+    },
   },
   {
     title: "배달",
@@ -41,7 +41,7 @@ const columns = [
           return (
             <NavLink
               to={{
-                pathname: "RiderCallHistory"
+                pathname: "RiderCallHistory",
               }}
             >
               <Button type="primary" size="small">
@@ -49,29 +49,29 @@ const columns = [
               </Button>
             </NavLink>
           );
-        }
+        },
       },
       {
         title: "배달비",
         dataIndex: "lDayTotalRevenue",
         key: "lDayTotalRevenue",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "콜수수료",
         dataIndex: "lDayDeliCost",
         key: "lDayDeliCost",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "수입",
         dataIndex: "lDayDeliIncome",
         key: "lDayDeliIncome",
-        width: 100
-      }
-    ]
+        width: 100,
+      },
+    ],
   },
   {
     title: "심부름",
@@ -85,7 +85,7 @@ const columns = [
           return (
             <NavLink
               to={{
-                pathname: "RiderCallHistory"
+                pathname: "RiderCallHistory",
               }}
             >
               <Button type="primary" size="small">
@@ -93,23 +93,23 @@ const columns = [
               </Button>
             </NavLink>
           );
-        }
+        },
       },
       {
         title: "배달비",
         dataIndex: "lDayErrandCharge",
         key: "lDayErrandCharge",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "심부름 수수료",
         dataIndex: "lDayErrandFeeAgency",
         key: "lDayErrandFeeAgency",
         width: 100,
-        render: (cost: number) => costFormat(cost)
-      }
-    ]
+        render: (cost: number) => costFormat(cost),
+      },
+    ],
   },
   {
     title: "리스료",
@@ -117,7 +117,7 @@ const columns = [
     key: "lDayCycleLeaseCost",
     width: 100,
 
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "기사↔기사",
@@ -127,16 +127,16 @@ const columns = [
         dataIndex: "ulSubstituteCashPlus",
         key: "ulSubstituteCashPlus",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "캐시송금",
         dataIndex: "ulSubstituteCashMinus",
         key: "ulSubstituteCashMinus",
         width: 100,
-        render: (cost: number) => costFormat(cost)
-      }
-    ]
+        render: (cost: number) => costFormat(cost),
+      },
+    ],
   },
   {
     title: "기사↔가맹",
@@ -146,51 +146,51 @@ const columns = [
         dataIndex: "ulSubstituteInput",
         key: "ulSubstituteInput",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "카드↔현금 송금",
         dataIndex: "ulSubstituteRefund",
         key: "ulSubstituteRefund",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "예치금송금",
         dataIndex: "ulSubstituteDeposit",
         key: "ulSubstituteDeposit",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "현금건 완료시 자동송금",
         dataIndex: "ulCashPaymentAutoTransferAmount",
         key: "ulCashPaymentAutoTransferAmount",
         width: 100,
-        render: (cost: number) => costFormat(cost)
-      }
-    ]
+        render: (cost: number) => costFormat(cost),
+      },
+    ],
   },
   {
     title: "직권 회수 당한 예치금(지출)",
     dataIndex: "ulSubstituteCashMinusByManager",
     key: "ulSubstituteCashMinusByManager",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "직권 회수 예치금(수입)",
     dataIndex: "ulSubstituteCashPlusByManager",
     key: "ulSubstituteCashPlusByManager",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "가상계좌입금",
     dataIndex: "ulVirBankDeposit",
     key: "ulVirBankDeposit",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "출금",
@@ -200,44 +200,44 @@ const columns = [
         dataIndex: "ulReClaimAmount",
         key: "ulReClaimAmount",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "수수료",
         dataIndex: "ulReClaimComm",
         key: "ulReClaimComm",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "본사출금",
         dataIndex: "ulCreditAmount",
         key: "ulCreditAmount",
         width: 100,
-        render: (cost: number) => costFormat(cost)
-      }
-    ]
+        render: (cost: number) => costFormat(cost),
+      },
+    ],
   },
   {
     title: "잔고",
     dataIndex: "lRealBalance",
     key: "lRealBalance",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "보증금",
     dataIndex: "lDayCourierDeposit",
     key: "lDayCourierDeposit",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "출금가능액",
     dataIndex: "lReclaimableBalance",
     key: "lReclaimableBalance",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "갚지못한금액",
@@ -247,30 +247,30 @@ const columns = [
         dataIndex: "lNonDeliCost",
         key: "lNonDeliCost",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "리스료",
         dataIndex: "lNonCycleLeaseCost",
         key: "lNonCycleLeaseCost",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "전날까지누적 콜수수료",
         dataIndex: "lNonPrevNonDeliCost",
         key: "lNonPrevNonDeliCost",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "전날까지누적 리스료",
         dataIndex: "lNonPrevNonCycleLeaseCost",
         key: "lNonPrevNonCycleLeaseCost",
         width: 100,
-        render: (cost: number) => costFormat(cost)
-      }
-    ]
+        render: (cost: number) => costFormat(cost),
+      },
+    ],
   },
   {
     title: "갚은금액",
@@ -280,31 +280,31 @@ const columns = [
         dataIndex: "lRepayDeliCost",
         key: "lRepayDeliCost",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "리스료",
         dataIndex: "lRepayCycleLeaseCost",
         key: "lRepayCycleLeaseCost",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "전날콜수수료",
         dataIndex: "lRepayPrevNonDeliCost",
         key: "lRepayPrevNonDeliCost",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "전날리스료",
         dataIndex: "lRepayPrevNonCycleLeaseCost",
         key: "lRepayPrevNonCycleLeaseCost",
         width: 100,
-        render: (cost: number) => costFormat(cost)
-      }
-    ]
-  }
+        render: (cost: number) => costFormat(cost),
+      },
+    ],
+  },
 ];
 
 const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) => {
@@ -323,7 +323,7 @@ const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) =
         method: "get",
         url: "https://api.roadvoy.net/shared/rider/settlement/detail/index.php",
         headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
         },
         params: {
           ucAreaNo: riderInfo.ucAreaNo,
@@ -331,8 +331,8 @@ const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) =
           ucAgencyId: riderInfo.ucAgencyId,
           ucMemCourId: riderInfo.ucMemCourId,
           acStartDate: acStartDate.format("YYYY-MM-DD"),
-          acEndDate: acEndDate.format("YYYY-MM-DD")
-        }
+          acEndDate: acEndDate.format("YYYY-MM-DD"),
+        },
       });
 
       const { data } = response;
@@ -340,7 +340,7 @@ const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) =
       setAstRiderDaily(data.lstRiderDaily);
       setStRiderDailyTotal(data.stRiderDailyTotal);
     } catch (e) {
-      const error = e as AxiosError
+      const error = e as AxiosError;
       if (error.response && error.response.data && error.response.data.msg) {
         throw new Error(error.response.data.msg);
       } else {
@@ -363,14 +363,14 @@ const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) =
               const fileName = `기사정산 ${acStartDate.format("YYYY-MM-DD")} ~ ${acEndDate.format(
                 "YYYY-MM-DD"
               )}.xlsx`;
-              APIHelper.getInstance()({
+              api({
                 method: "GET",
                 url: "https://api.roadvoy.net/shared/rider/settlement/export/index.php",
                 params: {
                   acStartDate: acStartDate.format("YYYY-MM-DD"),
-                  acEndDate: acEndDate.format("YYYY-MM-DD")
+                  acEndDate: acEndDate.format("YYYY-MM-DD"),
                 },
-                responseType: "blob"
+                responseType: "blob",
               }).then(response => {
                 const url = window.URL.createObjectURL(
                   new Blob([response.data], { type: response.headers["content-type"] })
