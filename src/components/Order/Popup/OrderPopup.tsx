@@ -5,7 +5,6 @@ import { AxiosError } from "axios";
 import NumberFormat, { NumberFormatValues } from "react-number-format";
 
 import "./_styles.css";
-import styled from "styled-components";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import ErrandAllocType from "src/helpers/ErrandAllocType";
 import DistanceHelper from "src/helpers/DistanceHelper";
@@ -21,20 +20,13 @@ import { IPlace } from "../../Place/Place";
 import api from "../../../config/axios";
 import { CallInfo } from "../../CallList/CallListComponent";
 import { RiderInfo } from "../../shop/types";
+import { formItemLayout, LeftAlignedCol, TitleCol } from "./styles";
 
 interface Props {
   callInfo: CallInfo | undefined;
   stForceDispatchRider: RiderInfo;
 }
 const { Panel } = Collapse;
-const formItemLayout = {
-  labelCol: {
-    span: 7,
-  },
-  wrapperCol: {
-    span: 14,
-  },
-};
 
 const OrderPopup = (props: Props) => {
   const [form, setForm] = useState<IErrandOrderRequest>({
@@ -303,7 +295,6 @@ const OrderPopup = (props: Props) => {
       <Row>
         <Col span={12}>
           <Form
-            name="validate_other"
             {...formItemLayout}
             initialValues={{
               "input-number": 3,
@@ -437,7 +428,6 @@ const OrderPopup = (props: Props) => {
         </Col>
         <Col span={12} pull={1}>
           <Form
-            name="validate_other"
             {...formItemLayout}
             initialValues={{
               "input-number": 3,
@@ -730,10 +720,3 @@ const OrderPopup = (props: Props) => {
   );
 };
 export default OrderPopup;
-const LeftAlignedCol = styled(Col)`
-  text-align: left;
-`;
-const TitleCol = styled(Col)`
-  font-size: 3vh;
-  padding: 5px 20px 15px 20px;
-`;
