@@ -5,7 +5,7 @@ import { message, Table, Checkbox, Tag, Drawer, Button, Row, Col } from "antd";
 import styled from "styled-components";
 import "./Call.css";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { ColumnsType } from "antd/lib/table";
 
 import Header from "../Layout/Header";
@@ -68,6 +68,26 @@ export interface CallInfo {
   acClientMemo: string;
   acAllocDateTime: string;
 
+  // 경유지
+  acStop1Company: string;
+  acStop1Name: string;
+  acStop1CellNo: string;
+  acStop1Memo: string;
+  ulStop1LatiPos: number;
+  ulStop1LongPos: number;
+  acStop1OldAddr: number;
+  acStop1NewAddr: string;
+  acStop1AddrDesc: string;
+  acStop2CellNo: string;
+  acStop2Company: string
+  acStop2Name: string;
+  acStop2Memo: string;
+  ulStop2LatiPos :number
+  ulStop2LongPos: number;
+  acStop2OldAddr: string;
+  acStop2NewAddr: string;
+  acStop2AddrDesc: string;
+
   acDestOldAddr: string;
   acOriginOldAddr: string;
   ucErrandType: ErrandType;
@@ -79,6 +99,13 @@ export interface CallInfo {
   onCancel: any;
   onOk: any;
   visible: any;
+
+}
+export const getDeliStatus = (call:CallInfo) => {
+  if(call.ucDeliStatus === 2) {
+    return 4
+  }
+  return call.ucDeliStatus;
 }
 
 const columns: ColumnsType<CallInfo> = [
@@ -266,7 +293,8 @@ const CallListComponent = () => {
         }
       }
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError
+      message.error(error.message);
     }
   };
 
