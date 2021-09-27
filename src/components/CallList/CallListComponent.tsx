@@ -16,6 +16,7 @@ import ErrandType from "src/helpers/ErrandType";
 import CallListModal from "./CallListModal";
 import ErrandHelper from "src/helpers/ErrandHelper";
 import api from "../../config/axios";
+import DateUtil from "../../util/DateUtil";
 
 export interface CallInfo {
   acErrandDate: string;
@@ -228,7 +229,7 @@ const CallListComponent = () => {
           Authorization: `Bearer ${LoginHelper.getToken()}`,
         },
         params: {
-          acErrandDate: moment().format("YYYY-MM-DD"),
+          acErrandDate: DateUtil.getTodayMoment().format("YYYY-MM-DD"),
         },
       });
       const astErrand = response.data.astErrand as any[];
