@@ -10,7 +10,6 @@ import { Errand } from "src/util/Errand";
 import { AxiosError } from "axios";
 import DateUtil from "src/util/DateUtil";
 import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
-import CallListModal from "./CallListModal";
 import api from "src/config/axios";
 
 const Search = Input.Search;
@@ -328,12 +327,13 @@ const CallHistory = (props: Props) => {
               };
             }}
           />
+          {/*
           <CallListModal
             visible={isModalVisible}
             onOk={CallOk}
             onCancel={CallCancel}
             callInfo={callInfo}
-          />
+          />*/}
         </div>
       </div>
     </>

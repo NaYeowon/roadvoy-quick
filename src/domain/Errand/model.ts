@@ -62,6 +62,9 @@ export interface IErrandOrderRequest {
   ulErrandFeeAgency: number;
   ulErrandDispatchAgencyFee: number;
 
+  ulSplitPrePayment: number;
+  ulSplitPostPayment: number;
+
   // 경유지
   acStop1CellNo: string;
   acStop1Company: string;
@@ -99,6 +102,10 @@ export interface ErrandDto {
   ucDeliStatus: number;
 
   acOrderDateTime: string;
+  acAllocDateTime: string | undefined;
+  acPickupDateTime: string | undefined;
+  acDoneDateTime: string | undefined;
+  acCancelDateTime: string | undefined;
 
   // 출발지
   acOriginCompany: string;
@@ -133,6 +140,9 @@ export interface ErrandDto {
   ulErrandFeeAgency: number;
   ulErrandDispatchAgencyFee: number;
 
+  ulSplitPrePayment: number;
+  ulSplitPostPayment: number;
+
   // 경유지
   acStop1CellNo: string;
   acStop1Company: string;
@@ -152,6 +162,8 @@ export interface ErrandDto {
   acStop2AddrDesc: string;
   acStop2Memo: string;
 
+  acCourPresident: string;
+  acCourCellNo: string;
   ucAcptAreaNo: number;
   ucAcptDistribId: number;
   ucAcptAgencyId: number;

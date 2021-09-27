@@ -69,6 +69,9 @@ const OrderPopup = (props: Props) => {
     ulErrandFeeAgency: 0,
     ulErrandDispatchAgencyFee: 0,
 
+    ulSplitPostPayment: 0,
+    ulSplitPrePayment: 0,
+
     // 경유지
     acStop1Company: "",
     acStop1CellNo: "",

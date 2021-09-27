@@ -1,24 +1,19 @@
-/* eslint-disable */
 import { Tag } from "antd";
-import React from "react";
-import { CallInfo } from "src/components/CallList/CallListComponent";
 import styled from "styled-components";
 import { costFormat } from "./FormatUtil";
 
 interface Props {
-  callInfo: CallInfo;
+  ucPaymentMode: number;
+  ulGoodsPrice: number;
 }
 
 const PaymentModeAndAmount = (props: Props) => {
-  const { callInfo } = props;
-
-  const ucPaymentMode: number = Number(callInfo.ucPaymentMode);
-  const charge = costFormat(Number(callInfo.ulGoodsPrice));
+  const { ucPaymentMode, ulGoodsPrice } = props;
 
   let paymentModeText;
   let paymentColor;
 
-  switch (ucPaymentMode) {
+  switch (Number(ucPaymentMode)) {
     case 2:
       paymentModeText = "카드";
       paymentColor = "#2db7f5";
@@ -36,7 +31,7 @@ const PaymentModeAndAmount = (props: Props) => {
   return (
     <>
       <PaymentModeTag color={paymentColor}>{paymentModeText}</PaymentModeTag>
-      <span>{charge}</span>
+      <span>{costFormat(Number(ulGoodsPrice))}</span>
     </>
   );
 };

@@ -1,30 +1,23 @@
-/* eslint-disable */
-import { useState, useEffect, FC } from "react";
-import { Button, Popconfirm, message, Steps, Tag } from "antd";
-import styled from "styled-components";
+import { Button, Popconfirm } from "antd";
 import Modal from "antd/lib/modal/Modal";
-import "./CallListModal.css";
-import { CallDetailShopTitle } from "./index";
-import { CallInfo } from "./CallListComponent";
-import { costFormat, getCellNoFormat, getDateFormat } from "src/util/FormatUtil";
-import axios, { AxiosError } from "axios";
-import LoginHelper from "src/pages/shared/LoginHelper";
-import AddressDaumMapComponent from "src/util/AddressDaumMapComponent";
-import CallTimeLine from "./CallTimeLine";
+import "./_styles.css";
+import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 import PaymentModeAndAmount from "src/util/PaymentModeAndAmount";
 import FlatFixedRateSystem from "src/util/FlatFixedRateSystem";
+import { CallDetailModalShopName } from "./styles";
+import { CallDetailShopTitle } from "./CallDetailShopTitle";
+import { ErrandDto, ErrandFeeType } from "../../../domain/Errand/model";
+import CallTimeLine from "../CallTimeLine";
+import AddressDaumMapComponent from "../../../util/AddressDaumMapComponent";
 
-const { Step } = Steps;
-interface Props {
-  visible: boolean | undefined;
+interface CallModalProps {
   onOk: () => void;
   onCancel: () => void;
-  callInfo: CallInfo | undefined;
+  errand: ErrandDto | undefined;
 }
-const CallListModal: FC<Props> = (props: Props) => {
-  const { visible, onOk, onCancel, callInfo } = props;
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [callModalInfo, setCallModalInfo] = useState<CallInfo | undefined>(undefined);
+
+function CallModal(props: CallModalProps) {
+  const { onOk, onCancel, errand } = props;
 
   const handleCancel = () => {
     onCancel();
@@ -33,16 +26,8 @@ const CallListModal: FC<Props> = (props: Props) => {
     onOk();
   };
 
-  const CallOk = () => {
-    setIsModalVisible(false);
-  };
-
-  const CallCancel = () => {
-    setIsModalVisible(false);
-  };
-
   const handleClickCancelErrand = async () => {
-    const form = new FormData();
+    /*const form = new FormData();
 
     form.append("ulErrandSeqNo", String(props.callInfo!!.ulErrandSeqNo));
     try {
@@ -60,15 +45,11 @@ const CallListModal: FC<Props> = (props: Props) => {
     } catch (e) {
       const error = e as AxiosError;
       message.error(error.message);
-    }
+    }*/
   };
 
-  if (!callInfo) {
-    return <></>;
-  }
-
   const handleClickDispatchCancel = async () => {
-    const form = new FormData();
+    /*const form = new FormData();
 
     form.append("ucAreaNo", String(props.callInfo?.ucAreaNo));
     form.append("ucDistribId", String(props.callInfo?.ucDistribId));
@@ -91,97 +72,106 @@ const CallListModal: FC<Props> = (props: Props) => {
     } catch (e) {
       const error = e as AxiosError;
       message.error(error.message);
-    }
+    }*/
   };
+
+  if (!errand) {
+    return <></>;
+  }
 
   // 배차 대행 수수료
   let calcErrandFeeAgency;
-  if (callInfo.ucErrandFeeType === 1) {
-    calcErrandFeeAgency = callInfo.ulErrandFeeAmount;
+  if (errand.ucErrandFeeType === ErrandFeeType.AMOUNT) {
+    calcErrandFeeAgency = errand.ulErrandFeeAmount;
   } else {
-    calcErrandFeeAgency = callInfo.ulErrandCharge * (callInfo.ucErrandFeeRate! / 100);
+    calcErrandFeeAgency = errand.ulErrandCharge * (errand.ucErrandFeeRate / 100);
   }
 
   // 배달기사 수수료
-  let riderFee;
-  if (callInfo.ucErrandType == 1) {
-    riderFee = callInfo.ulErrandCharge - calcErrandFeeAgency;
-  } else {
-    riderFee = callInfo.ulErrandCharge - calcErrandFeeAgency;
-  }
+  const riderFee = errand.ulErrandCharge - calcErrandFeeAgency;
+
   return (
     <>
-      <Modal title="콜 상세" visible={visible} onCancel={handleCancel} onOk={handleOk}>
+      <Modal title="콜 상세" visible={true} onCancel={handleCancel} onOk={handleOk}>
         <div>
           <div style={{ marginBottom: "10px" }}>
-            <CallDetailModalShopName>{callInfo.acOriginCompany}</CallDetailModalShopName>
-            <p>접수번호: {callInfo.ulErrandSeqNo}</p>
-            <p>주문시간: {callInfo.acOrderDateTime}</p>
-            <p>픽업제한시간: {callInfo.ucLimitTime}분</p>
+            <CallDetailModalShopName>{errand.acOriginCompany}</CallDetailModalShopName>
+            <p>접수번호: {errand.ulErrandSeqNo}</p>
+            <p>주문시간: {errand.acOrderDateTime}</p>
+            <p>픽업제한시간: {errand.ucLimitTime}분</p>
           </div>
           <div style={{ marginBottom: "10px" }}>
             <div style={{ paddingBottom: "10px" }}>
-              <CallDetailShopTitle title="기사" value={callInfo.acCourPresident} />
+              <CallDetailShopTitle title="기사" value={errand.acCourPresident} />
               <CallDetailShopTitle
                 title="기사연락처"
-                value={getCellNoFormat(callInfo.acCourCellNo)}
+                value={getCellNoFormat(errand.acCourCellNo)}
               />
-              <CallDetailShopTitle title="배달비용" value={costFormat(callInfo.ulErrandCharge)} />
+              <CallDetailShopTitle title="배달비용" value={costFormat(errand.ulErrandCharge)} />
               <CallDetailShopTitle
                 title="배차대행 수수료"
-                value={<FlatFixedRateSystem callInfo={callInfo} />}
+                value={
+                  <FlatFixedRateSystem
+                    ucErrandFeeType={errand.ucErrandFeeType}
+                    ulErrandFeeAgency={errand.ulErrandFeeAgency}
+                  />
+                }
               />
               <CallDetailShopTitle title="배달기사 수수료" value={costFormat(riderFee)} />
             </div>
             <div style={{ paddingBottom: "10px" }}>
               <CallDetailShopTitle
                 title="타사 지급 수수료"
-                value={costFormat(callInfo.ulErrandDispatchAgencyFee)}
+                value={costFormat(errand.ulErrandDispatchAgencyFee)}
               />
               <CallDetailShopTitle
                 title="물건가격"
-                value={<PaymentModeAndAmount callInfo={callInfo} />}
+                value={
+                  <PaymentModeAndAmount
+                    ucPaymentMode={errand.ucPaymentMode}
+                    ulGoodsPrice={errand.ulGoodsPrice}
+                  />
+                }
               />
               <CallDetailShopTitle
                 title="선지급액(분할)"
-                value={costFormat(callInfo.ulSplitPrePayment)}
+                value={costFormat(errand.ulSplitPrePayment)}
               />
               <CallDetailShopTitle
                 title="잔여금액(분할)"
-                value={costFormat(callInfo.ulSplitPostPayment)}
+                value={costFormat(errand.ulSplitPostPayment)}
               />
             </div>
-            {/* <CallDetailShopTitle title="물건가격" value={costFormat(callInfo.ulGoodsPrice)} /> */}
             <CallDetailShopTitle
               title="픽업지연락처"
-              value={getCellNoFormat(callInfo.acOriginCellNo)}
+              value={getCellNoFormat(errand.acOriginCellNo)}
             />
-            <CallDetailShopTitle title="픽업지업체명" value={callInfo.acOriginCompany} />
-            <CallDetailShopTitle title="픽업지요청사항" value={callInfo.acOriginMemo} />
+            <CallDetailShopTitle title="픽업지업체명" value={errand.acOriginCompany} />
+            <CallDetailShopTitle title="픽업지요청사항" value={errand.acOriginMemo} />
             <CallDetailShopTitle
               title="픽업지주소"
-              value={`${callInfo.acOriginOldAddr} ${callInfo.acOriginAddrDesc}`}
+              value={`${errand.acOriginOldAddr} ${errand.acOriginAddrDesc}`}
             />
           </div>
           <div style={{ backgroundColor: "#fff280" }}>
             <CallDetailShopTitle
               title="목적지연락처"
-              value={getCellNoFormat(callInfo.acDestCellNo)}
+              value={getCellNoFormat(errand.acDestCellNo)}
             />
-            <CallDetailShopTitle title="목적지업체명" value={callInfo.acDestCompany} />
-            <CallDetailShopTitle title="목적지요청사항" value={callInfo.acDestMemo} />
+            <CallDetailShopTitle title="목적지업체명" value={errand.acDestCompany} />
+            <CallDetailShopTitle title="목적지요청사항" value={errand.acDestMemo} />
             <CallDetailShopTitle
               title="목적지주소"
-              value={`${callInfo.acDestOldAddr} ${callInfo.acDestAddrDesc}`}
+              value={`${errand.acDestOldAddr} ${errand.acDestAddrDesc}`}
             />
           </div>
-          <AddressDaumMapComponent callInfo={callInfo} />
+          <AddressDaumMapComponent errand={errand} />
         </div>
-        <CallTimeLine callInfo={callInfo} />
+        <CallTimeLine errand={errand} />
         <Button
           onClick={() => {
-            setIsModalVisible(true);
-            setCallModalInfo(callInfo);
+            // setIsModalVisible(true);
+            // setCallModalInfo(callInfo);
           }}
         >
           콜 수정
@@ -215,11 +205,6 @@ const CallListModal: FC<Props> = (props: Props) => {
       />*/}
     </>
   );
-};
+}
 
-export default CallListModal;
-const CallDetailModalShopName = styled.h2`
-  color: black;
-  margin: 0;
-  font-weight: bold;
-`;
+export default CallModal;

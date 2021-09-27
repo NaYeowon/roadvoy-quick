@@ -11,11 +11,11 @@ import LoginHelper from "../../pages/shared/LoginHelper";
 import { costFormat, getCellNoFormat, getDateFormat } from "../../util/FormatUtil";
 import moment from "moment";
 import ErrandType from "src/helpers/ErrandType";
-import CallListModal from "./CallListModal";
 import ErrandHelper from "src/helpers/ErrandHelper";
 import api from "../../config/axios";
 import DateUtil from "../../util/DateUtil";
 import { ErrandDto } from "../../domain/Errand/model";
+import { CallModal } from "./Modal";
 
 export interface CallInfo {
   acErrandDate: string;
@@ -405,14 +405,7 @@ const CallListComponent = () => {
           };
         }}
       />
-      {/*
-      <CallListModal
-        visible={isModalVisible}
-        onOk={handleCloseModal}
-        onCancel={handleCloseModal}
-        callInfo={callInfo}
-      />
-      */}
+      <CallModal onOk={handleCloseModal} onCancel={handleCloseModal} errand={modalErrand} />
     </>
   );
 };
