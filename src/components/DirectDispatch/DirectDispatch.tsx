@@ -1,57 +1,65 @@
-/* eslint-disable */
 import Search from "antd/lib/input/Search";
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
 import { RiderInfo } from "../shop/types";
-import { CallInfo } from "./CallListComponent";
-import TradeAPIService from "src/util/TradeAPIService";
 import { message } from "antd";
-import { Errand } from "src/util/Errand";
-import DirectDispatchRiderItem from "./DirectDispatchRiderItem";
 import api from "../../config/axios";
+import RiderItem from "./RiderItem";
+import { useEffect, useState } from "react";
+import { ErrandId } from "../../domain/Errand/model";
 
-interface Props {
-  call?: CallInfo;
-  beforeOrderDispatch: boolean;
-  onDispatchCallback?: any;
-  onSelectedBeforeDispatchRider?: any;
+// ucDeliStatus = undefined인 경우 콜 올리기전 배차
+interface IDirectDispatchProps {
+  ulErrandSeqNo: ErrandId;
+  ucDeliStatus?: number;
 }
 
-const DirectDispatch = (props: Props) => {
-  const { call, beforeOrderDispatch } = props;
+const DirectDispatch = (props: IDirectDispatchProps) => {
+  /*
+  const { ulErrandSeqNo, ucDeliStatus } = props;
 
   const [riderList, setRiderList] = useState<RiderInfo[]>([]);
-  const [searchRiderName, SetSearchRiderName] = useState("");
+  const [searchRiderName, setSearchRiderName] = useState("");
 
   useEffect(() => {
-    if (!beforeOrderDispatch && call!.ucDeliStatus >= 32) return;
     fetchRiderList();
   }, []);
 
   const fetchRiderList = async () => {
-    let response = await api.get("agency/call/dispatchManagementRiderList.php");
+    const response = await api.get("agency/call/dispatchManagementRiderList.php");
     setRiderList(response.data.astRider);
   };
 
   const postDispatch = async (rider: RiderInfo) => {
     try {
-      await TradeAPIService.postForceDispatch(call as unknown as Errand, rider);
+      await api.post("agency/errand/execute-command/direct-dispatch.php", {
+        ulErrandSeqNo: ulErrandSeqNo,
+        ucAreaNo: rider.ucAreaNo,
+        ucDistribId: rider.ucDistribId,
+        ucAgencyId: rider.ucAgencyId,
+        ucMemCourId: rider.ucMemCourId,
+      });
 
       message.success("배차 했습니다.");
-      props.onDispatchCallback();
-    } catch (error) {
+      //      props.onDispatchCallback();
+    } catch (e) {
+      const error = e as Error;
       message.error(error.message);
     }
   };
 
   const postOptionalDispatch = async (rider: RiderInfo) => {
     try {
-      await TradeAPIService.postOptionalDispatch(call as unknown as Errand, rider);
+      await api.post("agency/errand/execute-command/optional-dispatch.php", {
+        ulErrandSeqNo: ulErrandSeqNo,
+        ucAreaNo: rider.ucAreaNo,
+        ucDistribId: rider.ucDistribId,
+        ucAgencyId: rider.ucAgencyId,
+        ucMemCourId: rider.ucMemCourId,
+      });
 
       message.success("선택배차를 요청했습니다.");
-      props.onDispatchCallback();
-    } catch (error) {
+      // props.onDispatchCallback();
+    } catch (e) {
+      const error = e as Error;
       message.error(error.message);
     }
   };
@@ -95,16 +103,15 @@ const DirectDispatch = (props: Props) => {
             rider.acPresident.toLocaleLowerCase().includes(searchRiderName.toLocaleLowerCase())
         )
         .map(rider => (
-          <DirectDispatchRiderItem
+          <RiderItem
             rider={rider}
-            call={call}
             onClickDispatchButton={_onClickDispatchButton}
             onClickOptionalDispatchButton={_onClickOptionalDispatchButton}
-            beforeOrderDispatch={beforeOrderDispatch}
+            key={rider.acUserId}
           />
         ))}
     </div>
-  );
+  );*/
 };
 
 DirectDispatch.defaultProps = {

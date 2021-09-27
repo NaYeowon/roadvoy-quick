@@ -21,6 +21,7 @@ export enum ErrandAllocType {
   FORCE_DISPATCH = 2,
 }
 
+export type ErrandId = number;
 export interface IErrandOrderRequest {
   ucAreaNo: number;
   ucDistribId: number;
