@@ -1,4 +1,4 @@
-import { Button, Popconfirm } from "antd";
+import { Button, message, Popconfirm } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import "./_styles.css";
 import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
@@ -9,6 +9,8 @@ import { CallDetailShopTitle } from "./CallDetailShopTitle";
 import { ErrandDto, ErrandFeeType } from "../../../domain/Errand/model";
 import CallTimeLine from "../CallTimeLine";
 import AddressDaumMapComponent from "../../../util/AddressDaumMapComponent";
+import api from "../../../config/axios";
+import { AxiosError } from "axios";
 
 interface CallModalProps {
   onOk: () => void;
@@ -27,25 +29,23 @@ function CallModal(props: CallModalProps) {
   };
 
   const handleClickCancelErrand = async () => {
-    /*const form = new FormData();
-
-    form.append("ulErrandSeqNo", String(props.callInfo!!.ulErrandSeqNo));
     try {
-      const response = await axios({
+      if (!errand) return;
+
+      await api({
         method: "post",
-        url: "https://api.roadvoy.net/agency/errand/cancel.php",
-        data: form,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        url: "agency/errand/execute-command/cancel-order.php",
+        data: {
+          ulErrandSeqNo: errand.ulErrandSeqNo,
         },
       });
-      console.log(response);
-      message.success("콜이 취소되었습니다.");
+
+      message.success("콜을 취소했습니다.");
+      onOk();
     } catch (e) {
       const error = e as AxiosError;
       message.error(error.message);
-    }*/
+    }
   };
 
   const handleClickDispatchCancel = async () => {
