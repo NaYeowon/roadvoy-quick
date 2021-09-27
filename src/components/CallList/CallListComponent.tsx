@@ -195,17 +195,28 @@ const columns: ColumnsType<CallInfo> = [
   },
 ];
 
+interface IDeliStatusCount {
+  temp: number;
+  wait: number;
+  alloc: number;
+  pkup: number;
+  done: number;
+  cancel: number;
+}
+
 const CallListComponent = () => {
   const [astErrand, setAstManageCall] = useState<CallInfo[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectCall, setSelectCall] = useState<CallInfo | undefined>(undefined);
 
-  const [tempCount, setTempCount] = useState(0);
-  const [waitCount, setWaitCount] = useState(0);
-  const [allocCount, setAllocCount] = useState(0);
-  const [pkupCount, setpkupCount] = useState(0);
-  const [doneCount, setDoneCount] = useState(0);
-  const [cancelCount, setCancleCount] = useState(0);
+  const [deliStatusCount, setDeliStatusCount] = useState<IDeliStatusCount>({
+    temp: 0,
+    wait: 0,
+    alloc: 0,
+    pkup: 0,
+    done: 0,
+    cancel: 0,
+  });
 
   const [isCheckedTemp, setIsCheckedTemp] = useState(true);
   const [isCheckedWait, setIsCheckedWait] = useState(true);
@@ -239,36 +250,41 @@ const CallListComponent = () => {
         })
       );
 
-      let temp: number = 0;
-      let wait: number = 0;
-      let alloc: number = 0;
-      let pkup: number = 0;
-      let done: number = 0;
-      let cancel: number = 0;
+      let _deliStatusCount = {
+        temp: 0,
+        wait: 0,
+        alloc: 0,
+        pkup: 0,
+        done: 0,
+        cancel: 0,
+      };
 
       for (var i = 0; i < astErrand.length; i++) {
-        if (astErrand[i].ucDeliStatus === 1) {
-          temp += 1;
-          setTempCount(temp);
-        } else if (astErrand[i].ucDeliStatus === "4") {
-          wait += 1;
-          setWaitCount(wait);
-        } else if (astErrand[i].ucDeliStatus === "8") {
-          alloc += 1;
-          setAllocCount(alloc);
-        } else if (astErrand[i].ucDeliStatus === "16") {
-          pkup += 1;
-          setpkupCount(pkup);
-        } else if (astErrand[i].ucDeliStatus === "32") {
-          done += 1;
-          setDoneCount(done);
-        } else if (astErrand[i].ucDeliStatus === "64") {
-          cancel += 1;
-          setCancleCount(cancel);
+        switch (parseInt(astErrand[i].ucDeliStatus)) {
+          case 1:
+            _deliStatusCount.temp++;
+            break;
+          case 4:
+            _deliStatusCount.wait++;
+            break;
+          case 8:
+            _deliStatusCount.alloc++;
+            break;
+          case 16:
+            _deliStatusCount.pkup++;
+            break;
+          case 32:
+            _deliStatusCount.done++;
+            break;
+          case 64:
+            _deliStatusCount.cancel++;
+            break;
         }
       }
+      setDeliStatusCount(_deliStatusCount);
     } catch (e) {
-      message.error(e.message);
+      const error = e as Error;
+      message.error(error.message);
     }
   };
 
@@ -365,7 +381,7 @@ const CallListComponent = () => {
           checked={isCheckedWait}
           onChange={wait}
         >
-          대기 {waitCount}콜
+          대기 {deliStatusCount.wait}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="배차"
@@ -373,7 +389,7 @@ const CallListComponent = () => {
           checked={isCheckedAlloc}
           onChange={alloc}
         >
-          배차 {allocCount}콜
+          배차 {deliStatusCount.alloc}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="픽업"
@@ -381,7 +397,7 @@ const CallListComponent = () => {
           checked={isCheckedPkup}
           onChange={pkup}
         >
-          픽업 {pkupCount}콜
+          픽업 {deliStatusCount.pkup}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="완료"
@@ -389,7 +405,7 @@ const CallListComponent = () => {
           checked={isCheckedDone}
           onChange={done}
         >
-          완료 {doneCount}콜
+          완료 {deliStatusCount.done}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="취소"
@@ -397,7 +413,7 @@ const CallListComponent = () => {
           checked={isCheckedCancel}
           onChange={cancle}
         >
-          취소 {cancelCount}콜
+          취소 {deliStatusCount.cancel}콜
         </CustomCheckbox>
       </Checkbox.Group>
       <Table
