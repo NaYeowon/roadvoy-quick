@@ -163,8 +163,11 @@ function CallModal(props: CallModalProps) {
         <CallTimeLine errand={errand} />
         <Button
           onClick={() => {
-            // setIsModalVisible(true);
-            // setCallModalInfo(callInfo);
+            window.open(
+              `/order/update/popup/${errand.ulErrandSeqNo}`,
+              "_blank",
+              "top=100, left=500, width=1100, height=800"
+            );
           }}
         >
           콜 수정
@@ -189,13 +192,6 @@ function CallModal(props: CallModalProps) {
           </Button>
         </Popconfirm>
       </Modal>
-      {/*
-      <CallModify
-        visible={isModalVisible}
-        onOk={CallOk}
-        onCancel={CallCancel}
-        callInfo={callModalInfo}
-      />*/}
     </>
   );
 }

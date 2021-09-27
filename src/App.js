@@ -46,6 +46,7 @@ class App extends Component {
           <Route path="/shop" component={shop} />
           <Route path="/rider" component={rider} />
           <Route path="/order/popup" component={OrderPopup} />
+          <Route path="/order/update/popup/:ulErrandSeqNo" component={OrderPopup} />
           <Route path="/fileUpload" component={FileUpload} />
           <Route path="/shopSignupModal" component={shopSignupModal} />
           <Route path="/riderSignupModal" component={riderSignupModal} />

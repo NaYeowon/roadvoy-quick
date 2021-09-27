@@ -10,7 +10,9 @@ import ErrandAllocType from "src/helpers/ErrandAllocType";
 import DistanceHelper from "src/helpers/DistanceHelper";
 import { costFormat } from "src/util/FormatUtil";
 import {
+  ErrandDto,
   ErrandFeeType,
+  ErrandId,
   ErrandType,
   IErrandOrderRequest,
   PaymentMode,
@@ -21,10 +23,16 @@ import api from "../../../config/axios";
 import { CallInfo } from "../../CallList/CallListComponent";
 import { RiderInfo } from "../../shop/types";
 import { formItemLayout, LeftAlignedCol, TitleCol } from "./styles";
+import { RouteComponentProps } from "react-router";
+
+interface IMatchParams {
+  ulErrandSeqNo: ErrandId | undefined;
+}
 
 interface Props {
   callInfo: CallInfo | undefined;
   stForceDispatchRider: RiderInfo;
+  match: RouteComponentProps<IMatchParams>;
 }
 const { Panel } = Collapse;
 
@@ -159,6 +167,14 @@ const OrderPopup = (props: Props) => {
     }
   };
 
+  const executeOrder = () => {
+    if (isUpdate()) {
+      executeUpdateOrder();
+    } else {
+      executeCreateOrder();
+    }
+  };
+
   const executeCreateOrder = async () => {
     try {
       ensureValidData();
@@ -167,11 +183,28 @@ const OrderPopup = (props: Props) => {
         method: "post",
         url: "/agency/errand/execute-command/create-order.php",
         data: form,
-        headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`,
-        },
       });
       console.log(response);
+      window.close();
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
+
+  const executeUpdateOrder = async () => {
+    try {
+      ensureValidData();
+
+      await api({
+        method: "post",
+        url: "/agency/errand/execute-command/update-order.php",
+        data: {
+          ulErrandSeqNo: getUpdateErrandSeqNo(),
+          ...form,
+        },
+      });
+
       window.close();
     } catch (e) {
       const error = e as AxiosError;
@@ -207,6 +240,26 @@ const OrderPopup = (props: Props) => {
     // setUcAllocType(ErrandAllocType.NORMAL), setStForceDispatchRider(null);
   };
 
+  const getUpdateForm = async (ulErrandSeqNo: number) => {
+    try {
+      const response = await api({
+        method: "get",
+        url: "/shared/errand/process-query/get-errand-by-seq-no.php",
+        params: {
+          ulErrandSeqNo: ulErrandSeqNo,
+        },
+      });
+
+      setForm({
+        ...(response.data.stErrand as ErrandDto),
+      });
+      console.log(response.data.stErrand);
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
+
   let forceAllocRiderBody;
   if (stForceDispatchRider) {
     forceAllocRiderBody = (
@@ -216,6 +269,12 @@ const OrderPopup = (props: Props) => {
       </span>
     );
   }
+
+  useEffect(() => {
+    if (isUpdate()) {
+      getUpdateForm(getUpdateErrandSeqNo());
+    }
+  }, []);
 
   useEffect(() => {
     if (form.ucErrandType !== ErrandType.DIFFERENT_DESTINATION) {
@@ -290,10 +349,18 @@ const OrderPopup = (props: Props) => {
     }
   }, [form.ucErrandFeeRate]);
 
+  const isUpdate = () => {
+    return props.match.params.ulErrandSeqNo ? true : false;
+  };
+
+  const getUpdateErrandSeqNo = () => {
+    return Number(props.match.params.ulErrandSeqNo);
+  };
+
   return (
     <>
       <Row style={{ borderBottom: "1px solid #f5f5f5" }}>
-        <TitleCol>심부름 접수</TitleCol>
+        <TitleCol>심부름 {isUpdate() ? "수정" : "접수"}</TitleCol>
       </Row>
       <Row>
         <Col span={12}>
@@ -305,7 +372,13 @@ const OrderPopup = (props: Props) => {
               rate: 3.5,
             }}
           >
-            <Form.Item label="접수 번호" />
+            <Form.Item label="접수 번호">
+              {isUpdate() ? (
+                <span style={{ paddingRight: "11px" }}>{getUpdateErrandSeqNo()}</span>
+              ) : (
+                <></>
+              )}
+            </Form.Item>
             <Form.Item label="심부름 종류">
               <Col style={{ textAlign: "left" }}>
                 <Checkbox
@@ -333,7 +406,7 @@ const OrderPopup = (props: Props) => {
                       ucErrandType: ucErrandType,
                     });
                   }}
-                  checked={form.ucErrandType === ErrandType.SAME}
+                  checked={Number(form.ucErrandType) === ErrandType.SAME}
                 />
                 <span>
                   <span>바로목적지로</span>
@@ -440,7 +513,7 @@ const OrderPopup = (props: Props) => {
           >
             <Form.Item label="제한시간">
               <Radio.Group
-                value={form.ucLimitTime}
+                value={Number(form.ucLimitTime)}
                 onChange={e =>
                   setForm({
                     ...form,
@@ -486,7 +559,7 @@ const OrderPopup = (props: Props) => {
 
             <Form.Item label="주행유형">
               <Radio.Group
-                value={form.ucTripType}
+                value={Number(form.ucTripType)}
                 onChange={e =>
                   setForm({
                     ...form,
@@ -512,7 +585,7 @@ const OrderPopup = (props: Props) => {
             <Form.Item label="결제유형">
               <Radio.Group
                 name="ucPaymentMode"
-                value={form.ucPaymentMode}
+                value={Number(form.ucPaymentMode)}
                 onChange={e =>
                   setForm({
                     ...form,
@@ -572,7 +645,7 @@ const OrderPopup = (props: Props) => {
 
             <Form.Item label="정산유형">
               <Radio.Group
-                value={form.ucErrandSettlementType}
+                value={Number(form.ucErrandSettlementType)}
                 onChange={e => {
                   setForm({
                     ...form,
@@ -594,7 +667,7 @@ const OrderPopup = (props: Props) => {
 
             <Form.Item label="대행 수수료">
               <Radio.Group
-                value={form.ucErrandFeeType}
+                value={Number(form.ucErrandFeeType)}
                 onChange={e => {
                   setForm({
                     ...form,
@@ -709,10 +782,10 @@ const OrderPopup = (props: Props) => {
                 title="심부름을 접수하시겠습니까?"
                 okText="네"
                 cancelText="아니요"
-                onConfirm={executeCreateOrder}
+                onConfirm={executeOrder}
               >
                 <Button style={{ marginTop: "30px" }} type="ghost">
-                  접수
+                  {isUpdate() ? "수정" : "접수"}
                 </Button>
               </Popconfirm>
             </Row>
