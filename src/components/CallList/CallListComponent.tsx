@@ -1,11 +1,9 @@
-/* eslint-disable */
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { message, Table, Checkbox, Tag, Drawer, Button, Row, Col } from "antd";
+import { message, Table, Checkbox, Tag } from "antd";
 import styled from "styled-components";
 import "./Call.css";
 
-import axios from "axios";
 import { ColumnsType } from "antd/lib/table";
 
 import Header from "../Layout/Header";
@@ -17,6 +15,7 @@ import CallListModal from "./CallListModal";
 import ErrandHelper from "src/helpers/ErrandHelper";
 import api from "../../config/axios";
 import DateUtil from "../../util/DateUtil";
+import { ErrandDto } from "../../domain/Errand/model";
 
 export interface CallInfo {
   acErrandDate: string;
@@ -83,28 +82,28 @@ export interface CallInfo {
   visible: any;
 }
 
-const columns: ColumnsType<CallInfo> = [
+const columns: ColumnsType<ErrandDto> = [
   {
     title: "상점명",
     dataIndex: "acOriginCompany",
     key: "acOriginCompany",
     className: "deli-status",
     width: 120,
-    render: (text: string, record: CallInfo) => record.acOriginCompany,
+    render: (text: string, record: ErrandDto) => record.acOriginCompany,
   },
   {
     title: "접수",
     dataIndex: "acOrderDateTime",
     className: "deli-status",
     width: 50,
-    render: (data: string, record: CallInfo) => getDateFormat(data),
+    render: (data: string) => getDateFormat(data),
   },
   {
     title: "진행/조리",
     dataIndex: "ucLimitTime",
     className: "deli-status",
     width: 50,
-    render: (text: string, call: CallInfo) => {
+    render: (text: string, call: ErrandDto) => {
       const diff = Math.abs(moment().valueOf() - moment(call.acOrderDateTime).valueOf());
       return Math.floor(diff / 1000 / 60) + "분/" + `${call.ucLimitTime}` + "분";
     },
@@ -114,30 +113,7 @@ const columns: ColumnsType<CallInfo> = [
     dataIndex: "ulErrandCharge",
     className: "deli-status",
     width: 200,
-    render: (text: string, call: CallInfo) => {
-      // if (call.ucErrandType == ErrandType.DIFFERENT_DESTINATION) {
-      //   const originAddr = call.acOriginOldAddr ? call.acOriginOldAddr : call.acOriginNewAddr;
-      //   const destAddr = call.acDestOldAddr ? call.acDestOldAddr : call.acDestNewAddr;
-      //   return (
-      //     <div>
-      //       <div>
-      //         <Tag color="volcano">픽업지</Tag>
-      //         {originAddr} {call.acOriginAddrDesc}
-      //       </div>
-      //       <div>
-      //         <Tag color="purple">목적지</Tag>
-      //         {destAddr}
-      //       </div>
-      //     </div>
-      //   );
-      // } else {
-      //   return (
-      //     <div>
-      //       <Tag color="purple">목적지</Tag>
-      //       {call.acDestOldAddr} {call.acDestAddrDesc}
-      //     </div>
-      //   );
-      // }
+    render: (text: string, call: ErrandDto) => {
       return ErrandHelper.formatAddress(call);
     },
   },
@@ -153,9 +129,9 @@ const columns: ColumnsType<CallInfo> = [
     dataIndex: "ucPaymentMode",
     className: "deli-status",
     width: 90,
-    render: (dataIndex: number, record) => {
+    render: (value: number, record: ErrandDto) => {
       const charge = Number(record.ulGoodsPrice).toLocaleString();
-      switch (Number(dataIndex)) {
+      switch (Number(value)) {
         case 2:
           return (
             <>
@@ -205,9 +181,7 @@ interface IDeliStatusCount {
 }
 
 const CallListComponent = () => {
-  const [astErrand, setAstManageCall] = useState<CallInfo[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectCall, setSelectCall] = useState<CallInfo | undefined>(undefined);
+  const [errandList, setErrandList] = useState<ErrandDto[]>([]);
 
   const [deliStatusCount, setDeliStatusCount] = useState<IDeliStatusCount>({
     temp: 0,
@@ -225,7 +199,8 @@ const CallListComponent = () => {
   const [isCheckedDone, setIsCheckedDone] = useState(true);
   const [isCheckedCancel, setIsCheckedCancel] = useState(true);
 
-  const [callInfo, setCallInfo] = useState<CallInfo | undefined>(undefined);
+  const [modalErrand, setModalErrand] = useState<ErrandDto | undefined>(undefined);
+
   useEffect(() => {
     const delay = window.setInterval(fetchCallList, 1000);
     return () => clearInterval(delay);
@@ -243,14 +218,14 @@ const CallListComponent = () => {
           acErrandDate: DateUtil.getTodayMoment().format("YYYY-MM-DD"),
         },
       });
-      const astErrand = response.data.astErrand as any[];
-      setAstManageCall(
+      const astErrand = response.data.astErrand as ErrandDto[];
+      setErrandList(
         astErrand.sort((a, b) => {
           return b.ulErrandSeqNo - a.ulErrandSeqNo;
         })
       );
 
-      let _deliStatusCount = {
+      const _deliStatusCount = {
         temp: 0,
         wait: 0,
         alloc: 0,
@@ -259,8 +234,8 @@ const CallListComponent = () => {
         cancel: 0,
       };
 
-      for (var i = 0; i < astErrand.length; i++) {
-        switch (parseInt(astErrand[i].ucDeliStatus)) {
+      for (let i = 0; i < astErrand.length; i++) {
+        switch (Number(astErrand[i].ucDeliStatus)) {
           case 1:
             _deliStatusCount.temp++;
             break;
@@ -288,40 +263,40 @@ const CallListComponent = () => {
     }
   };
 
-  const TableList = (callInfo: CallInfo) => {
+  const TableList = (errand: ErrandDto) => {
     const className: any = [];
 
-    if (Number(callInfo.ucDeliStatus) === 1) {
+    if (Number(errand.ucDeliStatus) === 1) {
       className.push("deli-status-temp");
       if (isCheckedTemp === false) {
         className.push(" box-checked-xw");
       }
     }
-    if (Number(callInfo.ucDeliStatus) === 4) {
+    if (Number(errand.ucDeliStatus) === 4) {
       className.push("deli-status-wait");
       if (isCheckedWait === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(callInfo.ucDeliStatus) === 8) {
+    if (Number(errand.ucDeliStatus) === 8) {
       className.push("deli-status-alloc");
       if (isCheckedAlloc === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(callInfo.ucDeliStatus) === 16) {
+    if (Number(errand.ucDeliStatus) === 16) {
       className.push("deli-status-pkup");
       if (isCheckedPkup === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(callInfo.ucDeliStatus) === 32) {
+    if (Number(errand.ucDeliStatus) === 32) {
       className.push("deli-status-done");
       if (isCheckedDone === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(callInfo.ucDeliStatus) === 64) {
+    if (Number(errand.ucDeliStatus) === 64) {
       className.push("deli-status-cancel");
       if (isCheckedCancel === false) {
         className.push(" box-checked-show");
@@ -361,13 +336,10 @@ const CallListComponent = () => {
     setIsCheckedCancel(!isCheckedCancel);
   };
 
-  const CallOk = () => {
-    setIsModalVisible(false);
+  const handleCloseModal = () => {
+    setModalErrand(undefined);
   };
 
-  const CallCancel = () => {
-    setIsModalVisible(false);
-  };
   return (
     <>
       <Header />
@@ -419,28 +391,28 @@ const CallListComponent = () => {
       <Table
         className="test"
         columns={columns}
-        dataSource={astErrand}
+        dataSource={errandList}
         bordered
         pagination={false}
         size="small"
         scroll={{ y: 650 }}
         rowClassName={TableList}
-        onRow={(callInfo: CallInfo) => {
+        onRow={(errand: ErrandDto) => {
           return {
             onClick: () => {
-              setIsModalVisible(true);
-              setSelectCall(callInfo);
-              setCallInfo(callInfo);
+              setModalErrand(errand);
             },
           };
         }}
       />
+      {/*
       <CallListModal
         visible={isModalVisible}
-        onOk={CallOk}
-        onCancel={CallCancel}
+        onOk={handleCloseModal}
+        onCancel={handleCloseModal}
         callInfo={callInfo}
       />
+      */}
     </>
   );
 };
