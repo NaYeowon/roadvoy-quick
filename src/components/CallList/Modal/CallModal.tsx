@@ -49,30 +49,23 @@ function CallModal(props: CallModalProps) {
   };
 
   const handleClickDispatchCancel = async () => {
-    /*const form = new FormData();
-
-    form.append("ucAreaNo", String(props.callInfo?.ucAreaNo));
-    form.append("ucDistribId", String(props.callInfo?.ucDistribId));
-    form.append("ucAgencyId", String(props.callInfo?.ucAgencyId));
-    form.append("ucMemCourId", String(props.callInfo?.ucMemCourId));
-    form.append("acErrandDate", callInfo.acErrandDate);
-    form.append("ulErrandSeqNo", String(props.callInfo?.ulErrandSeqNo));
     try {
-      const response = await axios({
+      if (!errand) return;
+
+      await api({
         method: "post",
-        url: "https://api.roadvoy.net/agency/errand/dispatch/cancel.php",
-        data: form,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        url: "agency/errand/execute-command/dispatch-cancel.php",
+        data: {
+          ulErrandSeqNo: errand.ulErrandSeqNo,
         },
       });
-      console.log(response);
-      message.success("배차가 취소되었습니다.");
+
+      message.success("배차를 취소했습니다.");
+      onOk();
     } catch (e) {
       const error = e as AxiosError;
       message.error(error.message);
-    }*/
+    }
   };
 
   if (!errand) {
