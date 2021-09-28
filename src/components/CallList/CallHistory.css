@@ -24,7 +24,6 @@
 
 .errand-list-table-wrapper table tbody{
     font-size: 10pt;
-    color: white;
 }
 
 #errand-header-range-date-picker {
@@ -39,7 +38,6 @@
     width: 320px;
     height: 100%;
     float: left;
-
 }
 
 #errand-list-wrapper {
@@ -73,6 +71,9 @@
     width: 100px;
     vertical-align: middle;
 }
-.callHistory tbody{
+
+
+.callHistory tbody {
     color: white;
-}
+  }
+  

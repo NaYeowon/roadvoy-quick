@@ -1,6 +1,7 @@
 import { ErrandAllocType, ErrandFeeType, ErrandType, PaymentMode } from "../domain/Errand/model";
 
 export interface Errand {
+  acErrandDate: string
   ulErrandSeqNo: number;
 
   ucAreaNo: number;

@@ -12,12 +12,14 @@ import api from "src/config/axios";
 import { ErrandDto } from "src/domain/Errand/model";
 import { CallModal } from "./Modal";
 
+const Search = Input.Search
 const { RangePicker } = DatePicker;
 
 interface Props {
   astErrandSettlementList: [];
   astErrand: ErrandDto[];
   astFilteredErrand: ErrandDto[];
+
   acSelectedDate: string;
 
   startDate: moment.Moment;
@@ -127,12 +129,10 @@ const columns = [
   },
   {
     title: "결제정보",
-
     width: 120,
   },
   {
     title: "주행",
-
     width: 70,
   },
   {
@@ -241,6 +241,7 @@ const CallHistory = (props: Props) => {
   const getErrandList = async (_acErrandDate: moment.Moment) => {
     try {
       const response = await api.get("/agency/errand/process-query/find-period-history.php", {
+
         params: {
           acStartDate: DateUtil.format(_acErrandDate),
           acEndDate: DateUtil.format(_acErrandDate),
@@ -350,9 +351,6 @@ const TableList = (callInfo: ErrandDto) => {
   if (Number(callInfo.ucDeliStatus) === 1) {
     className.push("deli-status-temp");
   }
-  if (Number(callInfo.ucDeliStatus) === 4) {
-    className.push("deli-status-wait");
-  }
   if (Number(callInfo.ucDeliStatus) === 8) {
     className.push("deli-status-alloc");
   }
@@ -369,4 +367,8 @@ const TableList = (callInfo: ErrandDto) => {
   return className.join("");
 };
 
+  return className.join("");
+};
+
 export default CallHistory;
+
