@@ -1,10 +1,8 @@
-/* eslint-disable */
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { message, Table, Checkbox, Tag, Drawer, Button, Row, Col } from "antd";
+import { message, Table, Checkbox, Tag } from "antd";
 import styled from "styled-components";
 import "./Call.css";
-
 import axios, { AxiosError } from "axios";
 import { ColumnsType } from "antd/lib/table";
 
@@ -13,8 +11,11 @@ import LoginHelper from "../../pages/shared/LoginHelper";
 import { costFormat, getCellNoFormat, getDateFormat } from "../../util/FormatUtil";
 import moment from "moment";
 import ErrandType from "src/helpers/ErrandType";
-import CallListModal from "./CallListModal";
 import ErrandHelper from "src/helpers/ErrandHelper";
+import api from "../../config/axios";
+import DateUtil from "../../util/DateUtil";
+import { ErrandDto } from "../../domain/Errand/model";
+import { CallModal } from "./Modal";
 
 export interface CallInfo {
   acErrandDate: string;
@@ -108,79 +109,56 @@ export const getDeliStatus = (call:CallInfo) => {
   return call.ucDeliStatus;
 }
 
-const columns: ColumnsType<CallInfo> = [
+const columns: ColumnsType<ErrandDto> = [
   {
     title: "상점명",
     dataIndex: "acOriginCompany",
     key: "acOriginCompany",
     className: "deli-status",
     width: 120,
-    render: (text: string, record: CallInfo) => record.acOriginCompany
+    render: (text: string, record: ErrandDto) => record.acOriginCompany,
   },
   {
     title: "접수",
     dataIndex: "acOrderDateTime",
     className: "deli-status",
     width: 50,
-    render: (data: string, record: CallInfo) => getDateFormat(data)
+    render: (data: string) => getDateFormat(data),
   },
   {
     title: "진행/조리",
     dataIndex: "ucLimitTime",
     className: "deli-status",
     width: 50,
-    render: (text: string, call: CallInfo) => {
+    render: (text: string, call: ErrandDto) => {
       const diff = Math.abs(moment().valueOf() - moment(call.acOrderDateTime).valueOf());
       return Math.floor(diff / 1000 / 60) + "분/" + `${call.ucLimitTime}` + "분";
-    }
+    },
   },
   {
     title: "주소",
     dataIndex: "ulErrandCharge",
     className: "deli-status",
     width: 200,
-    render: (text: string, call: CallInfo) => {
-      // if (call.ucErrandType == ErrandType.DIFFERENT_DESTINATION) {
-      //   const originAddr = call.acOriginOldAddr ? call.acOriginOldAddr : call.acOriginNewAddr;
-      //   const destAddr = call.acDestOldAddr ? call.acDestOldAddr : call.acDestNewAddr;
-      //   return (
-      //     <div>
-      //       <div>
-      //         <Tag color="volcano">픽업지</Tag>
-      //         {originAddr} {call.acOriginAddrDesc}
-      //       </div>
-      //       <div>
-      //         <Tag color="purple">목적지</Tag>
-      //         {destAddr}
-      //       </div>
-      //     </div>
-      //   );
-      // } else {
-      //   return (
-      //     <div>
-      //       <Tag color="purple">목적지</Tag>
-      //       {call.acDestOldAddr} {call.acDestAddrDesc}
-      //     </div>
-      //   );
-      // }
-      return ErrandHelper.formatAddress(call)
-    }
+    render: (text: string, call: ErrandDto) => {
+      return ErrandHelper.formatAddress(call);
+    },
   },
   {
     title: "배달비",
     dataIndex: "ulErrandCharge",
     className: "deli-status",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "결제정보",
     dataIndex: "ucPaymentMode",
     className: "deli-status",
     width: 90,
-    render: (dataIndex: number, record) => {
+    render: (value: number, record: ErrandDto) => {
       const charge = Number(record.ulGoodsPrice).toLocaleString();
-      switch (Number(dataIndex)) {
+      switch (Number(value)) {
         case 2:
           return (
             <>
@@ -203,34 +181,43 @@ const columns: ColumnsType<CallInfo> = [
             </>
           );
       }
-    }
+    },
   },
   {
     title: "기사",
     dataIndex: "acCourPresident",
     className: "deli-status",
-    width: 90
+    width: 90,
   },
   {
     title: "고객연락처",
     dataIndex: "acDestCellNo",
     className: "deli-status",
     width: 90,
-    render: (phone: string) => getCellNoFormat(phone)
-  }
+    render: (phone: string) => getCellNoFormat(phone),
+  },
 ];
 
-const CallListComponent = () => {
-  const [astErrand, setAstManageCall] = useState<CallInfo[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectCall, setSelectCall] = useState<CallInfo | undefined>(undefined);
+interface IDeliStatusCount {
+  temp: number;
+  wait: number;
+  alloc: number;
+  pkup: number;
+  done: number;
+  cancel: number;
+}
 
-  const [tempCount, setTempCount] = useState(0);
-  const [waitCount, setWaitCount] = useState(0);
-  const [allocCount, setAllocCount] = useState(0);
-  const [pkupCount, setpkupCount] = useState(0);
-  const [doneCount, setDoneCount] = useState(0);
-  const [cancelCount, setCancleCount] = useState(0);
+const CallListComponent = () => {
+  const [errandList, setErrandList] = useState<ErrandDto[]>([]);
+
+  const [deliStatusCount, setDeliStatusCount] = useState<IDeliStatusCount>({
+    temp: 0,
+    wait: 0,
+    alloc: 0,
+    pkup: 0,
+    done: 0,
+    cancel: 0,
+  });
 
   const [isCheckedTemp, setIsCheckedTemp] = useState(true);
   const [isCheckedWait, setIsCheckedWait] = useState(true);
@@ -239,7 +226,8 @@ const CallListComponent = () => {
   const [isCheckedDone, setIsCheckedDone] = useState(true);
   const [isCheckedCancel, setIsCheckedCancel] = useState(true);
 
-  const [callInfo, setCallInfo] = useState<CallInfo | undefined>(undefined);
+  const [modalErrand, setModalErrand] = useState<ErrandDto | undefined>(undefined);
+
   useEffect(() => {
     const delay = window.setInterval(fetchCallList, 1000);
     return () => clearInterval(delay);
@@ -247,91 +235,95 @@ const CallListComponent = () => {
 
   const fetchCallList = async () => {
     try {
-      const response = await axios({
+      const response = await api({
         method: "get",
-        url: "https://api.roadvoy.net/agency/errand/list.php",
+        url: "/agency/errand/list.php",
         headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
         },
         params: {
-          acErrandDate: moment().format("YYYY-MM-DD")
-        }
+          acErrandDate: DateUtil.getTodayMoment().format("YYYY-MM-DD"),
+        },
       });
-      const astErrand = response.data.astErrand as any[];
-      setAstManageCall(
+      const astErrand = response.data.astErrand as ErrandDto[];
+      setErrandList(
         astErrand.sort((a, b) => {
           return b.ulErrandSeqNo - a.ulErrandSeqNo;
         })
       );
 
-      let temp: number = 0;
-      let wait: number = 0;
-      let alloc: number = 0;
-      let pkup: number = 0;
-      let done: number = 0;
-      let cancel: number = 0;
+      const _deliStatusCount = {
+        temp: 0,
+        wait: 0,
+        alloc: 0,
+        pkup: 0,
+        done: 0,
+        cancel: 0,
+      };
 
-      for (var i = 0; i < astErrand.length; i++) {
-        if (astErrand[i].ucDeliStatus === 1) {
-          temp += 1;
-          setTempCount(temp);
-        } else if (astErrand[i].ucDeliStatus === "4") {
-          wait += 1;
-          setWaitCount(wait);
-        } else if (astErrand[i].ucDeliStatus === "8") {
-          alloc += 1;
-          setAllocCount(alloc);
-        } else if (astErrand[i].ucDeliStatus === "16") {
-          pkup += 1;
-          setpkupCount(pkup);
-        } else if (astErrand[i].ucDeliStatus === "32") {
-          done += 1;
-          setDoneCount(done);
-        } else if (astErrand[i].ucDeliStatus === "64") {
-          cancel += 1;
-          setCancleCount(cancel);
+      for (let i = 0; i < astErrand.length; i++) {
+        switch (Number(astErrand[i].ucDeliStatus)) {
+          case 1:
+            _deliStatusCount.temp++;
+            break;
+          case 4:
+            _deliStatusCount.wait++;
+            break;
+          case 8:
+            _deliStatusCount.alloc++;
+            break;
+          case 16:
+            _deliStatusCount.pkup++;
+            break;
+          case 32:
+            _deliStatusCount.done++;
+            break;
+          case 64:
+            _deliStatusCount.cancel++;
+            break;
         }
       }
+      setDeliStatusCount(_deliStatusCount);
     } catch (e) {
-      const error = e as AxiosError
+      const error = e as Error;
       message.error(error.message);
     }
   };
 
-  const TableList = (callInfo: CallInfo) => {
+  const TableList = (errand: ErrandDto) => {
     const className: any = [];
 
-    if (Number(callInfo.ucDeliStatus) === 1) {
+    if (Number(errand.ucDeliStatus) === 1) {
       className.push("deli-status-temp");
       if (isCheckedTemp === false) {
         className.push(" box-checked-xw");
       }
     }
-    if (Number(callInfo.ucDeliStatus) === 4) {
+    if (Number(errand.ucDeliStatus) === 4) {
       className.push("deli-status-wait");
       if (isCheckedWait === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(callInfo.ucDeliStatus) === 8) {
+    if (Number(errand.ucDeliStatus) === 8) {
       className.push("deli-status-alloc");
       if (isCheckedAlloc === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(callInfo.ucDeliStatus) === 16) {
+    if (Number(errand.ucDeliStatus) === 16) {
       className.push("deli-status-pkup");
       if (isCheckedPkup === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(callInfo.ucDeliStatus) === 32) {
+    if (Number(errand.ucDeliStatus) === 32) {
       className.push("deli-status-done");
       if (isCheckedDone === false) {
         className.push(" box-checked-show");
       }
     }
-    if (Number(callInfo.ucDeliStatus) === 64) {
+    if (Number(errand.ucDeliStatus) === 64) {
       className.push("deli-status-cancel");
       if (isCheckedCancel === false) {
         className.push(" box-checked-show");
@@ -371,13 +363,10 @@ const CallListComponent = () => {
     setIsCheckedCancel(!isCheckedCancel);
   };
 
-  const CallOk = () => {
-    setIsModalVisible(false);
+  const handleCloseModal = () => {
+    setModalErrand(undefined);
   };
 
-  const CallCancel = () => {
-    setIsModalVisible(false);
-  };
   return (
     <>
       <Header />
@@ -391,7 +380,7 @@ const CallListComponent = () => {
           checked={isCheckedWait}
           onChange={wait}
         >
-          대기 {waitCount}콜
+          대기 {deliStatusCount.wait}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="배차"
@@ -399,7 +388,7 @@ const CallListComponent = () => {
           checked={isCheckedAlloc}
           onChange={alloc}
         >
-          배차 {allocCount}콜
+          배차 {deliStatusCount.alloc}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="픽업"
@@ -407,7 +396,7 @@ const CallListComponent = () => {
           checked={isCheckedPkup}
           onChange={pkup}
         >
-          픽업 {pkupCount}콜
+          픽업 {deliStatusCount.pkup}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="완료"
@@ -415,7 +404,7 @@ const CallListComponent = () => {
           checked={isCheckedDone}
           onChange={done}
         >
-          완료 {doneCount}콜
+          완료 {deliStatusCount.done}콜
         </CustomCheckbox>
         <CustomCheckbox
           value="취소"
@@ -423,34 +412,27 @@ const CallListComponent = () => {
           checked={isCheckedCancel}
           onChange={cancle}
         >
-          취소 {cancelCount}콜
+          취소 {deliStatusCount.cancel}콜
         </CustomCheckbox>
       </Checkbox.Group>
       <Table
         className="test"
         columns={columns}
-        dataSource={astErrand}
+        dataSource={errandList}
         bordered
         pagination={false}
         size="small"
         scroll={{ y: 650 }}
         rowClassName={TableList}
-        onRow={(callInfo: CallInfo) => {
+        onRow={(errand: ErrandDto) => {
           return {
             onClick: () => {
-              setIsModalVisible(true);
-              setSelectCall(callInfo);
-              setCallInfo(callInfo);
-            }
+              setModalErrand(errand);
+            },
           };
         }}
       />
-      <CallListModal
-        visible={isModalVisible}
-        onOk={CallOk}
-        onCancel={CallCancel}
-        callInfo={callInfo}
-      />
+      <CallModal onOk={handleCloseModal} onCancel={handleCloseModal} errand={modalErrand} />
     </>
   );
 };

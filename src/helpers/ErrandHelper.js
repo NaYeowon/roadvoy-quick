@@ -10,7 +10,7 @@ class ErrandHelper {
           <Tag color="volcano">픽업지</Tag>{stErrand.acOriginOldAddr} {stErrand.acOriginAddrDesc}
         </div>
         <div>
-          <Tag color="purple">목적지</Tag>{stErrand.acDestOldAddr}
+          <Tag color="purple">목적지</Tag>{stErrand.acDestOldAddr}{stErrand.acDestAddrDesc}
         </div>
       </div>
     } else {
