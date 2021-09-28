@@ -4,21 +4,20 @@ import locale from "antd/lib/date-picker/locale/ko_KR";
 import React, { useEffect, useState } from "react";
 import ErrandHelper from "src/helpers/ErrandHelper";
 import Header from "../Layout/Header";
-import { CallInfo } from "./CallListComponent";
 import "./CallHistory.css";
-import { Errand } from "src/util/Errand";
 import { AxiosError } from "axios";
 import DateUtil from "src/util/DateUtil";
 import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 import api from "src/config/axios";
+import { ErrandDto } from "src/domain/Errand/model";
+import { CallModal } from "./Modal";
 
-const Search = Input.Search;
 const { RangePicker } = DatePicker;
 
 interface Props {
   astErrandSettlementList: [];
-  astErrand: Errand[];
-  astFilteredErrand: Errand[];
+  astErrand: ErrandDto[];
+  astFilteredErrand: ErrandDto[];
   acSelectedDate: string;
 
   startDate: moment.Moment;
@@ -26,10 +25,9 @@ interface Props {
 
   searchQuery: string;
 
-  visible: boolean | undefined;
   onOk: () => void;
   onCancel: () => void;
-  callInfo: CallInfo;
+  modalErrand: ErrandDto | undefined;
 }
 
 const dateListColumns = [
@@ -45,7 +43,7 @@ const dateListColumns = [
   {
     title: "건수",
     dataIndex: "ulCnt",
-    width: 50,
+    width: 70,
     render: (text, record) => {
       return `${parseInt(record.ulCnt).toLocaleString()}건`;
     },
@@ -135,12 +133,12 @@ const columns = [
   {
     title: "주행",
 
-    width: 50,
+    width: 70,
   },
   {
     title: "정산",
 
-    width: 50,
+    width: 70,
   },
   {
     title: "기사연락처",
@@ -180,22 +178,21 @@ const columns = [
   },
 ];
 const CallHistory = (props: Props) => {
-  const [astErrand, setAstErrand] = useState<Errand[]>([]);
-  const [astErrandSettlementList, setAstErrandSettlementList] = useState<Errand[]>([]);
+  const [astErrand, setAstErrand] = useState<ErrandDto[]>([]);
+  const [astErrandView, setAstErrandView] = useState<ErrandDto[]>([]);
+  const [astErrandSettlementList, setAstErrandSettlementList] = useState<ErrandDto[]>([]);
   const [acSelectedDate, setAcSelectedDate] = useState<moment.Moment>(moment());
   const [startDate, setStartDate] = useState<moment.Moment>(moment().startOf("month"));
   const [endDate, setEndDate] = useState<moment.Moment>(moment());
   const [searchQuery, setSearchQuery] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [callInfo, setCallInfo] = useState<CallInfo>();
-  const [selectCall, setSelectCall] = useState<CallInfo>();
+  const [modalErrand, setModalErrand] = useState<ErrandDto | undefined>(undefined);
 
   const CallOk = () => {
-    setIsModalVisible(false);
+    setModalErrand(undefined);
   };
 
   const CallCancel = () => {
-    setIsModalVisible(false);
+    setModalErrand(undefined);
   };
 
   const handleChangeDate = val => {
@@ -254,7 +251,8 @@ const CallHistory = (props: Props) => {
       if (response && response.data) {
         const { astErrand } = response.data;
         setAcSelectedDate(_acErrandDate);
-        setAstErrand(astErrand);
+        setAstErrand(astErrand as ErrandDto[]);
+        setAstErrandView(astErrand as ErrandDto[])
       }
     } catch (e) {
       const error = e as AxiosError;
@@ -283,6 +281,20 @@ const CallHistory = (props: Props) => {
             onChange={handleChangeDate}
             locale={locale}
           />
+          <div className="errand-header-search">
+          <Input
+            placeholder="픽업지 주소, 기사 전화번호, 픽업지명, 목적지명"
+            allowClear
+            size="large"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              const val = e.target.value
+              setAstErrandView(astErrand.filter(it => it.acOriginOldAddr?.includes(val)
+              || it.acCourCellNo?.includes(val) || it.acOriginCompany?.includes(val) || it.acDestCompany?.includes(val)
+              ))
+
+            } }
+          />
+          </div>
         </div>
         <div className="errand-settlement-date-list-wrapper">
           <Table
@@ -315,32 +327,28 @@ const CallHistory = (props: Props) => {
             scroll={{ x: "2400" }}
             columns={columns}
             pagination={false}
-            dataSource={astErrand}
+            dataSource={astErrandView}
             rowClassName={TableList}
-            onRow={() => {
+            onRow={(errand: ErrandDto) => {
               return {
                 onClick: () => {
-                  setIsModalVisible(true);
-                  setSelectCall(callInfo);
-                  setCallInfo(callInfo);
+                  setModalErrand(errand);
                 },
               };
             }}
           />
-          {/*
-          <CallListModal
-            visible={isModalVisible}
+          <CallModal
             onOk={CallOk}
             onCancel={CallCancel}
-            callInfo={callInfo}
-          />*/}
+            errand={modalErrand}
+          />
         </div>
       </div>
     </>
   );
 };
 
-const TableList = (callInfo: Errand) => {
+const TableList = (callInfo: ErrandDto) => {
   const className: any = [];
 
   if (Number(callInfo.ucDeliStatus) === 1) {
