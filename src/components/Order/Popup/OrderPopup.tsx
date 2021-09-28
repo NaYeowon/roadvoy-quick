@@ -438,9 +438,32 @@ const OrderPopup = (props: Props) => {
                   key="1"
                   showArrow={false}
                 >
-                  {/*
-                  <Stopover1 callInfo={props.callInfo} />                  
-                  */}
+                  <Place
+                    prefix="경유지1"
+                    place={{
+                      acCompany: form.acStop1Company,
+                      acCellNo: form.acStop1CellNo,
+                      acMemo: form.acStop1Memo,
+                      ulLatiPos: form.ulStop1LatiPos,
+                      ulLongPos: form.ulStop1LongPos,
+                      acOldAddress: form.acStop1OldAddr,
+                      acNewAddress: form.acStop1NewAddr,
+                      acAddressDesc: form.acStop1AddrDesc,
+                    }}
+                    onChange={(place: IPlace) => {
+                      setForm({
+                        ...form,
+                        acStop1Company: place.acCompany,
+                        acStop1CellNo: place.acCellNo,
+                        acStop1Memo: place.acMemo,
+                        ulStop1LatiPos: place.ulLatiPos,
+                        ulStop1LongPos: place.ulLongPos,
+                        acStop1OldAddr: place.acOldAddress,
+                        acStop1NewAddr: place.acNewAddress,
+                        acStop1AddrDesc: place.acAddressDesc,
+                      });
+                    }}
+                  />
                 </Panel>
               </Collapse>
               <Collapse ghost>
