@@ -32,7 +32,7 @@ export default function Place(props: IPlaceProps) {
 
   const switchSearchAddress = (bool: boolean) => {
     setSearchAddress(bool);
-    setSearchAddress(!searchAddress)
+    setSearchAddress(!searchAddress);
   };
   return (
     <>
@@ -80,7 +80,11 @@ export default function Place(props: IPlaceProps) {
           />
         </Form.Item>
         <Form.Item label={`${prefix} 주소`}>
-          <Button type="primary" onClick={() => switchSearchAddress(true)} style={{ width: "100%" }}>
+          <Button
+            type="primary"
+            onClick={() => switchSearchAddress(true)}
+            style={{ width: "100%" }}
+          >
             주소검색
           </Button>
           <SearchAddress

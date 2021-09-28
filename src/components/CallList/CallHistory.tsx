@@ -184,7 +184,6 @@ const CallHistory = (props: Props) => {
   const [acSelectedDate, setAcSelectedDate] = useState<moment.Moment>(moment());
   const [startDate, setStartDate] = useState<moment.Moment>(moment().startOf("month"));
   const [endDate, setEndDate] = useState<moment.Moment>(moment());
-  const [searchQuery, setSearchQuery] = useState(null);
   const [modalErrand, setModalErrand] = useState<ErrandDto | undefined>(undefined);
 
   const CallOk = () => {
@@ -252,7 +251,7 @@ const CallHistory = (props: Props) => {
         const { astErrand } = response.data;
         setAcSelectedDate(_acErrandDate);
         setAstErrand(astErrand as ErrandDto[]);
-        setAstErrandView(astErrand as ErrandDto[])
+        setAstErrandView(astErrand as ErrandDto[]);
       }
     } catch (e) {
       const error = e as AxiosError;
@@ -263,10 +262,6 @@ const CallHistory = (props: Props) => {
         message.error("서버에서 응답을 받지 못했습니다");
       }
     }
-  };
-
-  const handleClickSearch = () => {
-    getErrandSettlementList(startDate, endDate);
   };
 
   return (
@@ -282,18 +277,23 @@ const CallHistory = (props: Props) => {
             locale={locale}
           />
           <div className="errand-header-search">
-          <Input
-            placeholder="픽업지 주소, 기사 전화번호, 픽업지명, 목적지명"
-            allowClear
-            size="large"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const val = e.target.value
-              setAstErrandView(astErrand.filter(it => it.acOriginOldAddr?.includes(val)
-              || it.acCourCellNo?.includes(val) || it.acOriginCompany?.includes(val) || it.acDestCompany?.includes(val)
-              ))
-
-            } }
-          />
+            <Input
+              placeholder="픽업지 주소, 기사 전화번호, 픽업지명, 목적지명"
+              allowClear
+              size="large"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const val = e.target.value;
+                setAstErrandView(
+                  astErrand.filter(
+                    it =>
+                      it.acOriginOldAddr?.includes(val) ||
+                      it.acCourCellNo?.includes(val) ||
+                      it.acOriginCompany?.includes(val) ||
+                      it.acDestCompany?.includes(val)
+                  )
+                );
+              }}
+            />
           </div>
         </div>
         <div className="errand-settlement-date-list-wrapper">
@@ -337,11 +337,7 @@ const CallHistory = (props: Props) => {
               };
             }}
           />
-          <CallModal
-            onOk={CallOk}
-            onCancel={CallCancel}
-            errand={modalErrand}
-          />
+          <CallModal onOk={CallOk} onCancel={CallCancel} errand={modalErrand} />
         </div>
       </div>
     </>
