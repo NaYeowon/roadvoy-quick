@@ -335,20 +335,6 @@ const OrderPopup = (props: Props) => {
     setUlCalculatedRiderFee(form.ulErrandCharge - ulCalculatedErrandFeeAgency);
   }, [form.ulErrandCharge, ulCalculatedErrandFeeAgency]);
 
-  // 정액제
-  useEffect(() => {
-    if (form.ulErrandFeeAmount > form.ulErrandCharge) {
-      alert("배달비용 금액보다 클 수 없습니다.");
-    }
-  }, [form.ulErrandFeeAmount, form.ulErrandCharge]);
-
-  // 정률제
-  useEffect(() => {
-    if (form.ucErrandFeeRate > 100) {
-      alert("100% 보다 클 수 없습니다.");
-    }
-  }, [form.ucErrandFeeRate]);
-
   const isUpdate = () => {
     return props.match.params.ulErrandSeqNo ? true : false;
   };
