@@ -166,7 +166,7 @@ function CallModal(props: CallModalProps) {
             window.open(
               `/order/update/popup/${errand.ulErrandSeqNo}`,
               "_blank",
-              "top=100, left=500, width=1100, height=800"
+              "top=100, left=500, width=1200, height=800"
             );
           }}
         >
