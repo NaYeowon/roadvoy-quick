@@ -5,7 +5,6 @@ import { AxiosError } from "axios";
 import NumberFormat, { NumberFormatValues } from "react-number-format";
 
 import "./_styles.css";
-import LoginHelper from "src/pages/shared/LoginHelper";
 import ErrandAllocType from "src/helpers/ErrandAllocType";
 import DistanceHelper from "src/helpers/DistanceHelper";
 import { costFormat } from "src/util/FormatUtil";
@@ -24,6 +23,7 @@ import { CallInfo } from "../../CallList/CallListComponent";
 import { RiderInfo } from "../../shop/types";
 import { formItemLayout, LeftAlignedCol, TitleCol } from "./styles";
 import { RouteComponentProps } from "react-router";
+import DirectDispatch from "../../DirectDispatch/DirectDispatch";
 
 interface IMatchParams {
   ulErrandSeqNo: ErrandId | undefined;
@@ -82,6 +82,7 @@ const OrderPopup = (props: Props) => {
 
     // 경유지
     acStop1Company: "",
+    acStop1Name: "",
     acStop1CellNo: "",
     acStop1Memo: "",
     ulStop1LatiPos: 0,
@@ -91,6 +92,7 @@ const OrderPopup = (props: Props) => {
     acStop1AddrDesc: "",
 
     acStop2Company: "",
+    acStop2Name: "",
     acStop2CellNo: "",
     acStop2Memo: "",
     ulStop2LatiPos: 0,
@@ -105,6 +107,7 @@ const OrderPopup = (props: Props) => {
     ucAcptMemCourId: 0,
   });
   const [stForceDispatchRider, setStForceDispatchRider] = useState<RiderInfo | null>(null);
+  const [isDispatchListVisible, setIsDispatchListVisible] = useState(false);
 
   // 로컬에서만 보여주는 겉값
   const [ulCalculatedErrandFeeAgency, setUlCalculatedErrandFeeAgency] = useState<number>(0);
@@ -178,7 +181,6 @@ const OrderPopup = (props: Props) => {
   const executeCreateOrder = async () => {
     try {
       ensureValidData();
-
       const response = await api({
         method: "post",
         url: "/agency/errand/execute-command/create-order.php",
@@ -303,10 +305,10 @@ const OrderPopup = (props: Props) => {
   }, [form.ulOriginLatiPos, form.ulOriginLongPos, form.ulDestLatiPos, form.ulDestLongPos]);
 
   // 분할결제 선지급액
-  /*let splitAdvancePayment;
-  if (ucPaymentMode === PaymentMode.INSTALLMENT_PAYMENT) {
-    splitAdvancePayment = ulErrandCharge - ulSplitPrePayment;
-  }*/
+  // let splitAdvancePayment;
+  // if (ucPaymentMode === PaymentMode.INSTALLMENT_PAYMENT) {
+  //   splitAdvancePayment = ulErrandCharge - ulSplitPrePayment;
+  // }
 
   useEffect(() => {
     if (form.ucErrandFeeType !== ErrandFeeType.RATE) {
@@ -442,6 +444,7 @@ const OrderPopup = (props: Props) => {
                     prefix="경유지1"
                     place={{
                       acCompany: form.acStop1Company,
+                      acName: form.acStop1Name,
                       acCellNo: form.acStop1CellNo,
                       acMemo: form.acStop1Memo,
                       ulLatiPos: form.ulStop1LatiPos,
@@ -454,6 +457,7 @@ const OrderPopup = (props: Props) => {
                       setForm({
                         ...form,
                         acStop1Company: place.acCompany,
+                        acStop1Name: place.acName!,
                         acStop1CellNo: place.acCellNo,
                         acStop1Memo: place.acMemo,
                         ulStop1LatiPos: place.ulLatiPos,
@@ -531,7 +535,7 @@ const OrderPopup = (props: Props) => {
             />
 
             <Form.Item label="픽업 ↔ 목적지">
-              <span className="originToDestDistance">{acOriginToDestDistance}</span>
+              <span style={{ float: "left" }}>{acOriginToDestDistance}</span>
             </Form.Item>
           </Form>
         </Col>
@@ -785,7 +789,7 @@ const OrderPopup = (props: Props) => {
                 value={form.ulErrandDispatchAgencyFee}
               />
             </Form.Item>
-            {/*
+
             <Form.Item label="직권배차">
               {forceAllocRiderBody}
               <Button
@@ -801,15 +805,17 @@ const OrderPopup = (props: Props) => {
               {isDispatchListVisible ? (
                 <DirectDispatch
                   beforeOrderDispatch
-                  onSelectedBeforeDispatchRider={rider => {
-                    setIsDispatchListVisible(false);
-                    setStForceDispatchRider(rider);
-                    setUcAllocType(ErrandAllocType.FORCE_DISPATCH);
-                  }}
+                  ulErrandSeqNo={props.match.params.ulErrandSeqNo}
+                  // onSelectedBeforeDispatchRider={rider => {
+                  //   setIsDispatchListVisible(false);
+                  //   setStForceDispatchRider(rider);
+                  //setUcAllocType(ErrandAllocType.FORCE_DISPATCH);
                 />
               ) : (
                 <></>
-              )}*/}
+              )}
+            </Form.Item>
+
             <Row style={{ float: "right" }}>
               <Popconfirm
                 title="심부름을 접수하시겠습니까?"
