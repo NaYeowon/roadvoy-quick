@@ -10,6 +10,7 @@ import { SearchAddress } from "../SearchAddress";
 import { IAddress } from "../SearchAddress/SearchAddress";
 
 export interface IPlace {
+  acName?: string;
   acCompany: string;
   acCellNo: string;
   acMemo: string;

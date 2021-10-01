@@ -66,6 +66,7 @@ export interface IErrandOrderRequest {
   ulSplitPostPayment: number;
 
   // 경유지
+  acStop1Name: string;
   acStop1CellNo: string;
   acStop1Company: string;
   ulStop1LatiPos: number;
@@ -75,6 +76,7 @@ export interface IErrandOrderRequest {
   acStop1AddrDesc: string;
   acStop1Memo: string;
 
+  acStop2Name: string;
   acStop2CellNo: string;
   acStop2Company: string;
   ulStop2LatiPos: number;
@@ -144,6 +146,7 @@ export interface ErrandDto {
   ulSplitPostPayment: number;
 
   // 경유지
+  acStop1Name: string;
   acStop1CellNo: string;
   acStop1Company: string;
   ulStop1LatiPos: number;
@@ -153,6 +156,7 @@ export interface ErrandDto {
   acStop1AddrDesc: string;
   acStop1Memo: string;
 
+  acStop2Name: string;
   acStop2CellNo: string;
   acStop2Company: string;
   ulStop2LatiPos: number;
