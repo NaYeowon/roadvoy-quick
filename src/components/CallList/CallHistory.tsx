@@ -104,7 +104,7 @@ const columns = [
     render: (text, record) => {
       return ErrandHelper.formatAddress(record);
     },
-    width: 400,
+    width: 430,
   },
   {
     title: "고객연락처",
@@ -132,49 +132,12 @@ const columns = [
     width: 120,
   },
   {
-    title: "주행",
-    width: 70,
-  },
-  {
-    title: "정산",
-
-    width: 70,
-  },
-  {
     title: "기사연락처",
     dataIndex: "acCourCellNo",
     render: (text, record) => {
       return `${getCellNoFormat(record.acCourCellNo)}`;
     },
     width: 120,
-  },
-  {
-    title: "배차시간",
-    render: (text, record) => {
-      return record.acAllocDateTime ? moment(record.acAllocDateTime).format("HH:mm:ss") : "";
-    },
-    width: 90,
-  },
-  {
-    title: "픽업시간",
-    render: (text, record) => {
-      return record.acPickupDateTime ? moment(record.acPickupDateTime).format("HH:mm:ss") : "";
-    },
-    width: 90,
-  },
-  {
-    title: "완료시간",
-    render: (text, record) => {
-      return record.acDoneDateTime ? moment(record.acDoneDateTime).format("HH:mm:ss") : "";
-    },
-    width: 90,
-  },
-  {
-    title: "취소시간",
-    render: (text, record) => {
-      return record.acCancelDateTime ? moment(record.acCancelDateTime).format("HH:mm:ss") : "";
-    },
-    width: 90,
   },
 ];
 const CallHistory = (props: Props) => {
