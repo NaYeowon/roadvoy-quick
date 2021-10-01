@@ -40,6 +40,10 @@ class ErrandHelper {
             <Tag color="purple">경유지1</Tag>
             {stErrand.acStop1OldAddr} {stErrand.acStop1OldAddr}
           </div>
+          <div>
+            <Tag color="purple">경유지2</Tag>
+            {stErrand.acStop2OldAddr} {stErrand.acStop2OldAddr}
+          </div>
         </div>
       );
     }
