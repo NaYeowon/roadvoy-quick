@@ -13,7 +13,6 @@ interface IDirectDispatchProps {
 }
 
 const DirectDispatch = (props: IDirectDispatchProps) => {
-  /*
   const { ulErrandSeqNo, ucDeliStatus } = props;
 
   const [riderList, setRiderList] = useState<RiderInfo[]>([]);
@@ -65,15 +64,15 @@ const DirectDispatch = (props: IDirectDispatchProps) => {
   };
 
   function getDeliStatus() {
-    if (call?.ucDeliStatus === 2) {
+    if (ucDeliStatus === 2) {
       return 4;
     }
   }
   const _onClickDispatchButton = (rider: RiderInfo) => {
-    if (beforeOrderDispatch) {
-      props.onSelectedBeforeDispatchRider(rider);
-      return;
-    }
+    // if (beforeOrderDispatch) {
+    //   props.onSelectedBeforeDispatchRider(rider);
+    //   return;
+    // }
     switch (getDeliStatus()) {
       case 4: {
         postDispatch(rider);
@@ -83,7 +82,7 @@ const DirectDispatch = (props: IDirectDispatchProps) => {
   };
 
   const _onClickOptionalDispatchButton = (rider: RiderInfo) => {
-    if (call!.ucDeliStatus >= 8) return;
+    if (ucDeliStatus! >= 8) return;
     postOptionalDispatch(rider);
   };
 
@@ -92,8 +91,8 @@ const DirectDispatch = (props: IDirectDispatchProps) => {
       <Search
         placeholder="기사명을 입력하세요"
         enterButton="검색"
-        onSearch={(value: string) => SetSearchRiderName(value)}
-        onChange={e => SetSearchRiderName(e.target.value)}
+        onSearch={(value: string) => setSearchRiderName(value)}
+        onChange={e => setSearchRiderName(e.target.value)}
         value={searchRiderName}
       />
       {riderList
@@ -107,11 +106,12 @@ const DirectDispatch = (props: IDirectDispatchProps) => {
             rider={rider}
             onClickDispatchButton={_onClickDispatchButton}
             onClickOptionalDispatchButton={_onClickOptionalDispatchButton}
+            ucDeliStatus={ucDeliStatus!}
             key={rider.acUserId}
           />
         ))}
     </div>
-  );*/
+  );
 };
 
 DirectDispatch.defaultProps = {
