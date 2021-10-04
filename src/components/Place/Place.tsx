@@ -1,10 +1,11 @@
-/* eslint-disable */
-
-import { AutoComplete, Button, Input, message } from "antd";
+import { AutoComplete, Button, Input, message, SelectProps } from "antd";
 import Form from "antd/lib/form";
 import Search from "antd/lib/input/Search";
 import TextArea from "antd/lib/input/TextArea";
+import { AxiosError } from "axios";
 import { useState } from "react";
+import api from "../../config/axios";
+import { IErrandCompany } from "../../domain/Errand/model";
 import { formItemLayout } from "../Order/Popup/styles";
 import { SearchAddress } from "../SearchAddress";
 import { IAddress } from "../SearchAddress/SearchAddress";
@@ -31,11 +32,37 @@ interface IPlaceProps {
 export default function Place(props: IPlaceProps) {
   const { prefix, place, disabled, onChange } = props;
   const [searchAddress, setSearchAddress] = useState(false);
-
+  const [astErrandCompanyAutoComplete, setAstErrandCompanyAutoComplete] = useState<
+    {
+      value: string;
+    }[]
+  >([]);
+  const [astErrandCompany, setAstErrandCompany] = useState<IErrandCompany[]>([]);
   const switchSearchAddress = (bool: boolean) => {
     setSearchAddress(bool);
     setSearchAddress(!searchAddress);
   };
+
+  const getCompaniesByName = async (acCompany: string) => {
+    try {
+      const response = await api({
+        method: "get",
+        url: "/agency/errand/company/process-query/find-companies-by-name.php",
+        params: {
+          acCompany: acCompany,
+        },
+      });
+
+      const items = response.data.astErrandCompany as IErrandCompany[];
+
+      setAstErrandCompanyAutoComplete(items.map(it => ({ value: it.acCompany })));
+      setAstErrandCompany(items);
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
+
   return (
     <>
       <Form
@@ -50,16 +77,29 @@ export default function Place(props: IPlaceProps) {
           <AutoComplete
             style={{ textAlign: "left" }}
             placeholder="업체명을 입력하세요"
-            filterOption={(inputValue, option) =>
-              option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-            }
+            options={astErrandCompanyAutoComplete}
             value={place.acCompany}
-            onChange={value =>
+            onChange={value => {
+              getCompaniesByName(value);
               onChange({
                 ...place,
                 acCompany: value,
-              })
-            }
+              });
+            }}
+            onSelect={(value: string) => {
+              const stErrandCompany = astErrandCompany.find(it => it.acCompany === value);
+              if (!stErrandCompany) return;
+              onChange({
+                ...place,
+                acCompany: stErrandCompany.acCompany,
+                acCellNo: stErrandCompany.acCellNo,
+                acOldAddress: stErrandCompany.acOldAddr,
+                acNewAddress: stErrandCompany.acNewAddr,
+                acAddressDesc: stErrandCompany.acAddrDesc,
+                ulLatiPos: stErrandCompany.ulLatiPos,
+                ulLongPos: stErrandCompany.ulLongPos,
+              });
+            }}
             disabled={disabled}
           />
         </Form.Item>

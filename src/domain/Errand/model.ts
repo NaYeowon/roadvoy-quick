@@ -173,3 +173,20 @@ export interface ErrandDto {
   ucAcptAgencyId: number;
   ucAcptMemCourId: number;
 }
+
+export interface IErrandCompany {
+  acAddrDesc: string;
+  acCellNo: string;
+  acCompany: string;
+  acEntryDateTime: string;
+  acName: string;
+  acNewAddr: string;
+  acOldAddr: string;
+  ucAgencyId: number;
+  ucAreaNo: number;
+  ucDistribId: number;
+  ucMemCourId: number;
+  ulErrandCompanySeqNo: number;
+  ulLatiPos: number;
+  ulLongPos: number;
+}
