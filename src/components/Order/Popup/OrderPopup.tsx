@@ -429,6 +429,7 @@ const OrderPopup = (props: Props) => {
                   acOriginAddrDesc: place.acAddressDesc,
                 });
               }}
+              disabled={form.ucErrandType === ErrandType.SAME}
             />
 
             <div style={{ textAlign: "center" }}>

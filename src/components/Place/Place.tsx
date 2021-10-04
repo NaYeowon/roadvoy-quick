@@ -24,11 +24,12 @@ export interface IPlace {
 interface IPlaceProps {
   prefix: string;
   place: IPlace;
+  disabled?: boolean;
   onChange: (place: IPlace) => void;
 }
 
 export default function Place(props: IPlaceProps) {
-  const { prefix, place, onChange } = props;
+  const { prefix, place, disabled, onChange } = props;
   const [searchAddress, setSearchAddress] = useState(false);
 
   const switchSearchAddress = (bool: boolean) => {
@@ -59,6 +60,7 @@ export default function Place(props: IPlaceProps) {
                 acCompany: value,
               })
             }
+            disabled={disabled}
           />
         </Form.Item>
         <Form.Item label={`${prefix} 연락처`}>
@@ -78,6 +80,7 @@ export default function Place(props: IPlaceProps) {
                   .replace("--", "-"),
               });
             }}
+            disabled={disabled}
           />
         </Form.Item>
         <Form.Item label={`${prefix} 주소`}>
@@ -85,6 +88,7 @@ export default function Place(props: IPlaceProps) {
             type="primary"
             onClick={() => switchSearchAddress(true)}
             style={{ width: "100%" }}
+            disabled={disabled}
           >
             주소검색
           </Button>
@@ -119,6 +123,7 @@ export default function Place(props: IPlaceProps) {
                 acAddressDesc: e.target.value,
               });
             }}
+            disabled={disabled}
           />
         </Form.Item>
         <Form.Item label={`${prefix} 요청사항`}>
@@ -131,6 +136,7 @@ export default function Place(props: IPlaceProps) {
                 acMemo: e.target.value,
               });
             }}
+            disabled={disabled}
           />
         </Form.Item>
       </Form>
