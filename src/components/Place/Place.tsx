@@ -1,6 +1,5 @@
 import { AutoComplete, Button, Input, message, SelectProps } from "antd";
 import Form from "antd/lib/form";
-import Search from "antd/lib/input/Search";
 import TextArea from "antd/lib/input/TextArea";
 import { AxiosError } from "axios";
 import { useState } from "react";
@@ -104,9 +103,8 @@ export default function Place(props: IPlaceProps) {
           />
         </Form.Item>
         <Form.Item label={`${prefix} 연락처`}>
-          <Search
+          <Input
             placeholder="연락처를 입력하세요"
-            enterButton="검색"
             value={place.acCellNo}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               onChange({
