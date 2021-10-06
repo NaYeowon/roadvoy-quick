@@ -102,6 +102,17 @@ const Header = () => {
     </Menu>
   );
 
+  const mapManagement = (
+    <Menu>
+      <Menu.Item key="0">
+        <NavLink to="/map">지도관제</NavLink>
+      </Menu.Item>
+      <Menu.Item key="1">
+        <NavLink to="/AreaSetting">구역설정</NavLink>
+      </Menu.Item>
+    </Menu>
+  );
+
   const shopManagement = (
     <Menu>
       <Menu.Item key="0">
@@ -111,12 +122,12 @@ const Header = () => {
         <NavLink to="/ShopSettlement">상점정산</NavLink>
       </Menu.Item>
       <Menu.Item key="2">
-        <NavLink to="/shop">구역설정</NavLink>
-      </Menu.Item>
-      <Menu.Item key="3">
         <a href="void:0" onClick={ShowModalShop}>
           상점등록
         </a>
+      </Menu.Item>
+      <Menu.Item key="3">
+        <NavLink to="/ShopHistory">상점이력</NavLink>
       </Menu.Item>
     </Menu>
   );
@@ -132,6 +143,9 @@ const Header = () => {
         <a href="void:0" onClick={ShowModalRider}>
           기사등록
         </a>
+      </Menu.Item>
+      <Menu.Item key="3">
+        <NavLink to="/RiderHistory">기사이력</NavLink>
       </Menu.Item>
     </Menu>
   );
@@ -192,15 +206,17 @@ const Header = () => {
           alt="Logo"
           style={{ width: "160px" }}
         />
-        {/* <NavLink exact to="/CallListComponent" className="item">콜 현황</NavLink> */}
         <Dropdown overlay={CallManagement} trigger={["hover"]}>
           <a href="void:0" className="ant-dropdown-link item" onClick={e => e.preventDefault()}>
             콜관리
           </a>
         </Dropdown>
-        <NavLink to="/map" className="item" activeClassName="active">
-          지도관제
-        </NavLink>
+        {/* <Dropdown overlay="/map" className="item" activeClassName="active"> */}
+        <Dropdown overlay={mapManagement} trigger={["hover"]}>
+          <a href="void:0" className="ant-dropdown-link item" onClick={e => e.preventDefault()}>
+            지도관제
+          </a>
+        </Dropdown>
         <Dropdown overlay={shopManagement} trigger={["hover"]}>
           <a href="void:0" className="ant-dropdown-link item" onClick={e => e.preventDefault()}>
             상점(고객) 관리
@@ -211,7 +227,6 @@ const Header = () => {
             기사관리
           </a>
         </Dropdown>
-        {/* <NavLink to="/settlement" className="item" activeClassName="active">대행관리</NavLink> */}
         <Dropdown overlay={settlementManagement} trigger={["hover"]}>
           <a href="void:0" className="ant-dropdown-link item" onClick={e => e.preventDefault()}>
             대행관리

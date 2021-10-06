@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-d
 
 import CallListComponent from "./components/CallList/CallListComponent";
 import map from "./components/map/map";
+import AreaSetting from "./components/map/AreaSetting";
 import shop from "./components/shop/shop";
 import CallHistory from "./components/CallList/CallHistory";
 import rider from "./components/rider/rider";
@@ -17,6 +18,8 @@ import ShopSettlement from "./components/shop/ShopSettlement";
 import HeadOffice from "./components/HeadOffice/HeadOffice";
 import Distributor from "./components/Distributor/Distributor";
 import ShopSettlementList from "./components/shop/ShopSettlementList";
+import ShopHistory from "./components/shop/ShopHistory";
+import RiderHistory from "./components/rider/RiderHistory";
 import RiderSettlement from "./components/rider/RiderSettlement";
 import RiderSettlementList from "./components/rider/RiderSettlementList";
 import Board from "./components/Board/Board";
@@ -43,11 +46,13 @@ class App extends Component {
           <Route path="/CallListComponent" component={CallListComponent} />
           <Route path="/CallHistory" component={CallHistory} />
           <Route path="/map" component={map} />
+          <Route path="/AreaSetting" component={AreaSetting} />
           <Route path="/shop" component={shop} />
           <Route path="/rider" component={rider} />
           <Route path="/order/popup" component={OrderPopup} />
           <Route path="/order/update/popup/:ulErrandSeqNo" component={OrderPopup} />
           <Route path="/fileUpload" component={FileUpload} />
+          <Route path="/ShopHistory" component={ShopHistory} />
           <Route path="/shopSignupModal" component={shopSignupModal} />
           <Route path="/riderSignupModal" component={riderSignupModal} />
           <Route path="/Agency" component={Agency} />
@@ -58,6 +63,7 @@ class App extends Component {
           <Route path="/ShopSettlementList" component={ShopSettlementList} />
           <Route path="/RiderSettlement" component={RiderSettlement} />
           <Route path="/RiderSettlementList" component={RiderSettlementList} />
+          <Route path="/RiderHistory" component={RiderHistory} />
           <Route path="/Board" component={Board} />
           <Route path="/Writing" component={Writing} />
           <Route path="/BoardDetail" component={BoardDetail} />
