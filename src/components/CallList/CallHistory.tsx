@@ -1,8 +1,7 @@
-import { DatePicker, Input, message, Table } from "antd";
+import { DatePicker, Input, message, Table, Tag } from "antd";
 import moment from "moment";
 import locale from "antd/lib/date-picker/locale/ko_KR";
 import React, { useEffect, useState } from "react";
-import ErrandHelper from "src/helpers/ErrandHelper";
 import Header from "../Layout/Header";
 import "./CallHistory.css";
 import { AxiosError } from "axios";
@@ -11,6 +10,7 @@ import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 import api from "src/config/axios";
 import { ErrandDto } from "src/domain/Errand/model";
 import { CallModal } from "./Modal";
+import ErrandHelper from "src/helpers/ErrandHelper";
 
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
@@ -108,9 +108,11 @@ const columns = [
   },
   {
     title: "고객연락처",
-    dataIndex: "acCompany",
-    key: "acCompany",
-
+    dataIndex: "acDestCellNo",
+    key: "acDestCellNo",
+    render: (text, record) => {
+      return `${getCellNoFormat(record.acDestCellNo)}`;
+    },
     width: 120,
   },
   {
@@ -129,7 +131,35 @@ const columns = [
   },
   {
     title: "결제정보",
+    dataIndex: "ucPaymentMode",
+    key: "ucPaymentMode",
     width: 120,
+    render: (value: number, record: ErrandDto) => {
+      const charge = Number(record.ulGoodsPrice).toLocaleString();
+      switch (Number(value)) {
+        case 2:
+          return (
+            <>
+              <Tag color="#2db7f5">카드</Tag>
+              <span>{charge}원</span>
+            </>
+          );
+        case 3:
+          return (
+            <>
+              <Tag color="#87d068">현금</Tag>
+              <span>{charge}원</span>
+            </>
+          );
+        case 4:
+          return (
+            <>
+              <Tag color="#f50">선결</Tag>
+              <span>{charge.toLocaleString()}원</span>
+            </>
+          );
+      }
+    },
   },
   {
     title: "기사연락처",
