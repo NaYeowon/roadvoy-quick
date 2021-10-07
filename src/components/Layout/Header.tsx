@@ -49,7 +49,7 @@ const Header = () => {
     console.log(data);
     setIsModalRiderVisible(false);
   };
-  const ShopCancelData = (data: boolean) => {
+  const ShopCancelData = () => {
     setIsModalShopVisible(false);
   };
   const DistributorCancelData = (data: boolean) => {
@@ -63,7 +63,7 @@ const Header = () => {
     console.log(data);
     setIsModalRiderVisible(false);
   };
-  const ShopOkData = (data: boolean) => {
+  const ShopOkData = () => {
     setIsModalShopVisible(false);
   };
   const DistributorOkData = (data: boolean) => {
