@@ -92,7 +92,7 @@ const ShopDetail: FC<Props> = (props: Props) => {
     width: "500px",
     height: "450px",
     border: "1px solid #000000",
-    zIndex: 100
+    zIndex: 100,
   };
 
   const handleCancel = () => {
