@@ -7,7 +7,8 @@ import axios from "axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import "./RiderSettlementList.css";
 import Checkbox from "antd/lib/checkbox/Checkbox";
-import { RiderInfo } from "../shop/types";
+import { RiderSignUpRequest } from "../shop/types";
+import api from "src/config/axios";
 
 const { Option } = Select;
 
@@ -22,90 +23,77 @@ const RiderSignupModal = (props: Props) => {
   const { visible, onCancel, onOk } = props;
   const [isModalVisible, setIsModalVisible] = useState(true);
 
-  const [acUserId, setAcUserId] = useState("");
-  const [acPresident, setAcPresident] = useState("");
-  const [acPassword, setAcPassword] = useState("");
-  const [acCellNo, setAcCellNo] = useState("");
-  const [acTeamName, setAcTeamName] = useState("");
-  const [usBankCode, setUsBankCode] = useState("");
-  const [acBankAccount, setAcBankAccount] = useState("");
-  const [acWithdrawPassword, setAcWithdrawPassword] = useState("");
-  const [ucCourierTag, setUcCourierTag] = useState("");
-  const [lCourierLease, setLcourierLease] = useState("");
-  const [lCourierDeposit, setLcourierDeposit] = useState("");
-  const [lCallUnitPrice, setLCallUnitPrice] = useState("");
-  const [cManagerFlag, setCManagerFlag] = useState("");
-  const [conCallLimit, setConCallLimit] = useState("");
-  const [acName, setAcName] = useState("");
-  const [acResRegNo, setAcResRegNo] = useState("");
+  const [form, setForm] = useState<RiderSignUpRequest>({
+    acUserId: "",
+    ucAreaNo: 0,
+    ucDistribId: 0,
+    ucAgencyId: 0,
+    ucMemCourId: 0,
+    acPresident: "",
+    acPassword: "",
+    acResRegNo: "",
+    acCellNo: "",
+    acNewAddress: "",
+    acOldAddress: "",
+    acAddressDesc: "",
+    ulLatiPos: 0,
+    ulLongPos: 0,
+    ucTaxInvoType: 0,
+    ucBankCode: 0,
+    acBankAccount: "",
+    acAccHoldName: "",
+    usVirtualBank: 0,
+    acVirtualAccount: "",
+    ucCourierTag: 0,
+    lCourierLease: 0,
+    lCourierDeposit: 0,
+    lCallUnitPrice: 0,
+    conCallLimit: 0,
+    cManagerFlag: 0,
+    cReClaimFlag: 0,
+    acAllocRemark: "",
+    acRemark: "",
+  });
 
   const handleOk = e => {
     setIsModalVisible(false);
     e.preventDefault();
-    onInitail();
-
     props.onOk();
   };
 
   const handleCancel = e => {
     setIsModalVisible(false);
     e.preventDefault();
-    onInitail();
-
     props.onOk();
   };
 
-  const onInitail = () => {
-    setAcUserId("");
-    setAcPresident("");
-    setAcPassword("");
-    setAcCellNo("");
-    setAcTeamName("");
-    setUsBankCode("");
-    setAcBankAccount("");
-    setAcWithdrawPassword("");
-    setUcCourierTag("");
-    setLcourierLease("");
-    setLcourierDeposit("");
-    setLCallUnitPrice("");
-    setCManagerFlag("");
-    setAcName("");
-    setAcResRegNo("");
-    setConCallLimit("");
+  const ensureValidData = () => {
+    if (!form) {
+      throw new Error("데이터를 찾지 못했습니다.");
+    }
+    if (!form.acPassword) {
+      throw new Error("비밀번호를 입력해주세요");
+    }
+    if (!form.acPresident) {
+      throw new Error("이름을 입력해주세요");
+    }
+    // if(!form.acNewAddress) {
+    //   throw new Error('주소를 입력해주세요')
+    // }
+    if (!form.acBankAccount) {
+      throw new Error("주거래은행 계좌번호를 선택해주세요");
+    }
+    if (form.acAccHoldName !== form.acPresident) {
+      throw new Error("주거래은행 예금주가 대표자명과 다릅니다");
+    }
   };
-
   const RiderSign = async () => {
-    const form = new FormData();
-
-    form.append("acUserId", acUserId);
-    form.append("acPresident", acPresident);
-    form.append("acPassword", acPassword);
-    form.append("acCellNo", acCellNo);
-    form.append("acTeamName", acTeamName);
-    //form.append("usBankCode", Number(usBankCode));
-    form.append("usBankCode", usBankCode);
-    form.append("acBankAccount", String(acBankAccount));
-    form.append("acWithdrawPassword", acWithdrawPassword);
-    form.append("ucCourierTag", String(ucCourierTag));
-    form.append("lCourierLease", lCourierLease);
-    form.append("lCourierDeposit", String(lCourierDeposit));
-    form.append("lCallUnitPrice", String(lCallUnitPrice));
-    form.append("cManagerFlag", cManagerFlag ? "Y" : "N");
-    form.append("conCallLimit", conCallLimit);
-    form.append("acName", acName);
-    form.append("acResRegNo", acResRegNo);
-
     try {
-      const response = await axios({
+      const response = await api({
         method: "post",
-        url: "https://api.roadvoy.net/agency/rider/signup.v2.php",
+        url: "/agency/rider/signup.v2.php",
         data: form,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${LoginHelper.getToken()}`
-        }
       });
-      onInitail();
       setIsModalVisible(false);
       props.onOk();
       console.log(response);
@@ -122,87 +110,75 @@ const RiderSignupModal = (props: Props) => {
             <form action="">
               <div style={{ textAlign: "center", margin: "0 auto" }}>
                 <Row gutter={[16, 48]} justify="center">
-                  <Col span={4}>
-                    <label>로그인아이디&nbsp;:</label>
+                  <Col span={6}>
+                    <label>회원ID&nbsp;:</label>
                   </Col>
                   <Col span={8}>
                     <Input
                       name="acUserId"
-                      value={acUserId}
-                      onChange={e => {
-                        setAcUserId(e.target.value);
-                      }}
-                    />
-                  </Col>
-                </Row>
-
-                <Row justify="center" gutter={[16, 48]}>
-                  <Col span={4}>
-                    <label>이름&nbsp;: </label>
-                  </Col>
-                  <Col span={8}>
-                    <Input
-                      name="acPresident"
-                      value={acPresident}
-                      onChange={e => {
-                        setAcPresident(e.target.value);
-                      }}
+                      value={form.acUserId}
+                      onChange={e => setForm({ ...form, acUserId: e.target.value })}
                     />
                   </Col>
                 </Row>
                 <Row justify="center" gutter={[16, 16]}>
-                  <Col span={4}>
+                  <Col span={6}>
                     <label>비밀번호&nbsp;:</label>
                   </Col>
                   <Col span={8}>
                     <Input
                       name="acPassword"
-                      value={acPassword}
+                      value={form.acPassword}
                       type="password"
-                      onChange={e => {
-                        setAcPassword(e.target.value);
-                      }}
+                      onChange={e => setForm({ ...form, acPassword: e.target.value })}
+                    />
+                  </Col>
+                </Row>
+                <Row justify="center" gutter={[16, 48]}>
+                  <Col span={6}>
+                    <label>이름&nbsp;: </label>
+                  </Col>
+                  <Col span={8}>
+                    <Input
+                      name="acPresident"
+                      value={form.acPresident}
+                      onChange={e => setForm({ ...form, acPresident: e.target.value })}
                     />
                   </Col>
                 </Row>
                 <Row justify="center" gutter={[16, 16]}>
-                  <Col span={4}>
+                  <Col span={6}>
+                    <label>생년월일&nbsp;:</label>
+                  </Col>
+                  <Col span={8}>
+                    <Input
+                      name="acResRegNo"
+                      value={form.acResRegNo}
+                      onChange={e => setForm({ ...form, acResRegNo: e.target.value })}
+                    />
+                  </Col>
+                </Row>
+                <Row justify="center" gutter={[16, 16]}>
+                  <Col span={6}>
                     <label>휴대폰번호&nbsp;:</label>
                   </Col>
                   <Col span={8}>
                     <Input
                       prefix={<PhoneOutlined />}
                       name="acCellNo"
-                      value={acCellNo}
-                      onChange={e => {
-                        setAcCellNo(e.target.value);
-                      }}
+                      value={form.acCellNo}
+                      onChange={e => setForm({ ...form, acCellNo: e.target.value })}
                     />
                   </Col>
                 </Row>
                 <Row justify="center" gutter={[16, 16]}>
-                  <Col span={4}>
-                    <label>소속&nbsp;:</label>
-                  </Col>
-                  <Col span={8}>
-                    <Input
-                      name="acTeamName"
-                      value={acTeamName}
-                      onChange={e => {
-                        setAcTeamName(e.target.value);
-                      }}
-                    />
-                  </Col>
-                </Row>
-                <Row justify="center" gutter={[16, 16]}>
-                  <Col span={4}>
-                    <label>출금은행&nbsp;:</label>
+                  <Col span={6}>
+                    <label>주거래은행&nbsp;:</label>
                   </Col>
                   <Col span={8}>
                     <Select
-                      //name="acBankAccount"
-                      value={acBankAccount}
-                      onChange={e => setAcBankAccount(e)}
+                      value={form.acBankAccount}
+                      onChange={e => setForm({ ...form, acBankAccount: e })}
                       style={{ width: "100%" }}
                     >
                       <Option value="88">신한은행</Option>
@@ -226,32 +202,28 @@ const RiderSignupModal = (props: Props) => {
                     </Select>
                   </Col>
                 </Row>
-                <Row justify="center" gutter={[16, 16]}>
-                  <Col span={4}>
-                    <label>출금비밀번호&nbsp;:</label>
+                <Row justify="center" gutter={[16, 48]}>
+                  <Col span={6}>
+                    <label>가상 계좌번호&nbsp;:</label>
                   </Col>
                   <Col span={8}>
                     <Input
-                      name="acWithdrawPassword"
-                      value={acWithdrawPassword}
-                      type="password"
-                      onChange={e => {
-                        setAcWithdrawPassword(e.target.value);
-                      }}
+                      readOnly
+                      name="acVirtualAccount"
+                      value={form.acVirtualAccount}
+                      onChange={e => setForm({ ...form, acVirtualAccount: e.target.value })}
                     />
                   </Col>
                 </Row>
                 <Row justify="center" gutter={[16, 16]}>
-                  <Col span={4}>
+                  <Col span={6}>
                     <label>기사구분&nbsp;:</label>
                   </Col>
                   <Col span={4}>
                     <Select
                       //name="ucCourierTag"
-                      value={ucCourierTag}
-                      onChange={e => {
-                        setUcCourierTag(e);
-                      }}
+                      value={form.ucCourierTag}
+                      onChange={e => setForm({ ...form, ucCourierTag: Number(e) })}
                       style={{ width: "100%" }}
                     >
                       <Option value={1}>지입</Option>
@@ -261,77 +233,106 @@ const RiderSignupModal = (props: Props) => {
                   <Col span={4} />
                 </Row>
                 <Row justify="center" gutter={[16, 16]}>
-                  <Col span={5}>
+                  <Col span={6}>
                     <label>1일 리스료&nbsp;:</label>
                   </Col>
-                  <Col span={5}>
+                  <Col span={4}>
                     <Input
                       name="lCourierLease"
-                      value={lCourierLease}
-                      onChange={e => {
-                        setLcourierLease(e.target.value);
-                      }}
+                      value={form.lCourierLease}
+                      onChange={e => setForm({ ...form, lCourierLease: Number(e.target.value) })}
                     />
-                  </Col>{" "}
-                  원&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Col span={3} />
+                  </Col>
+                  <Col span={4} />
                 </Row>
                 <Row justify="center" gutter={[16, 16]}>
-                  <Col span={5}>
+                  <Col span={6}>
                     <label>보증금&nbsp;:</label>
                   </Col>
-                  <Col span={5}>
+                  <Col span={4}>
                     <Input
                       name="lCourierDeposit"
-                      value={lCourierDeposit}
-                      onChange={e => {
-                        setLcourierDeposit(e.target.value);
-                      }}
+                      value={form.lCourierDeposit}
+                      onChange={e => setForm({ ...form, lCourierDeposit: Number(e.target.value) })}
                     />
-                  </Col>{" "}
-                  원&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Col span={3} />
+                  </Col>
+                  <Col span={4} />
                 </Row>
                 <Row justify="center" gutter={[16, 16]}>
-                  <Col span={5}>
+                  <Col span={6}>
                     <label>콜수수료&nbsp;:</label>
                   </Col>
-                  <Col span={5}>
+                  <Col span={4}>
                     <Input
                       name="lCallUnitPrice"
-                      value={lCallUnitPrice}
-                      onChange={e => {
-                        setLCallUnitPrice(e.target.value);
-                      }}
+                      value={form.lCallUnitPrice}
+                      onChange={e => setForm({ ...form, lCallUnitPrice: Number(e.target.value) })}
                     />
-                  </Col>{" "}
-                  원&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Col span={3} />
-                </Row>
-                <Row justify="center">
-                  <Col pull={3}>
-                    &nbsp;&nbsp;<label>관리자모드&nbsp;:</label>&nbsp;&nbsp;
-                    <Checkbox
-                      name="cManagerFlag"
-                      // onChange={(e) => setCManagerFlag(e.target.checked)}
-                      // checked={cManagerFlag}
-                    />
-                    {/* antd Checkbox */}
                   </Col>
+                  <Col span={4} />
                 </Row>
                 <Row justify="center" gutter={[16, 16]}>
-                  <Col span={5}>
+                  <Col span={6}>
                     <label>콜 동시 접수 제한&nbsp;:</label>
                   </Col>
-                  <Col span={5}>
+                  <Col span={4}>
                     <Input
                       name="conCallLimit"
-                      value={conCallLimit}
-                      onChange={e => setConCallLimit(e.target.value)}
+                      value={form.conCallLimit}
+                      onChange={e => setForm({ ...form, conCallLimit: Number(e.target.value) })}
                     />
                   </Col>
-                  건&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Col span={3} />
+                  <Col span={4} />
+                </Row>
+                <Row justify="center" gutter={[16, 16]}>
+                  <Col pull={2}>
+                    <label>관리자모드&nbsp;:</label>&nbsp;&nbsp;
+                    <Checkbox
+                      name="cManagerFlag"
+                      value={form.cManagerFlag}
+                      // onChange={(e) => setCManagerFlag(e.target.checked)}
+                      // checked={cManagerFlag}
+                      onChange={e => setForm({ ...form, cManagerFlag: Number(e.target.value) })}
+                    />
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                  </Col>
+                </Row>
+                <Row justify="center">
+                  <Col pull={2}>
+                    &nbsp;&nbsp;<label>출금가능여부&nbsp;:</label>&nbsp;&nbsp;
+                    <Checkbox
+                      name="cReClaimFlag"
+                      value={form.cReClaimFlag}
+                      onChange={e => setForm({ ...form, cReClaimFlag: Number(e.target.value) })}
+                    />
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  </Col>
+                </Row>
+                <Row justify="center" gutter={[16, 48]}>
+                  <Col span={6}>
+                    <label>기사특이사항&nbsp;:</label>
+                  </Col>
+                  <Col span={8}>
+                    <Input
+                      readOnly
+                      name="acAllocRemark"
+                      value={form.acAllocRemark}
+                      onChange={e => setForm({ ...form, acAllocRemark: e.target.value })}
+                    />
+                  </Col>
+                </Row>
+                <Row justify="center" gutter={[16, 48]}>
+                  <Col span={6}>
+                    <label>기사 추가특이사항&nbsp;:</label>
+                  </Col>
+                  <Col span={8}>
+                    <Input
+                      readOnly
+                      name="acRemark"
+                      value={form.acRemark}
+                      onChange={e => setForm({ ...form, acRemark: e.target.value })}
+                    />
+                  </Col>
                 </Row>
                 <Button block type="primary" onClick={RiderSign}>
                   기사등록
