@@ -37,7 +37,6 @@ export interface ShopInfo {
   acPhoneNo: number;
   acBizRegNo: number;
   acResRegNo: number;
-  acAddressDesc: string;
   acRemark: string;
   acAllocRemark: string;
   acCpPresident: string;
@@ -47,8 +46,55 @@ export interface ShopInfo {
   ulExtraDist: number;
   ulExtraFare: number;
   acPassword: number;
+  acNewAddress: string;
+  acOldAddress: string;
+  acAddressDesc: string;
+  ulLatiPos: number;
+  ulLongPos: number;
 }
 
+export interface ShopSignUpRequest {
+  ucAreaNo: number;
+  ucDistribId: number;
+  ucAgencyId: number;
+  ucMemCourId: number;
+
+  acUserId: string;
+  acCompany: string;
+  acPresident: string;
+  acPassword: string;
+  acCellNo: string;
+  acPhoneNo: string;
+  acBizRegNo: string;
+  acCorpNo: string;
+  acEmailAddress: string;
+  acBizCondition: string;
+  acBizType: string;
+  acResRegNo: string;
+  acNewAddress: string;
+  acOldAddress: string;
+  acAddressDesc: string;
+  ulLatiPos: number;
+  ulLongPos: number;
+  ucTaxInvoType: number;
+  ucBankCode: number;
+  acBankAccount: string;
+  acAccHoldName: string;
+  usVirtualBank: number;
+  acVirtualAccount: string;
+  acAllocRemark: string;
+  acRemark: string;
+  acCpPresident: string;
+  acCpCellNo: string;
+  ulBaseDist: number;
+  ulBaseFare: number;
+  ulExtraDist: number;
+  ulExtraFare: number;
+  cManagerFlag: number;
+  cAreaShareFlag: number;
+  cTotalCallShareFlag: number;
+  cReClaimFlag: number;
+}
 export interface RiderInfo {
   asStatusMessage: string;
   lCallUnitPrice: number;
@@ -99,6 +145,38 @@ export interface RiderInfo {
   usBankCode: number;
   acWithdrawPassword: number;
   cManagerFlag: number;
+}
+
+export interface RiderSignUpRequest {
+  acUserId: string;
+  ucAreaNo: number;
+  ucDistribId: number;
+  ucAgencyId: number;
+  ucMemCourId: number;
+  acPresident: string;
+  acPassword: string;
+  acResRegNo: string;
+  acCellNo: string;
+  acNewAddress: string;
+  acOldAddress: string;
+  acAddressDesc: string;
+  ulLatiPos: number;
+  ulLongPos: number;
+  ucTaxInvoType: number;
+  ucBankCode: number;
+  acBankAccount: string;
+  acAccHoldName: string;
+  usVirtualBank: number;
+  acVirtualAccount: string;
+  ucCourierTag: number;
+  lCourierLease: number;
+  lCourierDeposit: number;
+  lCallUnitPrice: number;
+  conCallLimit: number;
+  cManagerFlag: number;
+  cReClaimFlag: number;
+  acAllocRemark: string;
+  acRemark: string;
 }
 
 class RiderInfo1 {
