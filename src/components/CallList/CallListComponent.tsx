@@ -80,10 +80,10 @@ export interface CallInfo {
   acStop1NewAddr: string;
   acStop1AddrDesc: string;
   acStop2CellNo: string;
-  acStop2Company: string
+  acStop2Company: string;
   acStop2Name: string;
   acStop2Memo: string;
-  ulStop2LatiPos :number
+  ulStop2LatiPos: number;
   ulStop2LongPos: number;
   acStop2OldAddr: string;
   acStop2NewAddr: string;
@@ -100,14 +100,13 @@ export interface CallInfo {
   onCancel: any;
   onOk: any;
   visible: any;
-
 }
-export const getDeliStatus = (call:CallInfo) => {
-  if(call.ucDeliStatus === 2) {
-    return 4
+export const getDeliStatus = (call: CallInfo) => {
+  if (call.ucDeliStatus === 2) {
+    return 4;
   }
   return call.ucDeliStatus;
-}
+};
 
 const columns: ColumnsType<ErrandDto> = [
   {
