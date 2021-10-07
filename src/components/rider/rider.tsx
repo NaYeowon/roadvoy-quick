@@ -34,19 +34,19 @@ const columns: ColumnsType<RiderInfo> = [
         title: "아이디",
         dataIndex: "ucMemCourId",
         render: (text: string, record: RiderInfo) => `${MemberHelper.formatMemberId(record)}`,
-        width: 120
+        width: 120,
       },
       {
         title: "이름",
         dataIndex: "acPresident",
-        width: 80
+        width: 80,
       },
       {
         title: "상태메세지",
         dataIndex: "acStatusMessage",
-        width: 80
-      }
-    ]
+        width: 80,
+      },
+    ],
   },
   {
     title: "배달",
@@ -56,35 +56,35 @@ const columns: ColumnsType<RiderInfo> = [
         dataIndex: "lCallUnitPrice",
         key: "lCallUnitPrice",
         width: 80,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "당일",
         dataIndex: "usDayDoneCallSum",
         key: "usDayDoneCallSum",
-        width: 80
+        width: 80,
       },
       {
         title: "당월",
         dataIndex: "usMonthDoneCallSum",
         key: "usMonthDoneCallSum",
-        width: 100
-      }
-    ]
+        width: 100,
+      },
+    ],
   },
   {
     title: "출금가능액",
     dataIndex: "lAccountBalance",
     key: "lAccountBalance",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "보증금",
     dataIndex: "lCourierDeposit",
     key: "lCourierDeposit",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "리스료",
@@ -99,16 +99,16 @@ const columns: ColumnsType<RiderInfo> = [
             return "지입";
           }
           return "대여";
-        }
+        },
       },
       {
         title: "차감(매일)",
         dataIndex: "lCourierLease",
         key: "lCourierLease",
         width: 100,
-        render: (cost: number) => costFormat(cost)
-      }
-    ]
+        render: (cost: number) => costFormat(cost),
+      },
+    ],
   },
   {
     title: "패널티",
@@ -118,17 +118,17 @@ const columns: ColumnsType<RiderInfo> = [
         dataIndex: "ucConCallLimit",
         key: "ucConCallLimit",
         width: 80,
-        render: dataIndex => `${dataIndex} 콜`
+        render: dataIndex => `${dataIndex} 콜`,
       },
       {
         title: "지연",
         dataIndex: "ucCallRtrvTime",
         key: "ucCallRtrvTime",
         width: 80,
-        render: dataIndex => `${dataIndex}초`
-      }
-    ]
-  }
+        render: dataIndex => `${dataIndex}초`,
+      },
+    ],
+  },
 ];
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const Rider = () => {
@@ -150,8 +150,8 @@ const Rider = () => {
         method: "get",
         url: "https://api.roadvoy.net/agency/rider/manage/list.php",
         headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`
-        }
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
       });
 
       setAstManageRider(response.data.astManageRider);
@@ -203,7 +203,7 @@ const Rider = () => {
               setIsModalVisible(true);
               setSelectRider(riderInfo);
               setRiderInfo(riderInfo);
-            }
+            },
           };
         }}
       />
