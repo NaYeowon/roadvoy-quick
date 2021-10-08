@@ -10,6 +10,7 @@ import { CircularProgress } from "@material-ui/core";
 import ShopDaily from "src/dto/ShopDaily";
 import ShopDailyTotal from "src/dto/ShopDailyTotal";
 import DateUtil from "src/util/DateUtil";
+import { NavLink } from "react-router-dom";
 
 interface Props {
   shopInfo: ShopInfo;
@@ -25,7 +26,7 @@ const columns = [
     width: 100,
     render: date => {
       return DateUtil.formatShortDate(date);
-    }
+    },
   },
   {
     title: "배달",
@@ -35,30 +36,42 @@ const columns = [
         dataIndex: "usDayDoneCallSum",
         key: "usDayDoneCallSum",
         width: 60,
-        render: (cost: number) => costFormat(cost)
+        render: (text, record) => {
+          return (
+            <NavLink
+              to={{
+                pathname: "ShopCallHistory",
+              }}
+            >
+              <Button type="primary" size="small">
+                {text.toLocaleString()}콜
+              </Button>
+            </NavLink>
+          );
+        },
       },
       {
         title: "배달비",
         dataIndex: "ulDayTotalDeliFee",
         key: "ulDayTotalDeliFee",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "콜당 수수료",
         dataIndex: "ulDayCallCntFee",
         key: "ulDayCallCntFee",
         width: 100,
-        render: (cost: number) => costFormat(cost)
-      }
-    ]
+        render: (cost: number) => costFormat(cost),
+      },
+    ],
   },
   {
     title: "관리비 충전",
     dataIndex: "1DayReChargeAmount",
     key: "1DayReChargeAmount",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "기사 가맹간 캐시",
@@ -68,37 +81,37 @@ const columns = [
         dataIndex: "ulSubstituteInput",
         key: "ulSubstituteInput",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "현금→카드 송금",
         dataIndex: "ulSubstituteRefund",
         key: "ulSubstituteRefund",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "기사가 예치금 입금",
         dataIndex: "ulSubstituteDeposit",
         key: "ulSubstituteDeposit",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "현금건 완료시 자동송금",
         dataIndex: "ulCashPaymentAutoReansferAmount",
         key: "ulCashPaymentAutoReansferAmount",
         width: 100,
-        render: (cost: number) => costFormat(cost)
-      }
-    ]
+        render: (cost: number) => costFormat(cost),
+      },
+    ],
   },
   {
     title: "캐시 관리자 직권회수",
     dataIndex: "ulSubstituteCashMinusByManager",
     key: "ulSubstituteCashMinusByManager",
     width: 100,
-    render: (cost: number) => costFormat(cost)
+    render: (cost: number) => costFormat(cost),
   },
   {
     title: "가상계좌",
@@ -108,17 +121,17 @@ const columns = [
         dataIndex: "ulVirBankDeposit",
         key: "ulVirBankDeposit",
         width: 100,
-        render: (cost: number) => costFormat(cost)
+        render: (cost: number) => costFormat(cost),
       },
       {
         title: "수수료",
         dataIndex: "ulVirBankFee",
         key: "ulVirBankFee",
         width: 100,
-        render: (cost: number) => costFormat(cost)
-      }
-    ]
-  }
+        render: (cost: number) => costFormat(cost),
+      },
+    ],
+  },
 ];
 
 const ShopSettlementList: FC<Props> = ({ shopInfo, acStartDate, acEndDate }) => {
@@ -137,7 +150,7 @@ const ShopSettlementList: FC<Props> = ({ shopInfo, acStartDate, acEndDate }) => 
         method: "get",
         url: "https://api.roadvoy.net/shared/shop/settlement/detail/index.php",
         headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
         },
         params: {
           ucAreaNo: shopInfo.ucAreaNo,
@@ -145,8 +158,8 @@ const ShopSettlementList: FC<Props> = ({ shopInfo, acStartDate, acEndDate }) => 
           ucAgencyId: shopInfo.ucAgencyId,
           ucMemCourId: shopInfo.ucMemCourId,
           acStartDate: acStartDate.format("YYYY-MM-DD"),
-          acEndDate: acEndDate.format("YYYY-MM-DD")
-        }
+          acEndDate: acEndDate.format("YYYY-MM-DD"),
+        },
       });
 
       const { data } = response;

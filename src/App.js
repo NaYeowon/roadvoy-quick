@@ -35,6 +35,7 @@ import { CallFee } from "./components/Distributor/CallFee";
 import { CallQuantity } from "./components/Distributor/CallQuantity";
 import { ProgramUsageFee } from "./components/Distributor/ProgramUsageFee";
 import RiderCallHistory from "./components/rider/RiderCallHistory";
+import ShopCallHistory from "./components/shop/ShopCallHistory";
 import { OrderPopup } from "./components/Order/Popup";
 
 class App extends Component {
@@ -76,6 +77,7 @@ class App extends Component {
           <Route path="/DistributorSettlement" component={DistributorSettlement} />
           <Route path="/DistributorApproval" component={DistributorApproval} />
           <Route path="/RiderCallHistory" component={RiderCallHistory} />
+          <Route path="/ShopCallHistory" component={ShopCallHistory} />
           <Redirect from="/" to="/CallListComponent" />
         </Switch>
       </Router>
