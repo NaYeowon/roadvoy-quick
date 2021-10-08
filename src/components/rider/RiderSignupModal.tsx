@@ -9,6 +9,7 @@ import "./RiderSettlementList.css";
 import Checkbox from "antd/lib/checkbox/Checkbox";
 import { RiderSignUpRequest } from "../shop/types";
 import api from "src/config/axios";
+import { TitleCol } from "../Order/Popup/styles";
 
 const { Option } = Select;
 
@@ -104,9 +105,9 @@ const RiderSignupModal = (props: Props) => {
   return (
     <>
       <Modal width="700px" visible={visible} onOk={handleOk} onCancel={handleCancel}>
+        <TitleCol>기사등록</TitleCol>
         <div style={{ maxWidth: "700px", margin: "0 auto", paddingTop: "50px" }}>
           <div style={{ textAlign: "center" }}>
-            <h2>기사등록</h2>
             <form action="">
               <div style={{ textAlign: "center", margin: "0 auto" }}>
                 <Row gutter={[16, 48]} justify="center">
@@ -286,7 +287,7 @@ const RiderSignupModal = (props: Props) => {
                 </Row>
                 <Row justify="center" gutter={[16, 16]}>
                   <Col pull={2}>
-                    <label>관리자모드&nbsp;:</label>&nbsp;&nbsp;
+                    <label>관리자모드&nbsp;:</label>&nbsp;&nbsp;&nbsp;&nbsp;
                     <Checkbox
                       name="cManagerFlag"
                       value={form.cManagerFlag}
@@ -294,18 +295,18 @@ const RiderSignupModal = (props: Props) => {
                       // checked={cManagerFlag}
                       onChange={e => setForm({ ...form, cManagerFlag: Number(e.target.value) })}
                     />
-                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;
                   </Col>
                 </Row>
                 <Row justify="center">
                   <Col pull={2}>
-                    &nbsp;&nbsp;<label>출금가능여부&nbsp;:</label>&nbsp;&nbsp;
+                    <label>출금가능여부&nbsp;:</label>&nbsp;&nbsp;&nbsp;&nbsp;
                     <Checkbox
                       name="cReClaimFlag"
                       value={form.cReClaimFlag}
                       onChange={e => setForm({ ...form, cReClaimFlag: Number(e.target.value) })}
                     />
-                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </Col>
                 </Row>
                 <Row justify="center" gutter={[16, 48]}>

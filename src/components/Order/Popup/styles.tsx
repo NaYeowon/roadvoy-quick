@@ -17,4 +17,5 @@ export const LeftAlignedCol = styled(Col)`
 export const TitleCol = styled(Col)`
   font-size: 3vh;
   padding: 5px 20px 15px 20px;
+  text-align: left;
 `;
