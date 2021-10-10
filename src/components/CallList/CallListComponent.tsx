@@ -16,6 +16,7 @@ import api from "../../config/axios";
 import DateUtil from "../../util/DateUtil";
 import { ErrandDto } from "../../domain/Errand/model";
 import { CallModal } from "./Modal";
+import { MemberGroupSelector } from "../Member";
 
 export interface CallInfo {
   acErrandDate: string;
@@ -369,6 +370,7 @@ const CallListComponent = () => {
   return (
     <>
       <Header />
+      <MemberGroupSelector />
       <Checkbox.Group
         style={{ width: "100%", display: "flex" }}
         defaultValue={["대기", "배차", "픽업", "완료", "취소"]}
