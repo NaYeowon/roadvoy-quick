@@ -15,7 +15,7 @@ import AgencySiginupModal from "../AgencySettlement/AgencySiginupModal";
 const { SubMenu } = Menu;
 const Header = () => {
   const [isModalRiderVisible, setIsModalRiderVisible] = useState(false);
-  const [isModalShopVisible, setIsModalShopVisible] = useState(false);
+  // const [isModalShopVisible, setIsModalShopVisible] = useState(false);
   const [isModalDistributorVisible, setIsModalDistributorVisible] = useState(false);
   const [isModalAgencySiginupModal, setIsModalAgencySiginupModal] = useState(false);
 
@@ -33,9 +33,9 @@ const Header = () => {
     setIsModalRiderVisible(true);
   };
 
-  const ShowModalShop = () => {
-    setIsModalShopVisible(true);
-  };
+  // const ShowModalShop = () => {
+  //   setIsModalShopVisible(true);
+  // };
 
   const ShowModalDistributor = () => {
     setIsModalDistributorVisible(true);
@@ -49,9 +49,12 @@ const Header = () => {
     console.log(data);
     setIsModalRiderVisible(false);
   };
-  const ShopCancelData = () => {
-    setIsModalShopVisible(false);
-  };
+  // const ShopCancelData = () => {
+  //   setIsModalShopVisible(false);
+  // };
+  // const ShopOkData = () => {
+  //   setIsModalShopVisible(false);
+  // };
   const DistributorCancelData = (data: boolean) => {
     setIsModalDistributorVisible(false);
   };
@@ -63,9 +66,6 @@ const Header = () => {
     console.log(data);
     setIsModalRiderVisible(false);
   };
-  const ShopOkData = () => {
-    setIsModalShopVisible(false);
-  };
   const DistributorOkData = (data: boolean) => {
     setIsModalDistributorVisible(false);
   };
@@ -76,6 +76,10 @@ const Header = () => {
 
   const OnCallRegister = () => {
     window.open("/order/popup", "_blank", "top=100, left=500, width=1200, height=800");
+  };
+
+  const OnShopRegister = () => {
+    window.open("shopSignupModal", "_blank", "top=100, width=800, height=1200");
   };
 
   const Logout = () => {
@@ -122,7 +126,7 @@ const Header = () => {
         <NavLink to="/ShopSettlement">상점정산</NavLink>
       </Menu.Item>
       <Menu.Item key="2">
-        <a href="void:0" onClick={ShowModalShop}>
+        <a href="void:0" onClick={OnShopRegister}>
           상점등록
         </a>
       </Menu.Item>
@@ -267,7 +271,7 @@ const Header = () => {
         onOk={RiderOkData}
         onCancel={RiderCancelData}
       />
-      <ShopSignupModal visible={isModalShopVisible} onOk={ShopOkData} onCancel={ShopCancelData} />
+      {/* <ShopSignupModal visible={isModalShopVisible} onOk={ShopOkData} onCancel={ShopCancelData} /> */}
       <DistributorSignUpModal
         visible={isModalDistributorVisible}
         onOk={DistributorOkData}
