@@ -13,6 +13,7 @@ import { IAddress } from "../SearchAddress/SearchAddress";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import { TitleCol } from "../Order/Popup/styles";
 import { MemberId } from "src/domain/Member/model";
+import "../Order/Popup/_styles.css";
 
 const { Option } = Select;
 
@@ -67,57 +68,13 @@ const ShopSignupModal = (props: ShopModalProps) => {
     cTotalCallShareFlag: 0,
     cReClaimFlag: 0,
   });
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchAddress, setSearchAddress] = useState(false);
-  // const [address, setAddress] = useState(""); // 주소
-  // const [addressDetail, setAddressDetail] = useState(""); // 상세주소
-
-  // const [isOpenPost, setIsOpenPost] = useState(false);
-  // const onCompletePost = data => {
-  //   let fullAddr = data.address;
-  //   let extraAddr = "";
-
-  //   if (data.addressType === "R") {
-  //     if (data.bname !== "") {
-  //       extraAddr += data.bname;
-  //     }
-  //     if (data.buildingName !== "") {
-  //       extraAddr += extraAddr !== "" ? `, ${data.buildingName}` : data.buildingName;
-  //     }
-  //     fullAddr += extraAddr !== "" ? ` (${extraAddr})` : "";
-  //   }
-
-  //   setAddress(data.zonecode);
-  //   setAddressDetail(fullAddr);
-  //   setIsOpenPost(false);
-  // };
-  // const postCodeStyle: React.CSSProperties = {
-  //   position: "absolute",
-  //   display: "block",
-  //   top: 35,
-  //   left: "-150px",
-  //   width: "500px",
-  //   height: "450px",
-  //   border: "1px solid #000000",
-  //   zIndex: 100,
-  // };
 
   const switchSearchAddress = (bool: boolean) => {
     setSearchAddress(bool);
     setSearchAddress(!searchAddress);
   };
 
-  const handleOk = e => {
-    setIsModalVisible(false);
-    onOk();
-    props.onOk();
-  };
-
-  const handleCancel = e => {
-    setIsModalVisible(false);
-    onCancel();
-    props.onCancel();
-  };
   const ensureValidData = () => {
     if (!form) {
       throw new Error("데이터를 찾지 못했습니다.");
@@ -173,7 +130,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
         data: form,
       });
       console.log(response);
-      setIsModalVisible(false);
+      window.close();
     } catch (e) {
       const error = e as AxiosError;
       message.error(error.message);
