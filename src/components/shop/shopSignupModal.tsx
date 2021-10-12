@@ -1,31 +1,30 @@
 /* eslint-disable */
 import React, { Component, useEffect, useState } from "react";
-import { Modal, Input, Button, Row, Col, message, Select, Checkbox, Form } from "antd";
+import { Modal, Input, Button, Row, Col, message, Select, Checkbox, Form, Popconfirm } from "antd";
 import axios, { AxiosError } from "axios";
 import { PhoneOutlined } from "@ant-design/icons";
 import DaumPostCode, { DaumPostcode } from "react-daum-postcode";
 import "./shopSign.css";
 import { ShopInfo, ShopSignUpRequest } from "./types";
-import { RouteComponentProps } from "react-router";
 import api from "src/config/axios";
 import { SearchAddress } from "../SearchAddress";
 import { IAddress } from "../SearchAddress/SearchAddress";
 import LoginHelper from "src/pages/shared/LoginHelper";
-import { TitleCol } from "../Order/Popup/styles";
+import { formItemLayout, TitleCol } from "../Order/Popup/styles";
 import { MemberId } from "src/domain/Member/model";
 import "../Order/Popup/_styles.css";
+import queryString, { ParsedQuery } from "query-string";
+import { RouteComponentProps } from "react-router";
 
 const { Option } = Select;
 
 interface ShopModalProps {
-  visible: boolean | undefined;
   onOk: () => void;
   onCancel: () => void;
   shop?: ShopInfo;
-  match?: RouteComponentProps<MemberId>;
+  location: RouteComponentProps;
 }
 const ShopSignupModal = (props: ShopModalProps) => {
-  const { visible, onCancel, onOk } = props;
   const [form, setForm] = useState<ShopSignUpRequest>({
     ucAreaNo: 0,
     ucDistribId: 0,
@@ -142,9 +141,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
       const response = await api({
         method: "get",
         url: "/agency/shop/process-query/find-by-id.php",
-        params: {
-          ...memberId,
-        },
+        params: memberId,
       });
 
       setForm({
@@ -163,133 +160,106 @@ const ShopSignupModal = (props: ShopModalProps) => {
   }, []);
 
   const isUpdate = () => {
-    if (!props.match) return;
+    if (!props.location.search) return;
+
+    const params = queryString.parse(props.location.search);
     return ["ucAreaNo", "ucDistribId", "ucAgencyId", "ucMemCourId"]
-      .map(it => it in props.match.params)
+      .map(it => it in params)
       .every(it => it === true)
       ? true
       : false;
   };
 
   const getUpdateMemberId = (): MemberId => {
-    return props.match.params as MemberId;
+    const params = queryString.parse(props.location.search);
+
+    return {
+      ucAreaNo: Number(params.ucAreaNo),
+      ucDistribId: Number(params.ucDistribId),
+      ucAgencyId: Number(params.ucAgencyId),
+      ucMemCourId: Number(params.ucMemCourId),
+    };
   };
+
   return (
     <>
       <TitleCol>상점 {isUpdate() ? "수정" : "등록"}</TitleCol>
-      <div style={{ maxWidth: "700px", margin: "0 auto", paddingTop: "100px" }}>
-        <div style={{ textAlign: "left", margin: "0 auto" }}>
-          <Form>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>회원번호&nbsp;:</label>
-              </Col>
-              <Col span={8} style={{ textAlign: "left" }}>
-                <span>{`${form.ucAreaNo} - ${form.ucDistribId} - ${form.ucAgencyId} - ${form.ucMemCourId}`}</span>
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>회원ID&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+      <div style={{ textAlign: "left", margin: "0 auto" }}>
+        <Row>
+          <Col span={12}>
+            <Form
+              {...formItemLayout}
+              initialValues={{
+                "input-number": 3,
+                "checkbox-group": ["A", "B"],
+                rate: 3.5,
+              }}
+            >
+              <Form.Item label="회원번호">
+                {isUpdate() ? (
+                  <span>{`${form.ucAreaNo} - ${form.ucDistribId} - ${form.ucAgencyId} - ${form.ucMemCourId}`}</span>
+                ) : (
+                  <></>
+                )}
+              </Form.Item>
+              <Form.Item label="회원 ID">
                 <Input
                   name="acUserId"
                   value={form.acUserId}
                   onChange={e => setForm({ ...form, acUserId: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>비밀번호&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="비밀번호">
                 <Input
                   name="acPassword"
                   value={form.acPassword}
                   onChange={e => setForm({ ...form, acPassword: e.target.value })}
                   type="password"
                 />
-              </Col>
-            </Row>
-            <Row gutter={[16, 48]} justify="center">
-              <Col span={6}>
-                <label>가맹점명&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="가맹점명">
                 <Input
                   name="acCompany"
                   value={form.acCompany}
                   onChange={e => setForm({ ...form, acCompany: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>사업자 등록번호&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="사업자 등록번호">
                 <Input
                   name="acBizRegNo"
                   value={form.acBizRegNo}
                   onChange={e => setForm({ ...form, acBizRegNo: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>법인 등록번호&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="법인 등록번호">
                 <Input
                   name="acCorpNo"
                   value={form.acCorpNo}
                   onChange={e => setForm({ ...form, acCorpNo: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>E-mail주소&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="E-mail 주소">
                 <Input
                   name="acEmailAddress"
                   value={form.acEmailAddress}
                   onChange={e => setForm({ ...form, acEmailAddress: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>업태&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="업태">
                 <Input
                   name="acBizCondition"
                   value={form.acBizCondition}
                   onChange={e => setForm({ ...form, acBizCondition: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>업종&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="업종">
                 <Input
                   name="acBizType"
                   value={form.acBizType}
                   onChange={e => setForm({ ...form, acBizType: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>상점주소&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="상점주소">
                 <Button
                   type="primary"
                   style={{ width: "100%" }}
@@ -317,96 +287,88 @@ const ShopSignupModal = (props: ShopModalProps) => {
                   }}
                 />
                 {form.acOldAddress} {form.acAddressDesc}
-                {/* <Button type="primary" onClick={switchSearchAddress}>
-                      주소검색
-                    </Button>
-                    {isOpenPost ? (
-                      <DaumPostcode autoClose onComplete={onCompletePost} style={postCodeStyle} />
-                    ) : null}
-                    <div className="address">{addressDetail}</div> */}
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>상세주소&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="상세 주소">
                 <Input
                   placeholder="상세 주소를 입력하세요"
                   name="acAddressDesc"
                   value={form.acAddressDesc}
                   onChange={e => setForm({ ...form, acAddressDesc: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>대표자명&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="대표자명">
                 <Input
                   name="acPresident"
                   value={form.acPresident}
                   onChange={e => setForm({ ...form, acPresident: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>생년월일&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="생년월일">
                 <Input
                   name="acResRegNo"
                   value={form.acResRegNo}
                   onChange={e => setForm({ ...form, acResRegNo: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>휴대폰번호&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="휴대폰번호">
                 <Input
                   prefix={<PhoneOutlined />}
                   name="acCellNo"
                   value={form.acCellNo}
-                  onChange={e => setForm({ ...form, acCellNo: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setForm({
+                      ...form,
+                      acCellNo: e.target.value
+                        .replace(/[^0-9]/g, "")
+                        .replace(
+                          /(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/,
+                          "$1-$2-$3"
+                        )
+                        .replace("--", "-"),
+                    });
+                  }}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>사업장 전화번호&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+            </Form>
+          </Col>
+
+          <Col span={12} pull={1}>
+            <Form
+              {...formItemLayout}
+              initialValues={{
+                "input-number": 3,
+                "checkbox-group": ["A", "B"],
+                rate: 3.5,
+              }}
+            >
+              <Form.Item label="사업장 전화번호">
                 <Input
                   prefix={<PhoneOutlined />}
                   name="acPhoneNo"
                   value={form.acPhoneNo}
-                  onChange={e => setForm({ ...form, acPhoneNo: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setForm({
+                      ...form,
+                      acPhoneNo: e.target.value
+                        .replace(/[^0-9]/g, "")
+                        .replace(
+                          /(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/,
+                          "$1-$2-$3"
+                        )
+                        .replace("--", "-"),
+                    });
+                  }}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>세금계산서 발행&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="세금계산서 발행">
                 <Checkbox
                   style={{ float: "left" }}
                   name="ucTaxInvoType"
                   value={form.ucTaxInvoType}
                   onChange={e => setForm({ ...form, ucTaxInvoType: Number(e.target.value) })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 16]}>
-              <Col span={6}>
-                <label>주거래은행&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="주거래은행">
                 <Select
                   defaultValue={form.ucBankCode}
                   onChange={e =>
@@ -415,7 +377,6 @@ const ShopSignupModal = (props: ShopModalProps) => {
                       ucBankCode: Number(e),
                     })
                   }
-                  style={{ width: "100%" }}
                 >
                   <Option value="88">신한은행</Option>
                   <Option value="4">국민은행</Option>
@@ -436,161 +397,127 @@ const ShopSignupModal = (props: ShopModalProps) => {
                   <Option value="37">전북은행</Option>
                   <Option value="39">경남은행</Option>
                 </Select>
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>주거래 계좌번호&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="주거래 계좌번호">
                 <Input
                   name="acBankAccount"
                   value={form.acBankAccount}
                   onChange={e => setForm({ ...form, acBankAccount: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>주거래 예금주&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="주거래 예금주">
                 <Input
                   name="acAccHoldName"
                   value={form.acAccHoldName}
                   onChange={e => setForm({ ...form, acAccHoldName: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 16]}>
-              <Col span={6}>
-                <label>가상계좌은행&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="가상계좌은행">
                 <Input readOnly />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>가상 계좌번호&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="가상계좌번호">
                 <Input
                   readOnly
                   name="acVirtualAccount"
                   value={form.acVirtualAccount}
                   onChange={e => setForm({ ...form, acVirtualAccount: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>기본료&nbsp;:</label>
-              </Col>
-              <Col span={10}>
-                <Row>
-                  <Col span={12}>
-                    <Input
-                      addonAfter="m"
-                      name="ulBaseDist"
-                      value={form.ulBaseDist}
-                      type="number"
-                      onChange={e => setForm({ ...form, ulBaseDist: Number(e.target.value) })}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Input
-                      addonAfter="m"
-                      name="ulBaseFare"
-                      value={form.ulBaseFare}
-                      type="number"
-                      onChange={e => setForm({ ...form, ulBaseFare: Number(e.target.value) })}
-                    />
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>거리할증&nbsp;:</label>
-              </Col>
-              <Col span={10}>
-                <Row>
-                  <Col span={12}>
-                    <Input
-                      addonAfter="원"
-                      name="ulExtraDist"
-                      value={form.ulExtraDist}
-                      onChange={e => setForm({ ...form, ulExtraDist: Number(e.target.value) })}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Input
-                      addonAfter="원"
-                      name="ulExtraFare"
-                      value={form.ulExtraFare}
-                      onChange={e => setForm({ ...form, ulExtraFare: Number(e.target.value) })}
-                    />
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>배차 전 특이사항&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="기본료">
+                <span>
+                  <Input
+                    style={{ width: "50%" }}
+                    addonAfter="m"
+                    name="ulBaseDist"
+                    value={form.ulBaseDist}
+                    type="number"
+                    onChange={e => setForm({ ...form, ulBaseDist: Number(e.target.value) })}
+                  />
+                </span>
+                <span>
+                  <Input
+                    style={{ width: "50%" }}
+                    addonAfter="m"
+                    name="ulBaseFare"
+                    value={form.ulBaseFare}
+                    type="number"
+                    onChange={e => setForm({ ...form, ulBaseFare: Number(e.target.value) })}
+                  />
+                </span>
+              </Form.Item>
+              <Form.Item label="거리할증">
+                <span>
+                  <Input
+                    style={{ width: "50%" }}
+                    addonAfter="원"
+                    name="ulExtraDist"
+                    value={form.ulExtraDist}
+                    onChange={e => setForm({ ...form, ulExtraDist: Number(e.target.value) })}
+                  />
+                </span>
+                <span>
+                  <Input
+                    style={{ width: "50%" }}
+                    addonAfter="원"
+                    name="ulExtraFare"
+                    value={form.ulExtraFare}
+                    onChange={e => setForm({ ...form, ulExtraFare: Number(e.target.value) })}
+                  />
+                </span>
+              </Form.Item>
+              <Form.Item label="배차 전 특이사항">
                 <Input
                   name="allocRemark"
                   value={form.acAllocRemark}
                   onChange={e => setForm({ ...form, acAllocRemark: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>배차 후 특이사항&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="배차 후 특이사항">
                 <Input
                   name="acRemark"
                   value={form.acRemark}
                   onChange={e => setForm({ ...form, acRemark: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>담당관리자&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="담당관리자">
                 <Input
                   name="cpPresident"
                   value={form.acCpPresident}
                   onChange={e => setForm({ ...form, acCpPresident: e.target.value })}
                 />
-              </Col>
-            </Row>
-            <Row justify="center" gutter={[16, 48]}>
-              <Col span={6}>
-                <label>관리자연락처&nbsp;:</label>
-              </Col>
-              <Col span={8}>
+              </Form.Item>
+              <Form.Item label="관리자연락처">
                 <Input
                   prefix={<PhoneOutlined />}
                   name="cpCellNo"
                   value={form.acCpCellNo}
-                  onChange={e => setForm({ ...form, acCpCellNo: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setForm({
+                      ...form,
+                      acCpCellNo: e.target.value
+                        .replace(/[^0-9]/g, "")
+                        .replace(
+                          /(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/,
+                          "$1-$2-$3"
+                        )
+                        .replace("--", "-"),
+                    });
+                  }}
                 />
-              </Col>
-            </Row>
-            <Row id="sign-up-submit">
-              <Button type="primary" block onClick={executeCreateSignUp}>
-                상점{isUpdate() ? "수정" : "등록"}
-              </Button>
-            </Row>
-          </Form>
-        </div>
+              </Form.Item>
+              <Popconfirm
+                title="상점을 등록하시겠습니까?"
+                okText="네"
+                cancelText="아니요"
+                onConfirm={executeCreateSignUp}
+              >
+                <Button style={{ marginTop: "30px" }} type="ghost">
+                  {isUpdate() ? "수정" : "등록"}
+                </Button>
+              </Popconfirm>
+            </Form>
+          </Col>
+        </Row>
       </div>
     </>
   );
