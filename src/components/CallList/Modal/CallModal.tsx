@@ -8,7 +8,7 @@ import { CallDetailModalShopName } from "./styles";
 import { CallDetailShopTitle } from "./CallDetailShopTitle";
 import { ErrandDto, ErrandFeeType } from "../../../domain/Errand/model";
 import CallTimeLine from "../CallTimeLine";
-import AddressDaumMapComponent from "../../../util/AddressDaumMapComponent";
+import { AddressDaumMapComponent } from "../../../util/AddressDaumMapComponent";
 import api from "../../../config/axios";
 import { AxiosError } from "axios";
 
