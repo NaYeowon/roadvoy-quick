@@ -15,10 +15,9 @@ import MemberHelper from "src/helpers/MemberHelper";
 import LoginHelper from "../../pages/shared/LoginHelper";
 import { costFormat } from "../../util/FormatUtil";
 import SelectPage from "../Layout/SelectPage";
-import ShopDetail from "./ShopDetail";
-import { ShopInfo } from "./types";
-import { IAddress } from "../SearchAddress/SearchAddress";
-import ShopSignupModal from "./shopSignupModal";
+import { ShopDTO, ShopSignUpRequest } from "./types";
+import ShopModal from "./ShopModal";
+import { MemberGroupSelector } from "../Member";
 
 // ================================
 // react 는 props (property) 와 state 가 변경될 때 마다 render 가 호출되므로
@@ -27,12 +26,12 @@ import ShopSignupModal from "./shopSignupModal";
 // arr[0]['ucMemCourId'];
 // arr[1]['ucMemCourId']
 
-interface Props {
-  modalShop: ShopInfo | undefined;
-  onOk: () => void;
-  onCancel: () => void;
-}
-const columns: ColumnsType<ShopInfo> = [
+// interface Props {
+//   modalShop: ShopSignUpRequest | undefined;
+//   onOk: () => void;
+//   onCancel: () => void;
+// }
+const columns: ColumnsType<ShopDTO> = [
   {
     title: "계정정보",
     children: [
@@ -40,7 +39,8 @@ const columns: ColumnsType<ShopInfo> = [
         title: "아이디",
         dataIndex: "ucMemCourId",
         width: 120,
-        render: (text: string, record: ShopInfo) => `${MemberHelper.formatMemberId(record)}`,
+        render: (text: string, record: ShopSignUpRequest) =>
+          `${MemberHelper.formatMemberId(record)}`,
       },
       {
         title: "가맹명",
@@ -82,14 +82,14 @@ const columns: ColumnsType<ShopInfo> = [
         key: "usDeliDoneCntSum",
         width: 80,
 
-        sorter: (a, b) => a.usDeliDoneCntSum - b.usDeliDoneCntSum,
+        // sorter: (a, b) => a.usDeliDoneCntSum - b.usDeliDoneCntSum,
       },
       {
         title: "당월",
         dataIndex: "usMonthDeliDoneCntSum",
         key: "usMonthDeliDoneCntSum",
         width: 80,
-        sorter: (a, b) => a.usMonthDeliDoneCntSum - b.usMonthDeliDoneCntSum,
+        // sorter: (a, b) => a.usMonthDeliDoneCntSum - b.usMonthDeliDoneCntSum,
       },
     ],
   },
@@ -105,7 +105,7 @@ const columns: ColumnsType<ShopInfo> = [
         //   let format = (data2.ulVirAccDeposit + data2.lVirAccBalance - data2.ulVirAccDeduct)
         //   return format.toLocaleString()+'원'
         // }
-        render: (string: any, record: ShopInfo) =>
+        render: (string: any, record: ShopDTO) =>
           costFormat(
             Number(record.ulVirAccDeposit) +
               Number(record.lVirAccBalance) -
@@ -128,7 +128,7 @@ const columns: ColumnsType<ShopInfo> = [
         dataIndex: "ucTimeExtraFareType",
         key: "ucTimeExtraFareType",
         className: "time-extra-fare-column",
-        render: (text: string, record: ShopInfo) => "",
+        render: (text: string, record: ShopSignUpRequest) => "",
         width: 30,
       },
       {
@@ -136,7 +136,7 @@ const columns: ColumnsType<ShopInfo> = [
         dataIndex: "ucNightExtraFareType",
         key: "ucNightExtraFareType",
         className: "night-extra-fare-column",
-        render: (text: string, record: ShopInfo) => "",
+        render: (text: string, record: ShopSignUpRequest) => "",
         width: 30,
       },
       {
@@ -144,7 +144,7 @@ const columns: ColumnsType<ShopInfo> = [
         dataIndex: "ucRainyExtraFareType",
         key: "ucRainyExtraFareType",
         className: "rainy-extra-fare-column",
-        render: (text: string, record: ShopInfo) => "",
+        render: (text: string, record: ShopSignUpRequest) => "",
         width: 30,
       },
     ],
@@ -155,18 +155,15 @@ const columns: ColumnsType<ShopInfo> = [
 // render 밖에 정의해서 사용한다
 // ================================
 
-const Shop = (props: Props) => {
-  const [astManageShop, setAstManageShop] = useState<ShopInfo[]>([]);
+const Shop = () => {
+  const [astManageShop, setAstManageShop] = useState<ShopDTO[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectShop, setSelectShop] = useState<ShopInfo | undefined>(undefined);
-  const [shopInfo, setShopInfo] = useState<ShopInfo | undefined>(undefined);
-  const [modalShop, setModalShop] = useState<ShopInfo | undefined>();
+  // const [selectShop, setSelectShop] = useState<ShopInfo | undefined>(undefined);
+  // const [shopInfo, setShopInfo] = useState<ShopInfo | undefined>(undefined);
+  const [modalShop, setModalShop] = useState<ShopDTO | undefined>(undefined);
 
-  const okHandle = () => {
-    setIsModalVisible(false);
-  };
-
-  const cancelHandle = () => {
+  const handleCloseModal = () => {
+    //setModalShop(undefined);
     setIsModalVisible(false);
   };
 
@@ -211,7 +208,7 @@ const Shop = (props: Props) => {
           <b>{astManageShop?.length}</b>개의 가맹점이 등록 되어있습니다.
         </span>
         <span style={{ float: "right" }}>
-          <SelectPage />
+          <MemberGroupSelector />
         </span>
       </PageHeader>
       <Table
@@ -221,7 +218,7 @@ const Shop = (props: Props) => {
         pagination={false}
         size="small"
         scroll={{ y: 650 }}
-        rowClassName={(record: ShopInfo) => {
+        rowClassName={(record: ShopDTO) => {
           const className: any = [];
           if (record.ucTimeExtraFareType === 1) {
             className.push("time-extra-fare-on");
@@ -234,7 +231,7 @@ const Shop = (props: Props) => {
           }
           return className.join(" ");
         }}
-        onRow={(shop: ShopInfo) => {
+        onRow={(shop: ShopDTO) => {
           return {
             onClick: () => {
               setIsModalVisible(true);
@@ -246,9 +243,15 @@ const Shop = (props: Props) => {
           };
         }}
       />
-      <ShopSignupModal
+      {/* <ShopSignupModal
         onOk={okHandle}
         onCancel={cancelHandle}
+        shop={modalShop}
+        visible={isModalVisible}
+      /> */}
+      <ShopModal
+        onOk={handleCloseModal}
+        onCancel={handleCloseModal}
         shop={modalShop}
         visible={isModalVisible}
       />
