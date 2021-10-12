@@ -42,6 +42,7 @@ const RiderRegister = (props: Props) => {
     ulLongPos: 0,
     ucTaxInvoType: 0,
     usBankCode: 0,
+    acWithdrawPassword: "",
     acBankAccount: "",
     acAccHoldName: "",
     usVirtualBank: 0,
@@ -332,6 +333,14 @@ const RiderRegister = (props: Props) => {
                   name="acVirtualAccount"
                   value={form.acVirtualAccount}
                   onChange={e => setForm({ ...form, acVirtualAccount: e.target.value })}
+                />
+              </Form.Item>
+              <Form.Item label="출금비밀번호">
+                <Input
+                  name="acWithdrawPassword"
+                  type="password"
+                  value={form.acWithdrawPassword}
+                  onChange={e => setForm({ ...form, acWithdrawPassword: e.target.value })}
                 />
               </Form.Item>
 

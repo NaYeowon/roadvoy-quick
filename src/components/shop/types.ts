@@ -215,6 +215,7 @@ export interface RiderSignUpRequest {
   ucTaxInvoType: number;
   usBankCode: number;
   acBankAccount: string;
+  acWithdrawPassword: string;
   acAccHoldName: string;
   usVirtualBank: number;
   acVirtualAccount: string;
