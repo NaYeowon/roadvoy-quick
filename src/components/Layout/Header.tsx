@@ -79,7 +79,7 @@ const Header = () => {
   };
 
   const OnShopRegister = () => {
-    window.open("shopSignupModal", "_blank", "top=100, width=800, height=1200");
+    window.open("shopSignupModal", "_blank", "top=100, left=500, width=1200, height=800");
   };
 
   const Logout = () => {
