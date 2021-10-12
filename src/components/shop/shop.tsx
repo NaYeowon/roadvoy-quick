@@ -13,7 +13,7 @@ import { ColumnsType } from "antd/lib/table";
 import MemberHelper from "src/helpers/MemberHelper";
 
 import LoginHelper from "../../pages/shared/LoginHelper";
-import { costFormat } from "../../util/FormatUtil";
+import { callFormat, costFormat } from "../../util/FormatUtil";
 import SelectPage from "../Layout/SelectPage";
 import { ShopDTO, ShopSignUpRequest } from "./types";
 import ShopModal from "./ShopModal";
@@ -57,6 +57,7 @@ const columns: ColumnsType<ShopDTO> = [
         dataIndex: "ulCustCallCnt",
         key: "ulCustCallCnt",
         width: 100,
+        render: (call: number) => callFormat(call),
       },
       {
         title: "관리비",
@@ -81,7 +82,7 @@ const columns: ColumnsType<ShopDTO> = [
         dataIndex: "usDeliDoneCntSum",
         key: "usDeliDoneCntSum",
         width: 80,
-
+        render: (call: number) => callFormat(call),
         // sorter: (a, b) => a.usDeliDoneCntSum - b.usDeliDoneCntSum,
       },
       {
@@ -89,6 +90,8 @@ const columns: ColumnsType<ShopDTO> = [
         dataIndex: "usMonthDeliDoneCntSum",
         key: "usMonthDeliDoneCntSum",
         width: 80,
+        render: (call: number) => callFormat(call),
+
         // sorter: (a, b) => a.usMonthDeliDoneCntSum - b.usMonthDeliDoneCntSum,
       },
     ],
