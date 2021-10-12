@@ -3,7 +3,7 @@ import { AxiosError } from "axios";
 import { useState } from "react";
 import api from "src/config/axios";
 import { MemberId } from "src/domain/Member/model";
-import { ShopAddressComponent } from "src/util/AddressDaumMapComponent";
+import { AddressDaumMapComponent } from "src/util/AddressDaumMapComponent";
 import { CallDetailShopTitle } from "../CallList/Modal/CallDetailShopTitle";
 import { CallDetailModalShopName } from "../CallList/Modal/styles";
 import { ShopDTO } from "./types";
@@ -31,21 +31,21 @@ function ShopModal(props: ShopModalProps) {
         <div>
           <div>
             <CallDetailModalShopName>{shop?.acCompany}</CallDetailModalShopName>
-            <CallDetailShopTitle title="회원번호" value="" />
-            <CallDetailShopTitle title="회원 ID" value="" />
-            <CallDetailShopTitle title="사업자 등록번호" value="" />
-            <CallDetailShopTitle title="법인 등록번호" value="" />
-            <CallDetailShopTitle title="E-mail 주소" value="" />
-            <CallDetailShopTitle title="업태/업종" value="" />
-            <CallDetailShopTitle title="상점주소" value="" />
-            <ShopAddressComponent shop={shop!} />
-            <CallDetailShopTitle title="대표자명" value="" />
-            <CallDetailShopTitle title="휴대폰번호" value="" />
-            <CallDetailShopTitle title="사업장 전화번호" value="" />
-            <CallDetailShopTitle title="주거래은행" value="" />
-            <CallDetailShopTitle title="주거래 계좌번호" value="" />
-            <CallDetailShopTitle title="기본료" value="" />
-            <CallDetailShopTitle title="거리할증" value="" />
+            <CallDetailShopTitle title="회원번호" value={shop?.acUserId ?? ""} />
+            <CallDetailShopTitle title="회원 ID" value={shop?.acUserId ?? ""} />
+            <CallDetailShopTitle title="사업자 등록번호" value={shop?.acBizRegNo ?? ""} />
+            <CallDetailShopTitle title="법인 등록번호" value={shop?.acCorpNo ?? ""} />
+            <CallDetailShopTitle title="E-mail 주소" value={shop?.acEmailAddress ?? ""} />
+            <CallDetailShopTitle title="업태/업종" value={shop?.acBizType ?? ""} />
+            <CallDetailShopTitle title="상점주소" value={shop?.acOldAddress ?? ""} />
+            {shop && <AddressDaumMapComponent acAddress={shop.acOldAddress} />}
+            <CallDetailShopTitle title="대표자명" value={shop?.acPresident ?? ""} />
+            <CallDetailShopTitle title="휴대폰번호" value={shop?.acPhoneNo ?? ""} />
+            <CallDetailShopTitle title="사업장 전화번호" value={shop?.acCellNo ?? ""} />
+            <CallDetailShopTitle title="주거래은행" value={shop?.ucBankCode ?? ""} />
+            <CallDetailShopTitle title="주거래 계좌번호" value={shop?.acBankAccount ?? ""} />
+            <CallDetailShopTitle title="기본료" value={shop?.ulBaseDist ?? ""} />
+            <CallDetailShopTitle title="거리할증" value={shop?.ulExtraDist ?? ""} />
           </div>
         </div>
         <div style={{ textAlign: "center" }}>
