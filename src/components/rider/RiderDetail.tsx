@@ -47,7 +47,7 @@ function riderDetail(props: RiderModalProps) {
           <Button
             onClick={() => {
               window.open(
-                `/shopSignupModal?ucAreaNo=${rider?.ucAreaNo}&
+                `/RiderRegister?ucAreaNo=${rider?.ucAreaNo}&
             ucDistribId=${rider?.ucDistribId}&
             ucAgencyId=${rider?.ucAgencyId}&
             ucMemCourId=${rider?.ucMemCourId}`,
@@ -56,16 +56,16 @@ function riderDetail(props: RiderModalProps) {
               );
             }}
           >
-            상점 수정
+            기사 수정
           </Button>
           <Popconfirm
-            title="상점을 삭제하시겠습니까?"
+            title="기사를 삭제하시겠습니까?"
             //onConfirm={handleClickCancelErrand}
             okText="네"
             cancelText="아니요"
           >
             <Button type="primary" danger>
-              상점 삭제
+              기사 삭제
             </Button>
           </Popconfirm>
         </div>
