@@ -7,7 +7,7 @@ import "antd/dist/antd.css";
 import { Menu, Dropdown } from "antd";
 import LoginHelper from "src/pages/shared/LoginHelper";
 
-import RiderSignupModal from "../rider/RiderSignupModal";
+import RiderSignupModal from "../rider/RiderRegister";
 import ShopSignupModal from "../shop/shopSignupModal";
 import DistributorSignUpModal from "../Distributor/DistributorSignUpModal";
 import AgencySiginupModal from "../AgencySettlement/AgencySiginupModal";
@@ -29,10 +29,6 @@ const Header = () => {
     }
   };
 
-  const ShowModalRider = () => {
-    setIsModalRiderVisible(true);
-  };
-
   // const ShowModalShop = () => {
   //   setIsModalShopVisible(true);
   // };
@@ -45,16 +41,6 @@ const Header = () => {
     setIsModalAgencySiginupModal(true);
   };
 
-  const RiderCancelData = (data: boolean) => {
-    console.log(data);
-    setIsModalRiderVisible(false);
-  };
-  // const ShopCancelData = () => {
-  //   setIsModalShopVisible(false);
-  // };
-  // const ShopOkData = () => {
-  //   setIsModalShopVisible(false);
-  // };
   const DistributorCancelData = (data: boolean) => {
     setIsModalDistributorVisible(false);
   };
@@ -62,10 +48,6 @@ const Header = () => {
     setIsModalAgencySiginupModal(false);
   };
 
-  const RiderOkData = (data: boolean) => {
-    console.log(data);
-    setIsModalRiderVisible(false);
-  };
   const DistributorOkData = (data: boolean) => {
     setIsModalDistributorVisible(false);
   };
@@ -80,6 +62,10 @@ const Header = () => {
 
   const OnShopRegister = () => {
     window.open("shopSignupModal", "_blank", "top=100, left=500, width=1200, height=800");
+  };
+
+  const onRiderRegister = () => {
+    window.open("RiderRegister", "_blank", "top=100, left=500, width=1200, height=800");
   };
 
   const Logout = () => {
@@ -144,7 +130,7 @@ const Header = () => {
         <NavLink to="/RiderSettlement">기사별정산</NavLink>
       </Menu.Item>
       <Menu.Item key="2">
-        <a href="void:0" onClick={ShowModalRider}>
+        <a href="void:0" onClick={onRiderRegister}>
           기사등록
         </a>
       </Menu.Item>
@@ -266,11 +252,6 @@ const Header = () => {
           로그아웃
         </NavLink>
       </div>
-      <RiderSignupModal
-        visible={isModalRiderVisible}
-        onOk={RiderOkData}
-        onCancel={RiderCancelData}
-      />
       {/* <ShopSignupModal visible={isModalShopVisible} onOk={ShopOkData} onCancel={ShopCancelData} /> */}
       <DistributorSignUpModal
         visible={isModalDistributorVisible}

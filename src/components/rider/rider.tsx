@@ -13,7 +13,6 @@ import MemberHelper from "src/helpers/MemberHelper";
 import { costFormat } from "../../util/FormatUtil";
 import LoginHelper from "../../pages/shared/LoginHelper";
 import SelectPage from "../Layout/SelectPage";
-import RiderSignupModal from "./RiderSignupModal";
 import { RiderInfo } from "../shop/types";
 import RiderDetail from "./RiderDetail";
 
@@ -135,15 +134,11 @@ const Rider = () => {
   const [astManageRider, setAstManageRider] = useState<RiderInfo[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectRider, setSelectRider] = useState<RiderInfo | undefined>(undefined);
-  const [RiderInfo, setRiderInfo] = useState<RiderInfo | undefined>(undefined);
 
-  const okHandle = () => {
+  const handleCloseModal = () => {
     setIsModalVisible(false);
   };
 
-  const cancelHandle = () => {
-    setIsModalVisible(false);
-  };
   const fetchRiderList = async () => {
     try {
       const response = await axios({
@@ -202,16 +197,22 @@ const Rider = () => {
             onClick: () => {
               setIsModalVisible(true);
               setSelectRider(riderInfo);
-              setRiderInfo(riderInfo);
             },
           };
         }}
       />
-      <RiderDetail
+      {/* <RiderDetail
         visible={isModalVisible}
         onCancel={cancelHandle}
         onOk={okHandle}
         riderInfo={selectRider}
+      />
+    */}
+      <RiderDetail
+        onOk={handleCloseModal}
+        onCancel={handleCloseModal}
+        rider={selectRider}
+        visible={isModalVisible}
       />
     </div>
   );

@@ -11,7 +11,7 @@ import rider from "./components/rider/rider";
 import Login from "./pages/shared/Login";
 import FileUpload from "./components/file/FileUpload";
 import shopSignupModal from "./components/shop/shopSignupModal";
-import riderSignupModal from "./components/rider/RiderSignupModal";
+import RiderRegister from "./components/rider/RiderRegister";
 import Agency from "./components/AgencySettlement/Agency";
 import AgencySettlement from "./components/AgencySettlement/AgencySettlement";
 import ShopSettlement from "./components/shop/ShopSettlement";
@@ -55,8 +55,7 @@ class App extends Component {
           <Route path="/order/update/popup/:ulErrandSeqNo" component={OrderPopup} />
           <Route path="/fileUpload" component={FileUpload} />
           <Route path="/ShopHistory" component={ShopHistory} />
-          <Route path="/shopSignupModal" component={shopSignupModal} />
-          <Route path="/riderSignupModal" component={riderSignupModal} />
+          <Route path="/RiderRegister" component={RiderRegister} />
           <Route path="/Agency" component={Agency} />
           <Route path="/AgencySettlement" component={AgencySettlement} />
           <Route path="/ShopSettlement" component={ShopSettlement} />
