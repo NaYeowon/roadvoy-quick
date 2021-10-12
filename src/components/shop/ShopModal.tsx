@@ -1,5 +1,8 @@
-import { Button, Modal, Row } from "antd";
+import { Button, message, Modal, Popconfirm, Row } from "antd";
+import { AxiosError } from "axios";
 import { useState } from "react";
+import api from "src/config/axios";
+import { MemberId } from "src/domain/Member/model";
 import { ShopAddressComponent } from "src/util/AddressDaumMapComponent";
 import { CallDetailShopTitle } from "../CallList/Modal/CallDetailShopTitle";
 import { CallDetailModalShopName } from "../CallList/Modal/styles";
@@ -45,20 +48,32 @@ function ShopModal(props: ShopModalProps) {
             <CallDetailShopTitle title="거리할증" value="" />
           </div>
         </div>
-        <Button
-          onClick={() => {
-            window.open(
-              `/shopSignupModal?ucAreaNo=${shop?.ucAreaNo}&
+        <div style={{ textAlign: "center" }}>
+          <Button
+            onClick={() => {
+              window.open(
+                `/shopSignupModal?ucAreaNo=${shop?.ucAreaNo}&
             ucDistribId=${shop?.ucDistribId}&
             ucAgencyId=${shop?.ucAgencyId}&
             ucMemCourId=${shop?.ucMemCourId}`,
-              "_blank",
-              "top=100, left=500, width=1200, height=800"
-            );
-          }}
-        >
-          상점 수정
-        </Button>
+                "_blank",
+                "top=100, left=500, width=1200, height=800"
+              );
+            }}
+          >
+            상점 수정
+          </Button>
+          <Popconfirm
+            title="상점을 삭제하시겠습니까?"
+            //onConfirm={handleClickCancelErrand}
+            okText="네"
+            cancelText="아니요"
+          >
+            <Button type="primary" danger>
+              상점 삭제
+            </Button>
+          </Popconfirm>
+        </div>
       </Modal>
     </>
   );
