@@ -17,6 +17,7 @@ export const AddressDaumMapComponent = (props: AddressDaumMapComponentProps) => 
     kakao.maps.load(() => {
       const container = document.getElementById("myMap");
       const options = {
+        center: new kakao.maps.LatLng(37, 128),
         level: 3,
       };
 
