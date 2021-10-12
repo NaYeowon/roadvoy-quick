@@ -158,7 +158,7 @@ function CallModal(props: CallModalProps) {
               value={`${errand.acDestOldAddr} ${errand.acDestAddrDesc}`}
             />
           </div>
-          <AddressDaumMapComponent errand={errand} />
+          <AddressDaumMapComponent acAddress={errand.acDestOldAddr} />
         </div>
         <CallTimeLine errand={errand} />
         <Button
