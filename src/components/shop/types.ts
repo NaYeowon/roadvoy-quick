@@ -95,6 +95,56 @@ export interface ShopSignUpRequest {
   cTotalCallShareFlag: number;
   cReClaimFlag: number;
 }
+export interface ShopDTO {
+  ucAreaNo: number;
+  ucDistribId: number;
+  ucAgencyId: number;
+  ucMemCourId: number;
+
+  ulVirAccDeposit: number;
+  ulVirAccDeduct: number;
+  lVirAccBalance: number;
+
+  ucTimeExtraFareType: number;
+  ucNightExtraFareType: number;
+  ucRainyExtraFareType: number;
+
+  acUserId: string;
+  acCompany: string;
+  acPresident: string;
+  acPassword: string;
+  acCellNo: string;
+  acPhoneNo: string;
+  acBizRegNo: string;
+  acCorpNo: string;
+  acEmailAddress: string;
+  acBizCondition: string;
+  acBizType: string;
+  acResRegNo: string;
+  acNewAddress: string;
+  acOldAddress: string;
+  acAddressDesc: string;
+  ulLatiPos: number;
+  ulLongPos: number;
+  ucTaxInvoType: number;
+  ucBankCode: number;
+  acBankAccount: string;
+  acAccHoldName: string;
+  usVirtualBank: number;
+  acVirtualAccount: string;
+  acAllocRemark: string;
+  acRemark: string;
+  acCpPresident: string;
+  acCpCellNo: string;
+  ulBaseDist: number;
+  ulBaseFare: number;
+  ulExtraDist: number;
+  ulExtraFare: number;
+  cManagerFlag: number;
+  cAreaShareFlag: number;
+  cTotalCallShareFlag: number;
+  cReClaimFlag: number;
+}
 export interface RiderInfo {
   asStatusMessage: string;
   lCallUnitPrice: number;
@@ -163,7 +213,7 @@ export interface RiderSignUpRequest {
   ulLatiPos: number;
   ulLongPos: number;
   ucTaxInvoType: number;
-  ucBankCode: number;
+  usBankCode: number;
   acBankAccount: string;
   acAccHoldName: string;
   usVirtualBank: number;
