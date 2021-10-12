@@ -12,9 +12,9 @@ import MemberHelper from "src/helpers/MemberHelper";
 
 import { costFormat } from "../../util/FormatUtil";
 import LoginHelper from "../../pages/shared/LoginHelper";
-import SelectPage from "../Layout/SelectPage";
 import { RiderInfo } from "../shop/types";
 import RiderDetail from "./RiderDetail";
+import { MemberGroupSelector } from "../Member";
 
 // interface Rider {
 //   title: string;
@@ -182,7 +182,7 @@ const Rider = () => {
         </span>
 
         <span style={{ float: "right" }}>
-          <SelectPage />
+          <MemberGroupSelector />
         </span>
       </PageHeader>
       <Table
