@@ -3,7 +3,9 @@ import { AxiosError } from "axios";
 import { useState } from "react";
 import api from "src/config/axios";
 import { MemberId } from "src/domain/Member/model";
+import MemberHelper from "src/helpers/MemberHelper";
 import { AddressDaumMapComponent } from "src/util/AddressDaumMapComponent";
+import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 import { CallDetailShopTitle } from "../CallList/Modal/CallDetailShopTitle";
 import { CallDetailModalShopName } from "../CallList/Modal/styles";
 import { ShopDTO } from "./types";
@@ -31,7 +33,7 @@ function ShopModal(props: ShopModalProps) {
         <div>
           <div>
             <CallDetailModalShopName>{shop?.acCompany}</CallDetailModalShopName>
-            <CallDetailShopTitle title="회원번호" value={shop?.acUserId ?? ""} />
+            <CallDetailShopTitle title="회원번호" value={`${MemberHelper.formatMemberId(shop)}`} />
             <CallDetailShopTitle title="회원 ID" value={shop?.acUserId ?? ""} />
             <CallDetailShopTitle title="사업자 등록번호" value={shop?.acBizRegNo ?? ""} />
             <CallDetailShopTitle title="법인 등록번호" value={shop?.acCorpNo ?? ""} />
@@ -40,12 +42,24 @@ function ShopModal(props: ShopModalProps) {
             <CallDetailShopTitle title="상점주소" value={shop?.acOldAddress ?? ""} />
             {shop && <AddressDaumMapComponent acAddress={shop.acOldAddress} />}
             <CallDetailShopTitle title="대표자명" value={shop?.acPresident ?? ""} />
-            <CallDetailShopTitle title="휴대폰번호" value={shop?.acPhoneNo ?? ""} />
-            <CallDetailShopTitle title="사업장 전화번호" value={shop?.acCellNo ?? ""} />
+            <CallDetailShopTitle
+              title="휴대폰번호"
+              value={getCellNoFormat(shop?.acPhoneNo ?? "")}
+            />
+            <CallDetailShopTitle
+              title="사업장 전화번호"
+              value={getCellNoFormat(shop?.acCellNo ?? "")}
+            />
             <CallDetailShopTitle title="주거래은행" value={shop?.ucBankCode ?? ""} />
             <CallDetailShopTitle title="주거래 계좌번호" value={shop?.acBankAccount ?? ""} />
-            <CallDetailShopTitle title="기본료" value={shop?.ulBaseDist ?? ""} />
-            <CallDetailShopTitle title="거리할증" value={shop?.ulExtraDist ?? ""} />
+            <CallDetailShopTitle
+              title="기본료"
+              value={costFormat(Number(shop?.ulBaseDist ?? ""))}
+            />
+            <CallDetailShopTitle
+              title="거리할증"
+              value={costFormat(Number(shop?.ulExtraDist ?? ""))}
+            />
           </div>
         </div>
         <div style={{ textAlign: "center" }}>
