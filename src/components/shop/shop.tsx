@@ -1,8 +1,7 @@
 /* eslint-disable */
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./Shop.css";
-// eslint-disable-next-line import/order
 import Header from "../Layout/Header";
 
 import { message, PageHeader, Table } from "antd";
@@ -14,7 +13,6 @@ import MemberHelper from "src/helpers/MemberHelper";
 
 import LoginHelper from "../../pages/shared/LoginHelper";
 import { callFormat, costFormat } from "../../util/FormatUtil";
-import SelectPage from "../Layout/SelectPage";
 import { ShopDTO, ShopSignUpRequest } from "./types";
 import ShopModal from "./ShopModal";
 import { MemberGroupSelector } from "../Member";
@@ -39,8 +37,7 @@ const columns: ColumnsType<ShopDTO> = [
         title: "아이디",
         dataIndex: "ucMemCourId",
         width: 120,
-        render: (text: string, record: ShopSignUpRequest) =>
-          `${MemberHelper.formatMemberId(record)}`,
+        render: (text: string, record: ShopDTO) => `${MemberHelper.formatMemberId(record)}`,
       },
       {
         title: "가맹명",
