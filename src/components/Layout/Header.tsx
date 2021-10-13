@@ -7,18 +7,7 @@ import "antd/dist/antd.css";
 import { Menu, Dropdown } from "antd";
 import LoginHelper from "src/pages/shared/LoginHelper";
 
-import RiderSignupModal from "../rider/RiderRegister";
-import ShopSignupModal from "../shop/shopSignupModal";
-import DistributorSignUpModal from "../Distributor/DistributorSignUpModal";
-import AgencySiginupModal from "../AgencySettlement/AgencySiginupModal";
-
-const { SubMenu } = Menu;
 const Header = () => {
-  const [isModalRiderVisible, setIsModalRiderVisible] = useState(false);
-  // const [isModalShopVisible, setIsModalShopVisible] = useState(false);
-  const [isModalDistributorVisible, setIsModalDistributorVisible] = useState(false);
-  const [isModalAgencySiginupModal, setIsModalAgencySiginupModal] = useState(false);
-
   window.onkeydown = e => {
     if (e.key === "F2") {
       window.open("/order/popup", "_blank", "top=100, left=500, width=1200, height=800");
@@ -27,33 +16,6 @@ const Header = () => {
     } else if (e.key === "F4") {
       document.location.href = "#";
     }
-  };
-
-  // const ShowModalShop = () => {
-  //   setIsModalShopVisible(true);
-  // };
-
-  const ShowModalDistributor = () => {
-    setIsModalDistributorVisible(true);
-  };
-
-  const showModalAgency = () => {
-    setIsModalAgencySiginupModal(true);
-  };
-
-  const DistributorCancelData = (data: boolean) => {
-    setIsModalDistributorVisible(false);
-  };
-  const AgencyCancelData = (data: boolean) => {
-    setIsModalAgencySiginupModal(false);
-  };
-
-  const DistributorOkData = (data: boolean) => {
-    setIsModalDistributorVisible(false);
-  };
-
-  const AgencyOkData = (data: boolean) => {
-    setIsModalAgencySiginupModal(false);
   };
 
   const OnCallRegister = () => {
@@ -65,6 +27,14 @@ const Header = () => {
   };
 
   const onRiderRegister = () => {
+    window.open("RiderRegister", "_blank", "top=100, left=500, width=1200, height=800");
+  };
+
+  const onAgencyRegister = () => {
+    window.open("AgencyRegister", "_blank", "top=100, left=500, width=1200, height=800");
+  };
+
+  const onDistributorRegister = () => {
     window.open("RiderRegister", "_blank", "top=100, left=500, width=1200, height=800");
   };
 
@@ -151,7 +121,7 @@ const Header = () => {
         <NavLink to="/AgencySettlement">대행정산</NavLink>
       </Menu.Item>
       <Menu.Item key="2">
-        <a href="void:0" onClick={showModalAgency}>
+        <a href="void:0" onClick={onAgencyRegister}>
           대행등록
         </a>
       </Menu.Item>
@@ -170,7 +140,7 @@ const Header = () => {
         <NavLink to="/DistributorSettlement">총판정산</NavLink>
       </Menu.Item>
       <Menu.Item key="3">
-        <a href="void:0" onClick={ShowModalDistributor}>
+        <a href="void:0" onClick={onDistributorRegister}>
           총판등록
         </a>
       </Menu.Item>
@@ -252,17 +222,6 @@ const Header = () => {
           로그아웃
         </NavLink>
       </div>
-      {/* <ShopSignupModal visible={isModalShopVisible} onOk={ShopOkData} onCancel={ShopCancelData} /> */}
-      <DistributorSignUpModal
-        visible={isModalDistributorVisible}
-        onOk={DistributorOkData}
-        onCancel={DistributorCancelData}
-      />
-      <AgencySiginupModal
-        visible={isModalAgencySiginupModal}
-        onOk={AgencyOkData}
-        onCancel={AgencyOkData}
-      />
     </header>
   );
 };

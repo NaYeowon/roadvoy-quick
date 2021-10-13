@@ -27,7 +27,7 @@ import Writing from "./components/Board/Writing";
 import BoardDetail from "./components/Board/BoardDetail";
 import DistributorStatistics from "./components/Distributor/DistributorStatistics";
 import DistributorSignUpModal from "./components/Distributor/DistributorSignUpModal";
-import AgencySiginupModal from "./components/AgencySettlement/AgencySiginupModal";
+import AgencyRegister from "./components/AgencySettlement/AgencyRegister";
 import DistributorSettlement from "./components/Distributor/DistributorSettlement";
 import DistributorApproval from "./components/HeadOffice/DistributorApproval";
 
@@ -73,7 +73,7 @@ class App extends Component {
           <Route path="/CallFee" component={CallFee} />
           <Route path="/CallQuantity" component={CallQuantity} />
           <Route path="/ProgramUsageFee" component={ProgramUsageFee} />
-          <Route path="/AgencySiginupModal" component={AgencySiginupModal} />
+          <Route path="/AgencyRegister" component={AgencyRegister} />
           <Route path="/DistributorSettlement" component={DistributorSettlement} />
           <Route path="/DistributorApproval" component={DistributorApproval} />
           <Route path="/RiderCallHistory" component={RiderCallHistory} />
