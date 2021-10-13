@@ -33,7 +33,10 @@ function ShopModal(props: ShopModalProps) {
         <div>
           <div>
             <CallDetailModalShopName>{shop?.acCompany}</CallDetailModalShopName>
-            <CallDetailShopTitle title="회원번호" value={`${MemberHelper.formatMemberId(shop)}`} />
+            <CallDetailShopTitle
+              title="회원번호"
+              value={`${MemberHelper.formatMemberId(shop ?? "")}`}
+            />
             <CallDetailShopTitle title="회원 ID" value={shop?.acUserId ?? ""} />
             <CallDetailShopTitle title="사업자 등록번호" value={shop?.acBizRegNo ?? ""} />
             <CallDetailShopTitle title="법인 등록번호" value={shop?.acCorpNo ?? ""} />

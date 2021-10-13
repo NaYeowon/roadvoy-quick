@@ -30,7 +30,10 @@ function riderDetail(props: RiderModalProps) {
         <div>
           <div>
             <CallDetailModalShopName>{rider?.acPresident}</CallDetailModalShopName>
-            <CallDetailShopTitle title="회원번호" value={`${MemberHelper.formatMemberId(rider)}`} />
+            <CallDetailShopTitle
+              title="회원번호"
+              value={`${MemberHelper.formatMemberId(rider ?? "")}`}
+            />
             <CallDetailShopTitle title="회원 ID" value={rider?.acUserId ?? ""} />
             <CallDetailShopTitle title="이름" value={rider?.acPresident ?? ""} />
             <CallDetailShopTitle
