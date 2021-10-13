@@ -35,7 +35,7 @@ const Header = () => {
   };
 
   const onDistributorRegister = () => {
-    window.open("RiderRegister", "_blank", "top=100, left=500, width=1200, height=800");
+    window.open("DistributorRegister", "_blank", "top=100, left=500, width=1200, height=800");
   };
 
   const Logout = () => {
