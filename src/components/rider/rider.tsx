@@ -12,7 +12,7 @@ import MemberHelper from "src/helpers/MemberHelper";
 
 import { costFormat } from "../../util/FormatUtil";
 import LoginHelper from "../../pages/shared/LoginHelper";
-import { RiderInfo } from "../shop/types";
+import { RiderInfo, RiderSignUpRequest } from "../shop/types";
 import RiderDetail from "./RiderDetail";
 import { MemberGroupSelector } from "../Member";
 
@@ -25,14 +25,15 @@ import { MemberGroupSelector } from "../Member";
 //   onOk: any;
 //   onCancle: any;
 // }
-const columns: ColumnsType<RiderInfo> = [
+const columns: ColumnsType<RiderSignUpRequest> = [
   {
     title: "계정정보",
     children: [
       {
         title: "아이디",
         dataIndex: "ucMemCourId",
-        render: (text: string, record: RiderInfo) => `${MemberHelper.formatMemberId(record)}`,
+        render: (text: string, record: RiderSignUpRequest) =>
+          `${MemberHelper.formatMemberId(record)}`,
         width: 120,
       },
       {
@@ -131,9 +132,9 @@ const columns: ColumnsType<RiderInfo> = [
 ];
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const Rider = () => {
-  const [astManageRider, setAstManageRider] = useState<RiderInfo[]>([]);
+  const [astManageRider, setAstManageRider] = useState<RiderSignUpRequest[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectRider, setSelectRider] = useState<RiderInfo | undefined>(undefined);
+  const [selectRider, setSelectRider] = useState<RiderSignUpRequest | undefined>(undefined);
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
@@ -192,7 +193,7 @@ const Rider = () => {
         pagination={false}
         size="small"
         scroll={{ y: 650 }}
-        onRow={(riderInfo: RiderInfo) => {
+        onRow={(riderInfo: RiderSignUpRequest) => {
           return {
             onClick: () => {
               setIsModalVisible(true);
