@@ -218,6 +218,7 @@ const RiderRegister = (props: Props) => {
               <Form.Item label="주소">
                 <Button
                   type="primary"
+                  ghost
                   style={{ width: "100%" }}
                   onClick={() => switchSearchAddress(true)}
                 >
@@ -417,7 +418,7 @@ const RiderRegister = (props: Props) => {
                 cancelText="아니요"
                 onConfirm={executeCreateSignUp}
               >
-                <Button style={{ marginTop: "30px" }} type="ghost">
+                <Button style={{ marginTop: "30px" }} type="primary">
                   {isUpdate() ? "수정" : "등록"}
                 </Button>
               </Popconfirm>

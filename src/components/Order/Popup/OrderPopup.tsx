@@ -794,7 +794,9 @@ const OrderPopup = (props: Props) => {
             <Form.Item label="직권배차">
               {forceAllocRiderBody}
               <Button
-                type={isDispatchListVisible ? "ghost" : "primary"}
+                //type={isDispatchListVisible ? "ghost" : "primary"}
+                type={"primary"}
+                ghost
                 block
                 onClick={() => {
                   setIsDispatchListVisible(!isDispatchListVisible);
@@ -824,7 +826,7 @@ const OrderPopup = (props: Props) => {
                 cancelText="아니요"
                 onConfirm={executeOrder}
               >
-                <Button style={{ marginTop: "30px" }} type="ghost">
+                <Button style={{ marginTop: "30px" }} type="primary">
                   {isUpdate() ? "수정" : "접수"}
                 </Button>
               </Popconfirm>

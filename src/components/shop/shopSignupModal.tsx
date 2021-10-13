@@ -262,6 +262,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
               <Form.Item label="상점주소">
                 <Button
                   type="primary"
+                  ghost
                   style={{ width: "100%" }}
                   onClick={() => switchSearchAddress(true)}
                 >
@@ -511,7 +512,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
                 cancelText="아니요"
                 onConfirm={executeCreateSignUp}
               >
-                <Button style={{ marginTop: "30px" }} type="ghost">
+                <Button style={{ marginTop: "30px" }} type="primary">
                   {isUpdate() ? "수정" : "등록"}
                 </Button>
               </Popconfirm>

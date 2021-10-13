@@ -124,6 +124,7 @@ export default function Place(props: IPlaceProps) {
         <Form.Item label={`${prefix} 주소`}>
           <Button
             type="primary"
+            ghost
             onClick={() => switchSearchAddress(true)}
             style={{ width: "100%" }}
             disabled={disabled}
