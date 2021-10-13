@@ -241,7 +241,7 @@ const AgencyRegister = (props: AgencyProps) => {
                 <Checkbox style={{ float: "left" }} name="" />
               </Form.Item>
               <Popconfirm
-                title="대행을을 등록하시겠습니까?"
+                title="대행을 등록하시겠습니까?"
                 okText="네"
                 cancelText="아니요"
                 //onConfirm={executeCreateSignUp}
