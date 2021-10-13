@@ -1,13 +1,16 @@
 import { Button, Modal, Popconfirm, Row } from "antd";
+import MemberHelper from "src/helpers/MemberHelper";
+import BankCode from "src/util/BankCode";
+import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 
 import { CallDetailShopTitle } from "../CallList/Modal/CallDetailShopTitle";
 import { CallDetailModalShopName } from "../CallList/Modal/styles";
-import { RiderInfo } from "../shop/types";
+import { RiderSignUpRequest } from "../shop/types";
 
 interface RiderModalProps {
   onOk: () => void;
   onCancel: () => void;
-  rider: RiderInfo | undefined;
+  rider: RiderSignUpRequest | undefined;
   visible: boolean | undefined;
 }
 function riderDetail(props: RiderModalProps) {
@@ -27,20 +30,45 @@ function riderDetail(props: RiderModalProps) {
         <div>
           <div>
             <CallDetailModalShopName>{rider?.acPresident}</CallDetailModalShopName>
-            <CallDetailShopTitle title="회원번호" value="" />
-            <CallDetailShopTitle title="회원 ID" value="" />
-            <CallDetailShopTitle title="이름" value="" />
-            <CallDetailShopTitle title="생년월일" value="" />
-            <CallDetailShopTitle title="휴대폰번호" value="" />
-            <CallDetailShopTitle title="주소" value="" />
-            <CallDetailShopTitle title="주거래은행" value="" />
-            <CallDetailShopTitle title="주거래 계좌번호" value="" />
-            <CallDetailShopTitle title="가상계좌은행" value="" />
-            <CallDetailShopTitle title="가상계좌번호" value="" />
-            <CallDetailShopTitle title="1일 리스료" value="" />
-            <CallDetailShopTitle title="보증금" value="" />
-            <CallDetailShopTitle title="콜수수료" value="" />
-            <CallDetailShopTitle title="기사 특이사항" value="" />
+            <CallDetailShopTitle title="회원번호" value={`${MemberHelper.formatMemberId(rider)}`} />
+            <CallDetailShopTitle title="회원 ID" value={rider?.acUserId ?? ""} />
+            <CallDetailShopTitle title="이름" value={rider?.acPresident ?? ""} />
+            <CallDetailShopTitle
+              title="휴대폰번호"
+              value={getCellNoFormat(rider?.acCellNo ?? "")}
+            />
+            <CallDetailShopTitle title="주소" value={rider?.acOldAddress ?? ""} />
+            <CallDetailShopTitle
+              title="주거래은행 계좌번호"
+              value={
+                <BankCode
+                  ucBankCode={Number(rider?.usBankCode)}
+                  acBankAccount={parseInt(rider?.acBankAccount ?? "")}
+                />
+              }
+            />
+            <CallDetailShopTitle
+              title="가상계좌번호"
+              value={
+                <BankCode
+                  ucBankCode={Number(rider?.usVirtualBank)}
+                  acBankAccount={parseInt(rider?.acVirtualAccount ?? "")}
+                />
+              }
+            />
+            <CallDetailShopTitle
+              title="1일 리스료"
+              value={costFormat(Number(rider?.lCourierLease ?? ""))}
+            />
+            <CallDetailShopTitle
+              title="보증금"
+              value={costFormat(Number(rider?.lCourierDeposit ?? ""))}
+            />
+            <CallDetailShopTitle
+              title="콜수수료"
+              value={costFormat(Number(rider?.lCallUnitPrice ?? ""))}
+            />
+            <CallDetailShopTitle title="기사 특이사항" value={rider?.acAllocRemark ?? ""} />
           </div>
         </div>
         <div style={{ textAlign: "center" }}>
