@@ -11,21 +11,20 @@ import XLSX from "xlsx";
 import styled from "styled-components";
 import moment from "moment";
 import { callFormat } from "src/util/FormatUtil";
-import SelectPage from "../Layout/SelectPage";
 
 const columns = [
   {
     title: "이름",
     dataIndex: "acPresident",
-    key: "acPresident"
+    key: "acPresident",
   },
   {
     title: "콜수",
     dataIndex: "usDayDoneErrandSum",
     key: "usDayDoneErrandSum",
     width: 80,
-    render: (call: number) => callFormat(call)
-  }
+    render: (call: number) => callFormat(call),
+  },
 ];
 
 const { RangePicker } = DatePicker;
@@ -46,8 +45,8 @@ const RiderSettlement = (props: RiderInfo) => {
         method: "get",
         url: "https://api.roadvoy.net/agency/rider/manage/list.php",
         headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`
-        }
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
       });
 
       setAstManageRider(response.data.astManageRider);
@@ -77,7 +76,7 @@ const RiderSettlement = (props: RiderInfo) => {
         대행에지불한콜수수료: astManageRider[i],
         나에게캐시입금: astManageRider[i],
         다른기사에게캐시송금: astManageRider[i],
-        현금카드송금: astManageRider[i]
+        현금카드송금: astManageRider[i],
       };
     }
     const dataWS = XLSX.utils.json_to_sheet(dataSheet);
@@ -121,7 +120,6 @@ const RiderSettlement = (props: RiderInfo) => {
     <>
       <Header />
       <PageHeader />
-      <SelectPage />
       <Row>
         {SettlementList(astManageRider)}
         <Col span={4} pull={20}>
@@ -147,7 +145,7 @@ const RiderSettlement = (props: RiderInfo) => {
               return {
                 onClick: () => {
                   setSelectedRider(record);
-                }
+                },
               };
             }}
             size="small"
