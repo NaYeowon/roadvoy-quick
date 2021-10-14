@@ -1,6 +1,6 @@
 import { Button, Modal, Popconfirm, Row } from "antd";
 import MemberHelper from "src/helpers/MemberHelper";
-import BankCode from "src/util/BankCode";
+import { BankCode } from "src/util/BankCode";
 import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 
 import { CallDetailShopTitle } from "../CallList/Modal/CallDetailShopTitle";
@@ -45,8 +45,8 @@ function riderDetail(props: RiderModalProps) {
               title="주거래은행 계좌번호"
               value={
                 <BankCode
-                  ucBankCode={Number(rider?.usBankCode)}
-                  acBankAccount={parseInt(rider?.acBankAccount ?? "")}
+                  usBankCode={Number(rider?.usBankCode)}
+                  acBankAccount={rider?.acBankAccount ?? ""}
                 />
               }
             />
@@ -54,8 +54,8 @@ function riderDetail(props: RiderModalProps) {
               title="가상계좌번호"
               value={
                 <BankCode
-                  ucBankCode={Number(rider?.usVirtualBank)}
-                  acBankAccount={parseInt(rider?.acVirtualAccount ?? "")}
+                  usBankCode={Number(rider?.usVirtualBank)}
+                  acBankAccount={rider?.acVirtualAccount ?? ""}
                 />
               }
             />

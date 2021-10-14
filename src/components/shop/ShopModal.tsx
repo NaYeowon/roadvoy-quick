@@ -5,6 +5,7 @@ import api from "src/config/axios";
 import { MemberId } from "src/domain/Member/model";
 import MemberHelper from "src/helpers/MemberHelper";
 import { AddressDaumMapComponent } from "src/util/AddressDaumMapComponent";
+import { BankCode, VirtualBankCode } from "src/util/BankCode";
 import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 import { CallDetailShopTitle } from "../CallList/Modal/CallDetailShopTitle";
 import { CallDetailModalShopName } from "../CallList/Modal/styles";
@@ -53,8 +54,24 @@ function ShopModal(props: ShopModalProps) {
               title="사업장 전화번호"
               value={getCellNoFormat(shop?.acCellNo ?? "")}
             />
-            <CallDetailShopTitle title="주거래은행" value={shop?.ucBankCode ?? ""} />
-            <CallDetailShopTitle title="주거래 계좌번호" value={shop?.acBankAccount ?? ""} />
+            <CallDetailShopTitle
+              title="주거래 계좌번호"
+              value={
+                <BankCode
+                  usBankCode={Number(shop?.ucBankCode)}
+                  acBankAccount={shop?.acBankAccount ?? ""}
+                />
+              }
+            />
+            <CallDetailShopTitle
+              title="가상 계좌번호"
+              value={
+                <VirtualBankCode
+                  usVirtualBank={Number(shop?.usVirtualBank)}
+                  acVirtualAccount={shop?.acVirtualAccount ?? ""}
+                />
+              }
+            />
             <CallDetailShopTitle
               title="기본료"
               value={costFormat(Number(shop?.ulBaseDist ?? ""))}
@@ -62,6 +79,11 @@ function ShopModal(props: ShopModalProps) {
             <CallDetailShopTitle
               title="거리할증"
               value={costFormat(Number(shop?.ulExtraDist ?? ""))}
+            />
+            <CallDetailShopTitle title="담당관리자" value={shop?.acCpPresident ?? ""} />
+            <CallDetailShopTitle
+              title="관리자연락처"
+              value={getCellNoFormat(shop?.acCpCellNo ?? "")}
             />
           </div>
         </div>
