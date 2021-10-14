@@ -21,14 +21,7 @@ import { MemberGroupSelector } from "../Member";
 // react 는 props (property) 와 state 가 변경될 때 마다 render 가 호출되므로
 // columns 와 같은 변수의 값은 한번 설정되면 변경되지 않는 값이므로
 // render 밖에 정의해서 사용한다
-// arr[0]['ucMemCourId'];
-// arr[1]['ucMemCourId']
 
-// interface Props {
-//   modalShop: ShopSignUpRequest | undefined;
-//   onOk: () => void;
-//   onCancel: () => void;
-// }
 const columns: ColumnsType<ShopDTO> = [
   {
     title: "계정정보",
@@ -101,10 +94,7 @@ const columns: ColumnsType<ShopDTO> = [
         dataIndex: "ulCurrentVirAccBalance",
         key: "ulCurrentVirAccBalance",
         width: 120,
-        // render: (data1: any, data2: IShop) => {
-        //   let format = (data2.ulVirAccDeposit + data2.lVirAccBalance - data2.ulVirAccDeduct)
-        //   return format.toLocaleString()+'원'
-        // }
+
         render: (string: any, record: ShopDTO) =>
           costFormat(
             Number(record.ulVirAccDeposit) +
@@ -158,12 +148,9 @@ const columns: ColumnsType<ShopDTO> = [
 const Shop = () => {
   const [astManageShop, setAstManageShop] = useState<ShopDTO[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  // const [selectShop, setSelectShop] = useState<ShopInfo | undefined>(undefined);
-  // const [shopInfo, setShopInfo] = useState<ShopInfo | undefined>(undefined);
   const [modalShop, setModalShop] = useState<ShopDTO | undefined>(undefined);
 
   const handleCloseModal = () => {
-    //setModalShop(undefined);
     setIsModalVisible(false);
   };
 
@@ -235,20 +222,12 @@ const Shop = () => {
           return {
             onClick: () => {
               setIsModalVisible(true);
-              // setSelectShop(shopInfo);
-              // setShopInfo(shopInfo);
               setModalShop(shop);
               console.log(setModalShop(shop));
             },
           };
         }}
       />
-      {/* <ShopSignupModal
-        onOk={okHandle}
-        onCancel={cancelHandle}
-        shop={modalShop}
-        visible={isModalVisible}
-      /> */}
       <ShopModal
         onOk={handleCloseModal}
         onCancel={handleCloseModal}
