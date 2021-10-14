@@ -104,13 +104,13 @@ function ShopModal(props: ShopModalProps) {
             상점 수정
           </Button>
           <Popconfirm
-            title="상점을 삭제하시겠습니까?"
+            title="탈퇴하시겠습니까?"
             //onConfirm={handleClickCancelErrand}
             okText="네"
             cancelText="아니요"
           >
             <Button type="primary" danger>
-              상점 삭제
+              상점 탈퇴
             </Button>
           </Popconfirm>
         </div>
