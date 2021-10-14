@@ -126,7 +126,11 @@ const ShopSignupModal = (props: ShopModalProps) => {
       const response = await api({
         method: "post",
         url: "/agency/shop/execute-command/signup.php",
-        data: form,
+        data: {
+          ...form,
+          acCellNo: form.acCellNo?.replaceAll("-", ""),
+          acPhoneNo: form.acPhoneNo?.replaceAll("-", ""),
+        },
       });
       console.log(response);
       window.close();
@@ -431,8 +435,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
                     addonAfter="m"
                     name="ulBaseDist"
                     value={form.ulBaseDist}
-                    type="number"
-                    onChange={e => setForm({ ...form, ulBaseDist: Number(e.target.value) })}
+                    onChange={e => setForm({ ...form, ulBaseDist: parseInt(e.target.value) })}
                   />
                 </span>
                 <span>
@@ -441,8 +444,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
                     addonAfter="m"
                     name="ulBaseFare"
                     value={form.ulBaseFare}
-                    type="number"
-                    onChange={e => setForm({ ...form, ulBaseFare: Number(e.target.value) })}
+                    onChange={e => setForm({ ...form, ulBaseFare: parseInt(e.target.value) })}
                   />
                 </span>
               </Form.Item>
@@ -453,7 +455,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
                     addonAfter="원"
                     name="ulExtraDist"
                     value={form.ulExtraDist}
-                    onChange={e => setForm({ ...form, ulExtraDist: Number(e.target.value) })}
+                    onChange={e => setForm({ ...form, ulExtraDist: parseInt(e.target.value) })}
                   />
                 </span>
                 <span>
@@ -462,7 +464,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
                     addonAfter="원"
                     name="ulExtraFare"
                     value={form.ulExtraFare}
-                    onChange={e => setForm({ ...form, ulExtraFare: Number(e.target.value) })}
+                    onChange={e => setForm({ ...form, ulExtraFare: parseInt(e.target.value) })}
                   />
                 </span>
               </Form.Item>
