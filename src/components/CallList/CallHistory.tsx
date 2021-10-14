@@ -1,4 +1,4 @@
-import { DatePicker, Input, message, Table, Tag } from "antd";
+import { Button, DatePicker, Input, message, Table, Tag } from "antd";
 import moment from "moment";
 import locale from "antd/lib/date-picker/locale/ko_KR";
 import React, { useEffect, useState } from "react";
@@ -133,7 +133,7 @@ const columns = [
     title: "결제정보",
     dataIndex: "ucPaymentMode",
     key: "ucPaymentMode",
-    width: 120,
+    width: 140,
     render: (value: number, record: ErrandDto) => {
       const charge = Number(record.ulGoodsPrice).toLocaleString();
       switch (Number(value)) {
@@ -167,7 +167,7 @@ const columns = [
     render: (text, record) => {
       return `${getCellNoFormat(record.acCourCellNo)}`;
     },
-    width: 120,
+    width: 140,
   },
 ];
 const CallHistory = (props: Props) => {
@@ -270,9 +270,10 @@ const CallHistory = (props: Props) => {
             locale={locale}
           />
           <div className="errand-header-search">
-            <Input
+            <Search
               placeholder="픽업지 주소, 기사 전화번호, 픽업지명, 목적지명"
               allowClear
+              enterButton="검색"
               size="large"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const val = e.target.value;
