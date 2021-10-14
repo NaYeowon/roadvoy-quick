@@ -125,6 +125,9 @@ const Header = () => {
           대행등록
         </a>
       </Menu.Item>
+      <Menu.Item key="3">
+        <NavLink to="/AgencyHistory">이력상세</NavLink>
+      </Menu.Item>
     </Menu>
   );
 

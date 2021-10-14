@@ -28,6 +28,7 @@ import BoardDetail from "./components/Board/BoardDetail";
 import DistributorStatistics from "./components/Distributor/DistributorStatistics";
 import DistributorRegister from "./components/Distributor/DistributorRegister";
 import AgencyRegister from "./components/AgencySettlement/AgencyRegister";
+import AgencyHistory from "./components/AgencySettlement/AgencyHistory";
 import DistributorSettlement from "./components/Distributor/DistributorSettlement";
 import DistributorApproval from "./components/HeadOffice/DistributorApproval";
 
@@ -78,6 +79,7 @@ class App extends Component {
           <Route path="/DistributorApproval" component={DistributorApproval} />
           <Route path="/RiderCallHistory" component={RiderCallHistory} />
           <Route path="/ShopCallHistory" component={ShopCallHistory} />
+          <Route path="/AgencyHistory" component={AgencyHistory} />
           <Redirect from="/" to="/CallListComponent" />
         </Switch>
       </Router>
