@@ -67,7 +67,8 @@ function ShopModal(props: ShopModalProps) {
               title="가상 계좌번호"
               value={
                 <VirtualBankCode
-                  usVirtualBank={Number(shop?.usVirtualBank)}
+                  // usVirtualBank={Number(shop?.usVirtualBank)}
+                  usVirtualBank={Number(20)}
                   acVirtualAccount={shop?.acVirtualAccount ?? ""}
                 />
               }
