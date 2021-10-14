@@ -26,7 +26,7 @@ const DistributorRegister = (props: DistributorProps) => {
 
   return (
     <>
-      <TitleCol>대행등록</TitleCol>
+      <TitleCol>총판등록</TitleCol>
       <div style={{ textAlign: "left", margin: "0 auto" }}>
         <Row>
           <Col span={12}>
