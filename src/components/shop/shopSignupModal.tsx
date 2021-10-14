@@ -82,29 +82,29 @@ const ShopSignupModal = (props: ShopModalProps) => {
     if (!form.acCompany) {
       throw new Error("가맹점명을 입력하세요");
     }
-    if (!form.acPresident) {
-      throw new Error("대표자명을 입력하세요");
-    }
     if (!form.acPassword) {
       throw new Error("비밀번호를 입력하세요");
-    }
-    if (!form.acCellNo) {
-      throw new Error("전화번호를 입력하세요");
-    }
-    if (!form.acPhoneNo) {
-      throw new Error("휴대폰번호를 입력하세요");
     }
     if (!form.acBizRegNo) {
       throw new Error("사업자번호를 입력하세요");
     }
+    if (!form.acEmailAddress) {
+      throw new Error("E-mail주소를 입력하세요");
+    }
     if (!form.acBizCondition || !form.acBizType) {
       throw new Error("업태 또는 업종을 입력하세요");
     }
-    // if (!form.acOldAddress) {
-    //   throw new Error("주소를 입력하세요");
-    // }
+    if (!form.acOldAddress) {
+      throw new Error("주소를 입력하세요");
+    }
+    if (!form.acPresident) {
+      throw new Error("대표자명을 입력하세요");
+    }
     if (!form.acResRegNo) {
       throw new Error("생년월일을 입력하세요");
+    }
+    if (!form.acCellNo) {
+      throw new Error("휴대폰번호를 입력하세요");
     }
     if (!form.ucBankCode) {
       throw new Error("주거래은행을 입력하세요");
