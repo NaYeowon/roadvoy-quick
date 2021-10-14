@@ -52,8 +52,8 @@ const RiderRegister = (props: Props) => {
     lCourierDeposit: 0,
     lCallUnitPrice: 0,
     conCallLimit: 0,
-    cManagerFlag: 0,
-    cReClaimFlag: 0,
+    cManagerFlag: "",
+    cReClaimFlag: "",
     acAllocRemark: "",
     acRemark: "",
   });
@@ -387,7 +387,7 @@ const RiderRegister = (props: Props) => {
                   style={{ float: "left" }}
                   name="cManagerFlag"
                   value={form.cManagerFlag}
-                  onChange={e => setForm({ ...form, cManagerFlag: Number(e.target.value) })}
+                  onChange={e => setForm({ ...form, cManagerFlag: e.target.value })}
                 />
               </Form.Item>
               <Form.Item label="출금 가능여부">
@@ -395,7 +395,7 @@ const RiderRegister = (props: Props) => {
                   style={{ float: "left" }}
                   name="cReClaimFlag"
                   value={form.cReClaimFlag}
-                  onChange={e => setForm({ ...form, cReClaimFlag: Number(e.target.value) })}
+                  onChange={e => setForm({ ...form, cReClaimFlag: e.target.value })}
                 />
               </Form.Item>
               <Form.Item label="기사 특이사항">

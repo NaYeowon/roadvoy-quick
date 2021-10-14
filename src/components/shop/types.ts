@@ -90,10 +90,10 @@ export interface ShopSignUpRequest {
   ulBaseFare: number;
   ulExtraDist: number;
   ulExtraFare: number;
-  cManagerFlag: number;
-  cAreaShareFlag: number;
-  cTotalCallShareFlag: number;
-  cReClaimFlag: number;
+  cManagerFlag: string;
+  cAreaShareFlag: string;
+  cTotalCallShareFlag: string;
+  cReClaimFlag: string;
 }
 export interface ShopDTO {
   ucAreaNo: number;
@@ -140,10 +140,10 @@ export interface ShopDTO {
   ulBaseFare: number;
   ulExtraDist: number;
   ulExtraFare: number;
-  cManagerFlag: number;
-  cAreaShareFlag: number;
-  cTotalCallShareFlag: number;
-  cReClaimFlag: number;
+  cManagerFlag: string;
+  cAreaShareFlag: string;
+  cTotalCallShareFlag: string;
+  cReClaimFlag: string;
 }
 export interface RiderInfo {
   asStatusMessage: string;
@@ -224,8 +224,8 @@ export interface RiderSignUpRequest {
   lCourierDeposit: number;
   lCallUnitPrice: number;
   conCallLimit: number;
-  cManagerFlag: number;
-  cReClaimFlag: number;
+  cManagerFlag: string;
+  cReClaimFlag: string;
   acAllocRemark: string;
   acRemark: string;
 }

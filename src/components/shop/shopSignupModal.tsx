@@ -62,10 +62,10 @@ const ShopSignupModal = (props: ShopModalProps) => {
     ulBaseFare: 0,
     ulExtraDist: 0,
     ulExtraFare: 0,
-    cManagerFlag: 0,
-    cAreaShareFlag: 0,
-    cTotalCallShareFlag: 0,
-    cReClaimFlag: 0,
+    cManagerFlag: "",
+    cAreaShareFlag: "",
+    cTotalCallShareFlag: "",
+    cReClaimFlag: "",
   });
   const [searchAddress, setSearchAddress] = useState(false);
 
