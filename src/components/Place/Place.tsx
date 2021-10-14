@@ -1,4 +1,4 @@
-import { AutoComplete, Button, Input, message, SelectProps } from "antd";
+import { AutoComplete, Button, Input, message } from "antd";
 import Form from "antd/lib/form";
 import TextArea from "antd/lib/input/TextArea";
 import { AxiosError } from "axios";
@@ -8,6 +8,7 @@ import { IErrandCompany } from "../../domain/Errand/model";
 import { formItemLayout } from "../Order/Popup/styles";
 import { SearchAddress } from "../SearchAddress";
 import { IAddress } from "../SearchAddress/SearchAddress";
+import "./place.css";
 
 export interface IPlace {
   acName?: string;
