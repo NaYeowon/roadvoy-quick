@@ -145,6 +145,45 @@ export interface ShopDTO {
   cTotalCallShareFlag: string;
   cReClaimFlag: string;
 }
+
+export interface AgencyDTO {
+  ucMemCourId: string;
+  acPassword: string;
+  acCompany: string;
+  acEmailAddress: string;
+  acBizRegNo: string;
+  acBizType: string;
+  acBizCondition: string;
+  acCorpNo: string;
+  acPresident: string;
+  acEntryDateTime: string;
+  ucTaxInvoType: number;
+  ucDistribId: number;
+  acPhoneNo: string;
+  acCellNo: string;
+  acOldAddress: string;
+  acNewAddress: string;
+  acAddressDesc: string;
+  ulLatiPos: number;
+  ulLongPos: number;
+  cDelayWarning: string;
+  cUseRight: string;
+  usVirtualBank: number;
+  acVirtualAccount: string;
+  ucBankCode: number;
+  acBankAccount: string;
+  acAccHoldName: string;
+  cAreaShareFlag: string;
+  cTotalCallShareFlag: string;
+  ulBaseDist: number;
+  ulBaseFare: number;
+  ulExtraDist: number;
+  ulExtraFare: number;
+  allocRemark: string;
+  acRemark: string;
+  cpPresident: string;
+  cpCellNo: string;
+}
 export interface RiderInfo {
   asStatusMessage: string;
   lCallUnitPrice: number;
@@ -194,7 +233,7 @@ export interface RiderInfo {
   conCallLimit: number;
   usBankCode: number;
   acWithdrawPassword: number;
-  cManagerFlag: number;
+  cManagerFlag: string;
 }
 
 export interface RiderSignUpRequest {
