@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { message, Table, Checkbox, Tag } from "antd";
+import { message, Table, Checkbox, Tag, PageHeader } from "antd";
 import styled from "styled-components";
 import "./Call.css";
 import axios, { AxiosError } from "axios";
@@ -370,7 +370,11 @@ const CallListComponent = () => {
   return (
     <>
       <Header />
-      <MemberGroupSelector />
+      <PageHeader>
+        <span style={{ float: "right" }}>
+          <MemberGroupSelector />
+        </span>
+      </PageHeader>
       <Checkbox.Group
         style={{ width: "100%", display: "flex" }}
         defaultValue={["대기", "배차", "픽업", "완료", "취소"]}
