@@ -1,5 +1,6 @@
 import { Button, Modal, Popconfirm, Row } from "antd";
 import MemberHelper from "src/helpers/MemberHelper";
+import { AddressDaumMapComponent } from "src/util/AddressDaumMapComponent";
 import { BankCode } from "src/util/BankCode";
 import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
 
@@ -41,6 +42,7 @@ function riderDetail(props: RiderModalProps) {
               value={getCellNoFormat(rider?.acCellNo ?? "")}
             />
             <CallDetailShopTitle title="주소" value={rider?.acOldAddress ?? ""} />
+            {rider && <AddressDaumMapComponent acAddress={rider.acOldAddress} />}
             <CallDetailShopTitle
               title="주거래은행 계좌번호"
               value={
@@ -54,7 +56,8 @@ function riderDetail(props: RiderModalProps) {
               title="가상계좌번호"
               value={
                 <BankCode
-                  usBankCode={Number(rider?.usVirtualBank)}
+                  //usBankCode={Number(rider?.usVirtualBank)}
+                  usBankCode={20}
                   acBankAccount={rider?.acVirtualAccount ?? ""}
                 />
               }
