@@ -47,7 +47,7 @@ function riderDetail(props: RiderModalProps) {
               title="주거래은행 계좌번호"
               value={
                 <BankCode
-                  usBankCode={Number(rider?.usBankCode)}
+                  ucBankCode={Number(rider?.ucBankCode)}
                   acBankAccount={rider?.acBankAccount ?? ""}
                 />
               }
@@ -57,7 +57,7 @@ function riderDetail(props: RiderModalProps) {
               value={
                 <BankCode
                   //usBankCode={Number(rider?.usVirtualBank)}
-                  usBankCode={20}
+                  ucBankCode={20}
                   acBankAccount={rider?.acVirtualAccount ?? ""}
                 />
               }

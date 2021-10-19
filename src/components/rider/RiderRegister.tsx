@@ -41,7 +41,7 @@ const RiderRegister = (props: Props) => {
     ulLatiPos: 0,
     ulLongPos: 0,
     ucTaxInvoType: 0,
-    usBankCode: 0,
+    ucBankCode: 0,
     acWithdrawPassword: "",
     acBankAccount: "",
     acAccHoldName: "",
@@ -271,11 +271,11 @@ const RiderRegister = (props: Props) => {
               </Form.Item>
               <Form.Item label="주거래은행">
                 <Select
-                  defaultValue={form.usBankCode}
+                  defaultValue={form.ucBankCode}
                   onChange={e =>
                     setForm({
                       ...form,
-                      usBankCode: Number(e),
+                      ucBankCode: Number(e),
                     })
                   }
                 >

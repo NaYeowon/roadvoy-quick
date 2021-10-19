@@ -147,18 +147,23 @@ export interface ShopDTO {
 }
 
 export interface AgencyDTO {
+  ucAreaNo: string;
+  ucDistribId: string;
+  ucAgencyId: string;
   ucMemCourId: string;
+
+  acUserId: string;
   acPassword: string;
   acCompany: string;
   acEmailAddress: string;
   acBizRegNo: string;
+  acResRegNo: string;
   acBizType: string;
   acBizCondition: string;
   acCorpNo: string;
   acPresident: string;
   acEntryDateTime: string;
   ucTaxInvoType: number;
-  ucDistribId: number;
   acPhoneNo: string;
   acCellNo: string;
   acOldAddress: string;
@@ -170,7 +175,7 @@ export interface AgencyDTO {
   cUseRight: string;
   usVirtualBank: number;
   acVirtualAccount: string;
-  ucBankCode: number;
+  usBankCode: number;
   acBankAccount: string;
   acAccHoldName: string;
   cAreaShareFlag: string;
@@ -183,6 +188,7 @@ export interface AgencyDTO {
   acRemark: string;
   cpPresident: string;
   cpCellNo: string;
+  ucDefaultCallRtrvTime: number;
 }
 export interface RiderInfo {
   asStatusMessage: string;
@@ -252,7 +258,7 @@ export interface RiderSignUpRequest {
   ulLatiPos: number;
   ulLongPos: number;
   ucTaxInvoType: number;
-  usBankCode: number;
+  ucBankCode: number;
   acBankAccount: string;
   acWithdrawPassword: string;
   acAccHoldName: string;

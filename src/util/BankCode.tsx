@@ -4,17 +4,17 @@ import { RiderSignUpRequest } from "src/components/shop/types";
 import styled from "styled-components";
 
 interface BankCodeProps {
-  usBankCode: number;
+  ucBankCode: number;
   acBankAccount: string;
   rider?: RiderSignUpRequest;
 }
 export const BankCode = (props: BankCodeProps) => {
-  const { usBankCode, acBankAccount } = props;
+  const { ucBankCode, acBankAccount } = props;
   const BankAccount = acBankAccount;
 
   let bankcodeText;
   let bankCodeColor;
-  switch (Number(usBankCode)) {
+  switch (Number(ucBankCode)) {
     case 34:
       bankcodeText = "광주은행";
       bankCodeColor = "blue";

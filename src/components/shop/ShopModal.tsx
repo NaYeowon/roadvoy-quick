@@ -58,7 +58,7 @@ function ShopModal(props: ShopModalProps) {
               title="주거래 계좌번호"
               value={
                 <BankCode
-                  usBankCode={Number(shop?.ucBankCode)}
+                  ucBankCode={Number(shop?.ucBankCode)}
                   acBankAccount={shop?.acBankAccount ?? ""}
                 />
               }
