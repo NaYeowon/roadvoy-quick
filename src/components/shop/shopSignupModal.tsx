@@ -232,14 +232,32 @@ const ShopSignupModal = (props: ShopModalProps) => {
                 <Input
                   name="acBizRegNo"
                   value={form.acBizRegNo}
-                  onChange={e => setForm({ ...form, acBizRegNo: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setForm({
+                      ...form,
+                      acBizRegNo: e.target.value
+                        .replace(/[^0-9]/g, "")
+                        .replace(/([0-9]{3})([0-9]{2})([0-9]{5})/, "$1-$2-$3")
+                        .replace("--", "-"),
+                    });
+                  }}
+                  maxLength={12}
                 />
               </Form.Item>
               <Form.Item label="법인 등록번호">
                 <Input
                   name="acCorpNo"
                   value={form.acCorpNo}
-                  onChange={e => setForm({ ...form, acCorpNo: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setForm({
+                      ...form,
+                      acCorpNo: e.target.value
+                        .replace(/[^0-9]/g, "")
+                        .replace(/([0-9]{6})([0-9]{7})/, "$1-$2")
+                        .replace("--", "-"),
+                    });
+                  }}
+                  maxLength={14}
                 />
               </Form.Item>
               <Form.Item label="E-mail 주소">
