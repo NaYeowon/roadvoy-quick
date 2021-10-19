@@ -12,6 +12,7 @@ import LoginHelper from "../../pages/shared/LoginHelper";
 import { AgencyDTO } from "../shop/types";
 import api from "src/config/axios";
 import { MemberGroupSelector } from "../Member";
+import AgencyDetail from "./AgencyDetail";
 
 const columns = [
   {
@@ -110,7 +111,7 @@ const columns = [
 const Agency = () => {
   const [astManagerAgency, setAstManagerAgency] = useState<AgencyDTO[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [rowModal, setRowModal] = useState<AgencyDTO | undefined>(undefined);
+  const [selectAgency, setSelectAgency] = useState<AgencyDTO | undefined>(undefined);
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
@@ -149,7 +150,27 @@ const Agency = () => {
           <MemberGroupSelector />
         </span>
       </PageHeader>
-      <Table columns={columns} bordered pagination={false} size="small" scroll={{ y: 650 }} />
+      <Table
+        columns={columns}
+        bordered
+        pagination={false}
+        size="small"
+        scroll={{ y: 650 }}
+        onRow={(agency: AgencyDTO) => {
+          return {
+            onClick: () => {
+              setIsModalVisible(true);
+              setSelectAgency(agency);
+            },
+          };
+        }}
+      />
+      <AgencyDetail
+        onOk={handleCloseModal}
+        onCancel={handleCloseModal}
+        agency={selectAgency}
+        visible={isModalVisible}
+      />
     </>
   );
 };
