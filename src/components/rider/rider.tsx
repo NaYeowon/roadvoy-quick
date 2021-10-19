@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 import Header from "../Layout/Header";
 
-import { message, PageHeader, Table } from "antd";
+import { Button, message, Modal, PageHeader, Table, Tag } from "antd";
 import "antd/dist/antd.css";
 import axios from "axios";
 import { ColumnsType } from "antd/lib/table";
@@ -15,16 +15,8 @@ import LoginHelper from "../../pages/shared/LoginHelper";
 import { RiderInfo, RiderSignUpRequest } from "../shop/types";
 import RiderDetail from "./RiderDetail";
 import { MemberGroupSelector } from "../Member";
+import riderState from "./riderState";
 
-// interface Rider {
-//   title: string;
-//   dataIndex: string;
-//   width: number;
-
-//   visible: any;
-//   onOk: any;
-//   onCancle: any;
-// }
 const columns: ColumnsType<RiderSignUpRequest> = [
   {
     title: "계정정보",
@@ -202,13 +194,6 @@ const Rider = () => {
           };
         }}
       />
-      {/* <RiderDetail
-        visible={isModalVisible}
-        onCancel={cancelHandle}
-        onOk={okHandle}
-        riderInfo={selectRider}
-      />
-    */}
       <RiderDetail
         onOk={handleCloseModal}
         onCancel={handleCloseModal}
