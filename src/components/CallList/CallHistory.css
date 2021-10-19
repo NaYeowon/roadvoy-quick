@@ -40,9 +40,7 @@
   width: 320px;
   height: 100%;
   float: left;
-}
-.errand-settlement-date-list-wrapper table tbody:hover {
-  background-color: yellow;
+  background-color: ;
 }
 
 #errand-list-wrapper {
