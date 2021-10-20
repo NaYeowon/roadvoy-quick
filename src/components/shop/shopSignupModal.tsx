@@ -75,23 +75,30 @@ const ShopSignupModal = (props: ShopModalProps) => {
   };
 
   const ensureValidData = () => {
+    const password =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{8,20}$/;
+    const company = /[a-zA-Zㄱ-ㅎ|ㅏ-ㅣ|가-힣0-9]{2,}$/;
+    const mail =
+      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    const bizRegNo = /[(0-9)|-]{12,}$/;
+    const corpNo = /[(0-9)|-]{14}$/;
+
     if (!form) {
       throw new Error("데이터를 찾지 못했습니다.");
     }
-
-    if (!form.acCompany) {
-      throw new Error("가맹점명을 입력하세요");
+    if (!form.acCompany || !company.test(form.acCompany)) {
+      throw new Error("가맹점명을 영어 또는 한글로 2자리 이상 입력해주세요");
     }
-    if (!form.acPassword) {
-      throw new Error("비밀번호를 입력하세요");
+    if (!form.acPassword || !password.test(form.acPassword)) {
+      throw new Error("비밀번호를 8~20자리의 숫자,특수문자,영문 형태로 입력해주세요");
     }
-    if (!form.acBizRegNo) {
-      throw new Error("사업자번호를 입력하세요");
+    if (!form.acBizRegNo || !bizRegNo.test(form.acBizRegNo)) {
+      throw new Error("사업자등록번호(10자리)를 입력하세요");
     }
-    if (!form.acEmailAddress) {
-      throw new Error("E-mail주소를 입력하세요");
+    if (!form.acEmailAddress || !mail.test(form.acEmailAddress)) {
+      throw new Error("이메일 형식을 확인해주세요");
     }
-    if (!form.acBizCondition || !form.acBizType) {
+    if (!form.acBizCondition && !form.acBizType) {
       throw new Error("업태 또는 업종을 입력하세요");
     }
     if (!form.acOldAddress) {
@@ -112,11 +119,8 @@ const ShopSignupModal = (props: ShopModalProps) => {
     if (!form.acBankAccount) {
       throw new Error("주거래은행 계좌번호를 입력하세요");
     }
-    if (!form.acAccHoldName) {
-      throw new Error("주거래은행 예금주를 입력하세요");
-    }
-    if (form.acAccHoldName !== form.acPresident) {
-      throw new Error("주거래은행 예금주와 대표자명이 다릅니다");
+    if (!form.acAccHoldName || !(form.acAccHoldName === form.acPresident)) {
+      throw new Error("주거래 은행 예금주는 대표자명과 동일해야합니다");
     }
   };
 

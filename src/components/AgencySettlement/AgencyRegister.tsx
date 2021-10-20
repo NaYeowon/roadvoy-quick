@@ -99,9 +99,6 @@ const AgencyRegister = (props: AgencyProps) => {
     if (!form.acCorpNo || !corpNo.test(form.acCorpNo)) {
       throw new Error("법인등록번호(13자리)를 입력하세요");
     }
-    if (!form.acCorpNo) {
-      throw new Error("법인등록번호를 입력하세요");
-    }
     if (!form.acEmailAddress || !mail.test(form.acEmailAddress)) {
       throw new Error("이메일 형식을 확인해주세요");
     }
