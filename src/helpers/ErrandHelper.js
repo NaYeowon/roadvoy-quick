@@ -32,13 +32,13 @@ class ErrandHelper {
             {stErrand.acOriginOldAddr} {stErrand.acOriginAddrDesc}
           </div>
           <div>
+            <Tag color="purple">경유지1</Tag>
+            {stErrand.acStop1OldAddr} {stErrand.acStop1OldAddr}
+          </div>
+          <div>
             <Tag color="purple">목적지</Tag>
             {stErrand.acDestOldAddr}
             {stErrand.acDestAddrDesc}
-          </div>
-          <div>
-            <Tag color="purple">경유지1</Tag>
-            {stErrand.acStop1OldAddr} {stErrand.acStop1OldAddr}
           </div>
         </div>
       );
@@ -50,17 +50,17 @@ class ErrandHelper {
             {stErrand.acOriginOldAddr} {stErrand.acOriginAddrDesc}
           </div>
           <div>
-            <Tag color="purple">목적지</Tag>
-            {stErrand.acDestOldAddr}
-            {stErrand.acDestAddrDesc}
-          </div>
-          <div>
             <Tag color="purple">경유지1</Tag>
             {stErrand.acStop1OldAddr} {stErrand.acStop1AddrDesc}
           </div>
           <div>
             <Tag color="purple">경유지2</Tag>
             {stErrand.acStop2OldAddr} {stErrand.acStop2AddrDesc}
+          </div>
+          <div>
+            <Tag color="purple">목적지</Tag>
+            {stErrand.acDestOldAddr}
+            {stErrand.acDestAddrDesc}
           </div>
         </div>
       );
