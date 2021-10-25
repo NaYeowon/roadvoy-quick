@@ -322,6 +322,7 @@ const AgencyRegister = (props: AgencyProps) => {
               <Input
                 prefix={<PhoneOutlined />}
                 name="acPhoneNo"
+                value={form.acPhoneNo}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setForm({
                     ...form,
