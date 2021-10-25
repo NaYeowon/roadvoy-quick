@@ -1,10 +1,9 @@
 /* eslint-disable */
-import * as React from "react";
 import { useState, useEffect } from "react";
 
 import Header from "../Layout/Header";
 
-import { Button, message, Modal, PageHeader, Table, Tag } from "antd";
+import { message, PageHeader, Table } from "antd";
 import "antd/dist/antd.css";
 import axios from "axios";
 import { ColumnsType } from "antd/lib/table";
@@ -12,10 +11,9 @@ import MemberHelper from "src/helpers/MemberHelper";
 
 import { costFormat } from "../../util/FormatUtil";
 import LoginHelper from "../../pages/shared/LoginHelper";
-import { RiderInfo, RiderSignUpRequest } from "../shop/types";
+import { RiderSignUpRequest } from "../shop/types";
 import RiderDetail from "./RiderDetail";
 import { MemberGroupSelector } from "../Member";
-import riderState from "./riderState";
 
 const columns: ColumnsType<RiderSignUpRequest> = [
   {
