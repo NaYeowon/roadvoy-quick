@@ -41,7 +41,7 @@ const RiderRegister = (props: Props) => {
     ulLatiPos: 0,
     ulLongPos: 0,
     ucTaxInvoType: 0,
-    ucBankCode: 0,
+    usBankCode: 0,
     acWithdrawPassword: "",
     acBankAccount: "",
     acAccHoldName: "",
@@ -52,8 +52,8 @@ const RiderRegister = (props: Props) => {
     lCourierDeposit: 0,
     lCallUnitPrice: 0,
     conCallLimit: 0,
-    cManagerFlag: "",
-    cReClaimFlag: "",
+    cManagerFlag: 0,
+    cReClaimFlag: 0,
     acAllocRemark: "",
     acRemark: "",
   });
@@ -66,20 +66,38 @@ const RiderRegister = (props: Props) => {
   };
 
   const ensureValidData = () => {
+    const userId = /^[a-zA-Z0-9]{6,20}$/;
+    const password =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{8,20}$/;
+    const name = /[a-zA-Zㄱ-ㅎ|ㅏ-ㅣ|가-힣]{2,}$/;
+    const bankAccount = /[(0-9)]{9,15}$/;
+
     if (!form) {
       throw new Error("데이터를 찾지 못했습니다.");
     }
-    if (!form.acPassword) {
-      throw new Error("비밀번호를 입력해주세요");
+    if (!form.acUserId || !userId.test(form.acUserId)) {
+      throw new Error("회원ID를 6~20자리의 숫자, 영문자 형태로 입력해주세요");
     }
-    if (!form.acPresident) {
-      throw new Error("이름을 입력해주세요");
+    if (!form.acPassword || !password.test(form.acPassword)) {
+      throw new Error("비밀번호를 8~20자리의 숫자,특수문자,영문 형태로 입력해주세요");
     }
-    // if(!form.acNewAddress) {
-    //   throw new Error('주소를 입력해주세요')
-    // }
+    if (!form.acPresident || !name.test(form.acPresident)) {
+      throw new Error("이름을 2글자 이상 입력해주세요");
+    }
+    if (!form.acCellNo) {
+      throw new Error("휴대폰번호를 입력해주세요");
+    }
+    if (!form.acOldAddress) {
+      throw new Error("주소를 입력해주세요");
+    }
     if (!form.acBankAccount) {
       throw new Error("주거래은행 계좌번호를 선택해주세요");
+    }
+    if (!form.acWithdrawPassword || !password.test(form.acWithdrawPassword)) {
+      throw new Error("출금비밀번호를 8자리 이내의 숫자,특수문자,영문 형태로 입력해주세요");
+    }
+    if (!form.acBankAccount || !bankAccount.test(form.acBankAccount)) {
+      throw new Error("주거래 계좌번호를 9~15자리의 숫자로 입력해주세요");
     }
     if (form.acAccHoldName !== form.acPresident) {
       throw new Error("주거래은행 예금주가 대표자명과 다릅니다");
@@ -92,7 +110,10 @@ const RiderRegister = (props: Props) => {
       const response = await api({
         method: "post",
         url: "/agency/rider/execute-command/signup.php",
-        data: form,
+        data: {
+          ...form,
+          acCellNo: form.acCellNo?.replace("-", ""),
+        },
       });
       console.log(response);
       window.close();
@@ -146,6 +167,41 @@ const RiderRegister = (props: Props) => {
       ucMemCourId: Number(params.ucMemCourId),
     };
   };
+
+  const Days = [
+    "1일",
+    "2일",
+    "3일",
+    "4일",
+    "5일",
+    "6일",
+    "7일",
+    "8일",
+    "9일",
+    "10일",
+    "11일",
+    "12일",
+    "13일",
+    "14일",
+    "15일",
+    "16일",
+    "17일",
+    "18일",
+    "19일",
+    "20일",
+    "21일",
+    "22일",
+    "23일",
+    "24일",
+    "25일",
+    "26일",
+    "27일",
+    "28일",
+    "29일",
+    "30일",
+    "31일",
+  ];
+
   return (
     <>
       <TitleCol>기사 {isUpdate() ? "수정" : "등록"}</TitleCol>
@@ -194,7 +250,37 @@ const RiderRegister = (props: Props) => {
                   name="acResRegNo"
                   value={form.acResRegNo}
                   onChange={e => setForm({ ...form, acResRegNo: e.target.value })}
+                  maxLength={4}
+                  suffix="년"
+                  style={{ width: "33.3%" }}
                 />
+                <Select
+                  //onChange={e => setForm({ ...form, acResRegNo: String(e) })}
+                  style={{ width: "33.3%" }}
+                >
+                  <Option value="1">1월</Option>
+                  <Option value="2">2월</Option>
+                  <Option value="3">3월</Option>
+                  <Option value="4">4월</Option>
+                  <Option value="5">5월</Option>
+                  <Option value="6">6월</Option>
+                  <Option value="7">7월</Option>
+                  <Option value="8">8월</Option>
+                  <Option value="9">9월</Option>
+                  <Option value="10">10월</Option>
+                  <Option value="11">11월</Option>
+                  <Option value="12">12월</Option>
+                </Select>
+                <Select
+                  //onChange={e => setForm({ ...form, acResRegNo: String(e) })}
+                  style={{ width: "33.3%" }}
+                >
+                  {Days.map((date, index) => (
+                    <Option key={index} value={date}>
+                      {date}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
               <Form.Item label="휴대폰번호">
                 <Input
@@ -206,10 +292,7 @@ const RiderRegister = (props: Props) => {
                       ...form,
                       acCellNo: e.target.value
                         .replace(/[^0-9]/g, "")
-                        .replace(
-                          /(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/,
-                          "$1-$2-$3"
-                        )
+                        .replace(/(^010|^016|^019|^018)([0-9]+)([0-9]{4})/, "$1-$2-$3")
                         .replace("--", "-"),
                     });
                   }}
@@ -253,14 +336,6 @@ const RiderRegister = (props: Props) => {
                   onChange={e => setForm({ ...form, acAddressDesc: e.target.value })}
                 />
               </Form.Item>
-
-              <Form.Item label="생년월일">
-                <Input
-                  name="acResRegNo"
-                  value={form.acResRegNo}
-                  onChange={e => setForm({ ...form, acResRegNo: e.target.value })}
-                />
-              </Form.Item>
               <Form.Item label="세금계산서 발행">
                 <Checkbox
                   style={{ float: "left" }}
@@ -271,11 +346,11 @@ const RiderRegister = (props: Props) => {
               </Form.Item>
               <Form.Item label="주거래은행">
                 <Select
-                  defaultValue={form.ucBankCode}
+                  defaultValue={form.usBankCode}
                   onChange={e =>
                     setForm({
                       ...form,
-                      ucBankCode: Number(e),
+                      usBankCode: Number(e),
                     })
                   }
                 >
@@ -304,6 +379,7 @@ const RiderRegister = (props: Props) => {
                   name="acBankAccount"
                   value={form.acBankAccount}
                   onChange={e => setForm({ ...form, acBankAccount: e.target.value })}
+                  maxLength={15}
                 />
               </Form.Item>
               <Form.Item label="주거래 예금주">
@@ -345,7 +421,7 @@ const RiderRegister = (props: Props) => {
                 />
               </Form.Item>
 
-              <Form.Item label="기사구분">
+              <Form.Item label="기사구분" style={{ paddingTop: "7%" }}>
                 <Select
                   value={form.ucCourierTag}
                   onChange={e => setForm({ ...form, ucCourierTag: Number(e) })}

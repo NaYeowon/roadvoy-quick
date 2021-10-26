@@ -258,7 +258,7 @@ export interface RiderSignUpRequest {
   ulLatiPos: number;
   ulLongPos: number;
   ucTaxInvoType: number;
-  ucBankCode: number;
+  usBankCode: number;
   acBankAccount: string;
   acWithdrawPassword: string;
   acAccHoldName: string;
@@ -269,8 +269,8 @@ export interface RiderSignUpRequest {
   lCourierDeposit: number;
   lCallUnitPrice: number;
   conCallLimit: number;
-  cManagerFlag: string;
-  cReClaimFlag: string;
+  cManagerFlag: number;
+  cReClaimFlag: number;
   acAllocRemark: string;
   acRemark: string;
 }
