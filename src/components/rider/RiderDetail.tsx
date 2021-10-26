@@ -1,12 +1,15 @@
-import { Button, Modal, Popconfirm, Row } from "antd";
+import { Button, message, Modal, Popconfirm, Row } from "antd";
+import api from "src/config/axios";
 import MemberHelper from "src/helpers/MemberHelper";
 import { AddressDaumMapComponent } from "src/util/AddressDaumMapComponent";
 import { BankCode } from "src/util/BankCode";
 import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
+import { MemberId } from "src/domain/Member/model";
 
 import { CallDetailShopTitle } from "../CallList/Modal/CallDetailShopTitle";
 import { CallDetailModalShopName } from "../CallList/Modal/styles";
 import { RiderSignUpRequest } from "../shop/types";
+import { AxiosError } from "axios";
 
 interface RiderModalProps {
   onOk: () => void;
@@ -25,6 +28,28 @@ function riderDetail(props: RiderModalProps) {
     onOk();
   };
 
+  const handleClickCancelErrand = async () => {
+    try {
+      if (!rider) return;
+
+      await api({
+        method: "post",
+        url: "/agency/rider/execute-command/leave.php",
+        data: {
+          ucAreaNo: rider.ucAreaNo,
+          ucDistribId: rider.ucDistribId,
+          ucAgencyId: rider.ucAgencyId,
+          ucMemCourId: rider.ucMemCourId,
+        },
+      });
+
+      message.success("탈퇴되었습니다.");
+      onOk();
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
   return (
     <>
       <Modal title="기사상세" onCancel={handleCancel} onOk={handleOk} visible={visible}>
@@ -47,7 +72,7 @@ function riderDetail(props: RiderModalProps) {
               title="주거래은행 계좌번호"
               value={
                 <BankCode
-                  ucBankCode={Number(rider?.ucBankCode)}
+                  ucBankCode={Number(rider?.usBankCode)}
                   acBankAccount={rider?.acBankAccount ?? ""}
                 />
               }
@@ -94,7 +119,7 @@ function riderDetail(props: RiderModalProps) {
           </Button>
           <Popconfirm
             title="탈퇴하시겠습니까?"
-            //onConfirm={handleClickCancelErrand}
+            onConfirm={handleClickCancelErrand}
             okText="네"
             cancelText="아니요"
           >
