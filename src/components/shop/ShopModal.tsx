@@ -28,6 +28,27 @@ function ShopModal(props: ShopModalProps) {
     onOk();
   };
 
+  const handleClickCancelErrand = async () => {
+    try {
+      if (!shop) return;
+
+      await api({
+        method: "post",
+        url: "/agency/shop/execute-command/leave.php",
+        data: {
+          ucAreaNo: shop.ucAreaNo,
+          ucDistribId: shop.ucDistribId,
+          ucAgencyId: shop.ucAgencyId,
+          ucMemCourId: shop.ucMemCourId,
+        },
+      });
+      message.success("탈퇴되었습니다.");
+      onOk();
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
   return (
     <>
       <Modal title="상점상세" onCancel={handleCancel} onOk={handleOk} visible={visible}>
@@ -105,7 +126,7 @@ function ShopModal(props: ShopModalProps) {
           </Button>
           <Popconfirm
             title="탈퇴하시겠습니까?"
-            //onConfirm={handleClickCancelErrand}
+            onConfirm={handleClickCancelErrand}
             okText="네"
             cancelText="아니요"
           >
