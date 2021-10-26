@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as React from "react";
-import { useState } from "react";
-import { Input, Row, Col, Select, Button, message, Form, Popconfirm } from "antd";
+import { useEffect, useState } from "react";
+import { Input, Row, Col, Select, Button, message, Form, Popconfirm, Result } from "antd";
 import { PhoneOutlined } from "@ant-design/icons";
 import { AxiosError } from "axios";
 import "./RiderSettlementList.css";
@@ -71,6 +71,8 @@ const RiderRegister = (props: Props) => {
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{8,20}$/;
     const name = /[a-zA-Zㄱ-ㅎ|ㅏ-ㅣ|가-힣]{2,}$/;
     const bankAccount = /[(0-9)]{9,15}$/;
+    const withdrawPassword =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{,8}$/;
 
     if (!form) {
       throw new Error("데이터를 찾지 못했습니다.");
@@ -93,7 +95,7 @@ const RiderRegister = (props: Props) => {
     if (!form.acBankAccount) {
       throw new Error("주거래은행 계좌번호를 선택해주세요");
     }
-    if (!form.acWithdrawPassword || !password.test(form.acWithdrawPassword)) {
+    if (!form.acWithdrawPassword || !withdrawPassword.test(form.acWithdrawPassword)) {
       throw new Error("출금비밀번호를 8자리 이내의 숫자,특수문자,영문 형태로 입력해주세요");
     }
     if (!form.acBankAccount || !bankAccount.test(form.acBankAccount)) {
@@ -123,6 +125,23 @@ const RiderRegister = (props: Props) => {
     }
   };
 
+  const executeUpdateSignUp = async () => {
+    try {
+      ensureValidData();
+
+      await api({
+        method: "post",
+        url: "/agency/rider/execute-command/modify.php",
+        data: {
+          ucAreaNo: form.ucAreaNo,
+          ucDistribId: form.ucDistribId,
+          ucAgencyId: form.ucAgencyId,
+          ucMemCourId: form.ucMemCourId,
+        },
+      });
+    } catch (e) {}
+  };
+
   const getUpdateForm = async (memberId: MemberId) => {
     try {
       const response = await api({
@@ -140,7 +159,7 @@ const RiderRegister = (props: Props) => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isUpdate()) {
       getUpdateForm(getUpdateMemberId());
     }
