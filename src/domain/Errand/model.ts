@@ -1,6 +1,7 @@
 export enum ErrandType {
   DIFFERENT_DESTINATION = 1,
   SAME = 2,
+  STOP = 3,
 }
 
 export enum PaymentMode {
