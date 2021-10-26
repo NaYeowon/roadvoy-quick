@@ -72,20 +72,22 @@ const AgencyRegister = (props: AgencyProps) => {
   };
 
   const ensureValidData = () => {
-    const userId = /^[a-zA-Z0-9]{6,20}$/;
+    const userId = /^[a-zA-Z][a-zA-Z0-9]{5,20}$/;
     const password =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{8,20}$/;
     const company = /[a-zA-Zㄱ-ㅎ|ㅏ-ㅣ|가-힣0-9]{2,}$/;
     const mail =
       /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     const bizRegNo = /[(0-9)|-]{12,}$/;
-    const corpNo = /[(0-9)|-]{14}$/;
+    const bankAccount = /[(0-9)]{9,15}$/;
 
     if (!form) {
       throw new Error("데이터를 찾지 못했습니다.");
     }
-    if (!form.ucMemCourId || !userId.test(form.ucMemCourId)) {
-      throw new Error("회원ID를 6~20자리의 숫자, 영문자 형태로 입력해주세요");
+    if (!userId.test(form.ucMemCourId)) {
+      throw new Error(
+        "회원ID를 6~20자리의 영문자, 숫자 형태로 입력해주세요(첫글자는 반드시 영문자로 입력)"
+      );
     }
     if (!form.acPassword || !password.test(form.acPassword)) {
       throw new Error("비밀번호를 8~20자리의 숫자,특수문자,영문 형태로 입력해주세요");
@@ -96,9 +98,6 @@ const AgencyRegister = (props: AgencyProps) => {
     if (!form.acBizRegNo || !bizRegNo.test(form.acBizRegNo)) {
       throw new Error("사업자등록번호(10자리)를 입력하세요");
     }
-    if (!form.acCorpNo || !corpNo.test(form.acCorpNo)) {
-      throw new Error("법인등록번호(13자리)를 입력하세요");
-    }
     if (!form.acEmailAddress || !mail.test(form.acEmailAddress)) {
       throw new Error("이메일 형식을 확인해주세요");
     }
@@ -108,8 +107,8 @@ const AgencyRegister = (props: AgencyProps) => {
     if (!form.acOldAddress) {
       throw new Error("주소를 입력해주세요");
     }
-    if (!form.acPresident) {
-      throw new Error("대표자명을 입력해주세요");
+    if (!form.acPresident || !company.test(form.acPresident)) {
+      throw new Error("대표자명을 영어 또는 한글로 2자리 이상 입력해주세요");
     }
     if (!form.acResRegNo) {
       throw new Error("생년월일을 입력해주세요");
@@ -117,8 +116,8 @@ const AgencyRegister = (props: AgencyProps) => {
     if (!form.usBankCode) {
       throw new Error("주거래 계좌번호를 선택하세요");
     }
-    if (!form.acBankAccount) {
-      throw new Error("주거래 계좌번호를 입력하세요");
+    if (!form.acBankAccount || !bankAccount.test(form.acBankAccount)) {
+      throw new Error("주거래 계좌번호를 9~15자리의 숫자로 입력해주세요");
     }
     if (!form.acAccHoldName || !(form.acAccHoldName === form.acPresident)) {
       throw new Error("주거래 은행 예금주는 대표자명과 동일해야합니다");
@@ -145,6 +144,39 @@ const AgencyRegister = (props: AgencyProps) => {
       message.error(error.message);
     }
   };
+  const Days = [
+    "1일",
+    "2일",
+    "3일",
+    "4일",
+    "5일",
+    "6일",
+    "7일",
+    "8일",
+    "9일",
+    "10일",
+    "11일",
+    "12일",
+    "13일",
+    "14일",
+    "15일",
+    "16일",
+    "17일",
+    "18일",
+    "19일",
+    "20일",
+    "21일",
+    "22일",
+    "23일",
+    "24일",
+    "25일",
+    "26일",
+    "27일",
+    "28일",
+    "29일",
+    "30일",
+    "31일",
+  ];
 
   return (
     <>
@@ -280,12 +312,39 @@ const AgencyRegister = (props: AgencyProps) => {
             <Form.Item label="생년월일">
               <Input
                 name="acResRegNo"
-                placeholder="ex)950716"
                 value={form.acResRegNo}
-                onChange={e => {
-                  setForm({ ...form, acResRegNo: e.target.value });
-                }}
+                onChange={e => setForm({ ...form, acResRegNo: e.target.value })}
+                maxLength={4}
+                suffix="년"
+                style={{ width: "33.3%" }}
               />
+              <Select
+                //onChange={e => setForm({ ...form, acResRegNo: String(e) })}
+                style={{ width: "33.3%" }}
+              >
+                <Option value="1">1월</Option>
+                <Option value="2">2월</Option>
+                <Option value="3">3월</Option>
+                <Option value="4">4월</Option>
+                <Option value="5">5월</Option>
+                <Option value="6">6월</Option>
+                <Option value="7">7월</Option>
+                <Option value="8">8월</Option>
+                <Option value="9">9월</Option>
+                <Option value="10">10월</Option>
+                <Option value="11">11월</Option>
+                <Option value="12">12월</Option>
+              </Select>
+              <Select
+                //onChange={e => setForm({ ...form, acResRegNo: String(e) })}
+                style={{ width: "33.3%" }}
+              >
+                {Days.map((date, index) => (
+                  <Option key={index} value={date}>
+                    {date}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
             <Form.Item label="휴대폰번호">
               <Input
@@ -297,13 +356,31 @@ const AgencyRegister = (props: AgencyProps) => {
                     ...form,
                     acCellNo: e.target.value
                       .replace(/[^0-9]/g, "")
+                      .replace(/(^010|^016|^019|^018)([0-9]+)([0-9]{4})/, "$1-$2-$3")
+                      .replace("--", "-"),
+                  });
+                }}
+                maxLength={13}
+              />
+            </Form.Item>
+            <Form.Item label="사업장 전화번호">
+              <Input
+                prefix={<PhoneOutlined />}
+                name="acPhoneNo"
+                value={form.acPhoneNo}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setForm({
+                    ...form,
+                    acPhoneNo: e.target.value
+                      .replace(/[^0-9]/g, "")
                       .replace(
-                        /(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/,
+                        /(^02|^051|^053|^032|^062|^042|^052|^044|^031|^033|^043|^041|^063|^061|^054|^055|^064)([0-9]+)([0-9]{4})/,
                         "$1-$2-$3"
                       )
                       .replace("--", "-"),
                   });
                 }}
+                maxLength={13}
               />
             </Form.Item>
           </Form>
@@ -318,25 +395,6 @@ const AgencyRegister = (props: AgencyProps) => {
               rate: 3.5,
             }}
           >
-            <Form.Item label="사업장 전화번호">
-              <Input
-                prefix={<PhoneOutlined />}
-                name="acPhoneNo"
-                value={form.acPhoneNo}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setForm({
-                    ...form,
-                    acPhoneNo: e.target.value
-                      .replace(/[^0-9]/g, "")
-                      .replace(
-                        /(^02|^0504|^0508|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})/,
-                        "$1-$2-$3"
-                      )
-                      .replace("--", "-"),
-                  });
-                }}
-              />
-            </Form.Item>
             <Form.Item label="세금계산서 발행">
               <Checkbox
                 style={{ float: "left" }}
@@ -379,6 +437,7 @@ const AgencyRegister = (props: AgencyProps) => {
                 name="acBankAccount"
                 value={form.acBankAccount}
                 onChange={e => setForm({ ...form, acBankAccount: e.target.value })}
+                maxLength={15}
               />
             </Form.Item>
             <Form.Item label="주거래 예금주">
@@ -457,7 +516,7 @@ const AgencyRegister = (props: AgencyProps) => {
                 />
               </span>
             </Form.Item>
-            <Form.Item label="대행 특이사항">
+            <Form.Item label="대행 특이사항" style={{ paddingTop: "7%" }}>
               <Input
                 name="allocRemark"
                 value={form.allocRemark}
