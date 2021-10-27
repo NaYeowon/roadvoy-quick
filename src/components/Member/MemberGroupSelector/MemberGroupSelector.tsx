@@ -1,6 +1,8 @@
 import { message, Row } from "antd";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
+import useLocalStorage from "src/hooks/useLocalStorage";
+import { LoginForm } from "src/pages/shared/Login";
 import api from "../../../config/axios";
 import { MemberIdDto } from "../../../domain/Member/model";
 import { MemberIdSelector } from "../MemberIdSelector";
@@ -146,11 +148,36 @@ export default function MemberGroupSelector() {
 
   return (
     <Row>
-      <MemberIdSelector key="area" memberIds={areas} onChange={handleChangeArea} />
-      <MemberIdSelector key="distrib" memberIds={distribs} onChange={handleChangeDistrib} />
-      <MemberIdSelector key="agency" memberIds={agencies} onChange={handleChangeAgency} />
-      <MemberIdSelector key="shop" memberIds={shops} onChange={handleChangeShop} />
-      <MemberIdSelector key="rider" memberIds={riders} onChange={handleChangeRider} />
+      <MemberIdSelector
+        memberType="AREA"
+        key="area"
+        memberIds={areas}
+        onChange={handleChangeArea}
+      />
+      <MemberIdSelector
+        memberType="DISTRIB"
+        key="distrib"
+        memberIds={distribs}
+        onChange={handleChangeDistrib}
+      />
+      <MemberIdSelector
+        memberType="AGENCY"
+        key="agency"
+        memberIds={agencies}
+        onChange={handleChangeAgency}
+      />
+      <MemberIdSelector
+        memberType="SHOP"
+        key="shop"
+        memberIds={shops}
+        onChange={handleChangeShop}
+      />
+      <MemberIdSelector
+        memberType="RIDER"
+        key="rider"
+        memberIds={riders}
+        onChange={handleChangeRider}
+      />
     </Row>
   );
 }
