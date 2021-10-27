@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input, Row, Col, Select, Button, message, Form, Popconfirm, Result } from "antd";
 import { PhoneOutlined } from "@ant-design/icons";
 import { AxiosError } from "axios";
@@ -72,7 +72,7 @@ const RiderRegister = (props: Props) => {
     const name = /[a-zA-Zㄱ-ㅎ|ㅏ-ㅣ|가-힣]{2,}$/;
     const bankAccount = /[(0-9)]{9,15}$/;
     const withdrawPassword =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{,8}$/;
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{0,8}$/;
 
     if (!form) {
       throw new Error("데이터를 찾지 못했습니다.");
@@ -103,6 +103,14 @@ const RiderRegister = (props: Props) => {
     }
     if (form.acAccHoldName !== form.acPresident) {
       throw new Error("주거래은행 예금주가 대표자명과 다릅니다");
+    }
+  };
+
+  const executeSignUp = () => {
+    if (isUpdate()) {
+      executeUpdateSignUp();
+    } else {
+      executeCreateSignUp();
     }
   };
 
@@ -139,7 +147,12 @@ const RiderRegister = (props: Props) => {
           ucMemCourId: form.ucMemCourId,
         },
       });
-    } catch (e) {}
+
+      window.close();
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
   };
 
   const getUpdateForm = async (memberId: MemberId) => {
@@ -152,6 +165,16 @@ const RiderRegister = (props: Props) => {
 
       setForm({
         ...(response.data.rider as RiderSignUpRequest),
+        acBankAccount: form.acBankAccount,
+        acCellNo: form.acCellNo,
+        acPresident: form.acPresident,
+        acUserId: form.acUserId,
+        cManagerFlag: form.cManagerFlag,
+        lCallUnitPrice: form.lCallUnitPrice,
+        lCourierDeposit: form.lCourierDeposit,
+        lCourierLease: form.lCourierLease,
+        ucCourierTag: form.ucCourierTag,
+        usBankCode: form.usBankCode,
       });
     } catch (e) {
       const error = e as AxiosError;
@@ -221,6 +244,16 @@ const RiderRegister = (props: Props) => {
     "31일",
   ];
 
+  const cellNoValidationMesage = useMemo(() => {
+    if (
+      form.acCellNo.length >= 3 &&
+      !["010", "016", "019", "018"].some(it => form.acCellNo.startsWith(it))
+    ) {
+      return "휴대폰번호를 입력해주세요";
+    } else {
+      return "";
+    }
+  }, [form.acCellNo]);
   return (
     <>
       <TitleCol>기사 {isUpdate() ? "수정" : "등록"}</TitleCol>
@@ -316,6 +349,9 @@ const RiderRegister = (props: Props) => {
                     });
                   }}
                 />
+                {cellNoValidationMesage && (
+                  <span style={{ color: "red" }}>{cellNoValidationMesage}</span>
+                )}
               </Form.Item>
               <Form.Item label="주소">
                 <Button
@@ -437,6 +473,7 @@ const RiderRegister = (props: Props) => {
                   type="password"
                   value={form.acWithdrawPassword}
                   onChange={e => setForm({ ...form, acWithdrawPassword: e.target.value })}
+                  maxLength={8}
                 />
               </Form.Item>
 
@@ -511,7 +548,7 @@ const RiderRegister = (props: Props) => {
                 title="기사를 등록하시겠습니까?"
                 okText="네"
                 cancelText="아니요"
-                onConfirm={executeCreateSignUp}
+                onConfirm={executeSignUp}
               >
                 <Button style={{ marginTop: "30px" }} type="primary">
                   {isUpdate() ? "수정" : "등록"}

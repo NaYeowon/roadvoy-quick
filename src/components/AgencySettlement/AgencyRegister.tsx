@@ -3,7 +3,7 @@
 import { Form, Input, Button, Row, Col, message, Select, Popconfirm, Checkbox } from "antd";
 import { PhoneOutlined } from "@ant-design/icons";
 import { RouteComponentProps } from "react-router";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { formItemLayout, TitleCol } from "../Order/Popup/styles";
 import { SearchAddress } from "../SearchAddress";
 import { IAddress } from "../SearchAddress/SearchAddress";
@@ -178,6 +178,45 @@ const AgencyRegister = (props: AgencyProps) => {
     "31일",
   ];
 
+  const cellNoValidationMesage = useMemo(() => {
+    if (
+      form.acCellNo.length >= 3 &&
+      !["010", "016", "019", "018"].some(it => form.acCellNo.startsWith(it))
+    ) {
+      return "휴대폰번호를 입력해주세요";
+    } else {
+      return "";
+    }
+  }, [form.acCellNo]);
+
+  const phoneNoValidationMesage = useMemo(() => {
+    if (
+      form.acPhoneNo.length >= 3 &&
+      ![
+        "02",
+        "051",
+        "053",
+        "032",
+        "062",
+        "042",
+        "052",
+        "044",
+        "031",
+        "033",
+        "043",
+        "041",
+        "063",
+        "061",
+        "054",
+        "055",
+        "064",
+      ].some(it => form.acPhoneNo.startsWith(it))
+    ) {
+      return "지역번호를 입력해주세요";
+    } else {
+      return "";
+    }
+  }, [form.acPhoneNo]);
   return (
     <>
       <Row style={{ borderBottom: "1px solid #f5f5f5" }}>
@@ -362,6 +401,9 @@ const AgencyRegister = (props: AgencyProps) => {
                 }}
                 maxLength={13}
               />
+              {cellNoValidationMesage && (
+                <span style={{ color: "red" }}>{cellNoValidationMesage}</span>
+              )}
             </Form.Item>
             <Form.Item label="사업장 전화번호">
               <Input
@@ -382,6 +424,9 @@ const AgencyRegister = (props: AgencyProps) => {
                 }}
                 maxLength={13}
               />
+              {phoneNoValidationMesage && (
+                <span style={{ color: "red" }}>{phoneNoValidationMesage}</span>
+              )}
             </Form.Item>
           </Form>
         </Col>

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, useEffect, useMemo, useState } from "react";
 import { Modal, Input, Button, Row, Col, message, Select, Checkbox, Form, Popconfirm } from "antd";
 import axios, { AxiosError } from "axios";
 import { PhoneOutlined } from "@ant-design/icons";
@@ -228,6 +228,45 @@ const ShopSignupModal = (props: ShopModalProps) => {
     "31일",
   ];
 
+  const cellNoValidationMesage = useMemo(() => {
+    if (
+      form.acCellNo.length >= 3 &&
+      !["010", "016", "019", "018"].some(it => form.acCellNo.startsWith(it))
+    ) {
+      return "휴대폰번호를 입력하세요";
+    } else {
+      return "";
+    }
+  }, [form.acCellNo]);
+  const phoneNoValidationMesage = useMemo(() => {
+    if (
+      form.acPhoneNo.length >= 3 &&
+      ![
+        "02",
+        "051",
+        "053",
+        "032",
+        "062",
+        "042",
+        "052",
+        "044",
+        "031",
+        "033",
+        "043",
+        "041",
+        "063",
+        "061",
+        "054",
+        "055",
+        "064",
+      ].some(it => form.acPhoneNo.startsWith(it))
+    ) {
+      return "지역번호를 입력해주세요";
+    } else {
+      return "";
+    }
+  }, [form.acPhoneNo]);
+
   return (
     <>
       <TitleCol>상점 {isUpdate() ? "수정" : "등록"}</TitleCol>
@@ -421,6 +460,9 @@ const ShopSignupModal = (props: ShopModalProps) => {
                     });
                   }}
                 />
+                {cellNoValidationMesage && (
+                  <span style={{ color: "red" }}>{cellNoValidationMesage}</span>
+                )}
               </Form.Item>
             </Form>
           </Col>
@@ -452,6 +494,9 @@ const ShopSignupModal = (props: ShopModalProps) => {
                     });
                   }}
                 />
+                {phoneNoValidationMesage && (
+                  <span style={{ color: "red" }}>{phoneNoValidationMesage}</span>
+                )}
               </Form.Item>
               <Form.Item label="세금계산서 발행">
                 <Checkbox
