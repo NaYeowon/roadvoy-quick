@@ -427,6 +427,7 @@ const OrderPopup = (props: Props) => {
                   acOriginOldAddr: place.acOldAddress,
                   acOriginNewAddr: place.acNewAddress,
                   acOriginAddrDesc: place.acAddressDesc,
+                  ucErrandType: ErrandType.DIFFERENT_DESTINATION,
                 });
               }}
               disabled={form.ucErrandType === ErrandType.SAME}
@@ -466,6 +467,7 @@ const OrderPopup = (props: Props) => {
                         acStop1OldAddr: place.acOldAddress,
                         acStop1NewAddr: place.acNewAddress,
                         acStop1AddrDesc: place.acAddressDesc,
+                        ucErrandType: ErrandType.STOP,
                       });
                     }}
                   />
@@ -502,6 +504,7 @@ const OrderPopup = (props: Props) => {
                         acStop2OldAddr: place.acOldAddress,
                         acStop2NewAddr: place.acNewAddress,
                         acStop2AddrDesc: place.acAddressDesc,
+                        ucErrandType: ErrandType.STOP,
                       });
                     }}
                   />
