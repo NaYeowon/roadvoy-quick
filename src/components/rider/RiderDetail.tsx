@@ -106,10 +106,7 @@ function riderDetail(props: RiderModalProps) {
           <Button
             onClick={() => {
               window.open(
-                `/RiderRegister?ucAreaNo=${rider?.ucAreaNo}&
-            ucDistribId=${rider?.ucDistribId}&
-            ucAgencyId=${rider?.ucAgencyId}&
-            ucMemCourId=${rider?.ucMemCourId}`,
+                `/RiderRegister?ucAreaNo=${rider?.ucAreaNo}&ucDistribId=${rider?.ucDistribId}&ucAgencyId=${rider?.ucAgencyId}&ucMemCourId=${rider?.ucMemCourId}`,
                 "_blank",
                 "top=100, left=500, width=1200, height=800"
               );

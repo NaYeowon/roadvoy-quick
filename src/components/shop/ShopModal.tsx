@@ -113,10 +113,7 @@ function ShopModal(props: ShopModalProps) {
           <Button
             onClick={() => {
               window.open(
-                `/shopSignupModal?ucAreaNo=${shop?.ucAreaNo}&
-            ucDistribId=${shop?.ucDistribId}&
-            ucAgencyId=${shop?.ucAgencyId}&
-            ucMemCourId=${shop?.ucMemCourId}`,
+                `/shopSignupModal?ucAreaNo=${shop?.ucAreaNo}&ucDistribId=${shop?.ucDistribId}&ucAgencyId=${shop?.ucAgencyId}&ucMemCourId=${shop?.ucMemCourId}`,
                 "_blank",
                 "top=100, left=500, width=1200, height=800"
               );
