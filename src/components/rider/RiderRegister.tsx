@@ -163,6 +163,7 @@ const RiderRegister = (props: Props) => {
           ucDistribId: form.ucDistribId,
           ucAgencyId: form.ucAgencyId,
           ucMemCourId: form.ucMemCourId,
+          acCellNo: form.acCellNo?.replace("-", ""),
         },
       });
 
