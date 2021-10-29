@@ -14,6 +14,7 @@ import queryString, { ParsedQuery } from "query-string";
 import { MemberId } from "src/domain/Member/model";
 import { SearchAddress } from "../SearchAddress";
 import { IAddress } from "../SearchAddress/SearchAddress";
+import { parseTwoDigitYear } from "moment";
 
 const { Option } = Select;
 
@@ -56,6 +57,9 @@ const RiderRegister = (props: Props) => {
     cReClaimFlag: 0,
     acAllocRemark: "",
     acRemark: "",
+    acTeamName: "",
+    ucCallRtrvTime: 0,
+    ucManagerCallRtrvTime: 0,
   });
 
   const [searchAddress, setSearchAddress] = useState(false);
@@ -103,6 +107,20 @@ const RiderRegister = (props: Props) => {
     }
     if (form.acAccHoldName !== form.acPresident) {
       throw new Error("주거래은행 예금주가 대표자명과 다릅니다");
+    }
+    if (form.acResRegNo.length === 8) {
+      const year = Number(form.acResRegNo.substring(0, 3));
+      const month = Number(form.acResRegNo.substring(4, 5));
+      let day = Number(form.acResRegNo.substring(6, 7));
+      console.log(year, month, day);
+
+      const monthOfDaySize = new Date(Number(year), Number(month), 0).getDate();
+      if (day > monthOfDaySize) {
+        throw new Error("overflow");
+      } else if (day < 1) {
+        throw new Error("");
+      } else if (!(1 <= month && month <= 12)) {
+      }
     }
   };
 
@@ -162,19 +180,11 @@ const RiderRegister = (props: Props) => {
         url: "/agency/rider/process-query/find-by-id.php",
         params: memberId,
       });
+      console.log(response.data);
 
       setForm({
-        ...(response.data.rider as RiderSignUpRequest),
-        acBankAccount: form.acBankAccount,
-        acCellNo: form.acCellNo,
-        acPresident: form.acPresident,
-        acUserId: form.acUserId,
-        cManagerFlag: form.cManagerFlag,
-        lCallUnitPrice: form.lCallUnitPrice,
-        lCourierDeposit: form.lCourierDeposit,
-        lCourierLease: form.lCourierLease,
-        ucCourierTag: form.ucCourierTag,
-        usBankCode: form.usBankCode,
+        ...(response.data.stRiderUpdateData as RiderSignUpRequest),
+        ...memberId,
       });
     } catch (e) {
       const error = e as AxiosError;
@@ -210,40 +220,6 @@ const RiderRegister = (props: Props) => {
     };
   };
 
-  const Days = [
-    "1일",
-    "2일",
-    "3일",
-    "4일",
-    "5일",
-    "6일",
-    "7일",
-    "8일",
-    "9일",
-    "10일",
-    "11일",
-    "12일",
-    "13일",
-    "14일",
-    "15일",
-    "16일",
-    "17일",
-    "18일",
-    "19일",
-    "20일",
-    "21일",
-    "22일",
-    "23일",
-    "24일",
-    "25일",
-    "26일",
-    "27일",
-    "28일",
-    "29일",
-    "30일",
-    "31일",
-  ];
-
   const cellNoValidationMesage = useMemo(() => {
     if (
       form.acCellNo.length >= 3 &&
@@ -254,6 +230,9 @@ const RiderRegister = (props: Props) => {
       return "";
     }
   }, [form.acCellNo]);
+
+  //
+
   return (
     <>
       <TitleCol>기사 {isUpdate() ? "수정" : "등록"}</TitleCol>
@@ -270,7 +249,9 @@ const RiderRegister = (props: Props) => {
             >
               <Form.Item label="회원번호">
                 {isUpdate() ? (
-                  <span>{`${form.ucAreaNo} - ${form.ucDistribId} - ${form.ucAgencyId} - ${form.ucMemCourId}`}</span>
+                  <span
+                    style={{ float: "left" }}
+                  >{`${form.ucAreaNo} - ${form.ucDistribId} - ${form.ucAgencyId} - ${form.ucMemCourId}`}</span>
                 ) : (
                   <></>
                 )}
@@ -297,42 +278,14 @@ const RiderRegister = (props: Props) => {
                   onChange={e => setForm({ ...form, acPresident: e.target.value })}
                 />
               </Form.Item>
+
               <Form.Item label="생년월일">
                 <Input
                   name="acResRegNo"
                   value={form.acResRegNo}
                   onChange={e => setForm({ ...form, acResRegNo: e.target.value })}
-                  maxLength={4}
-                  suffix="년"
-                  style={{ width: "33.3%" }}
+                  maxLength={8}
                 />
-                <Select
-                  //onChange={e => setForm({ ...form, acResRegNo: String(e) })}
-                  style={{ width: "33.3%" }}
-                >
-                  <Option value="1">1월</Option>
-                  <Option value="2">2월</Option>
-                  <Option value="3">3월</Option>
-                  <Option value="4">4월</Option>
-                  <Option value="5">5월</Option>
-                  <Option value="6">6월</Option>
-                  <Option value="7">7월</Option>
-                  <Option value="8">8월</Option>
-                  <Option value="9">9월</Option>
-                  <Option value="10">10월</Option>
-                  <Option value="11">11월</Option>
-                  <Option value="12">12월</Option>
-                </Select>
-                <Select
-                  //onChange={e => setForm({ ...form, acResRegNo: String(e) })}
-                  style={{ width: "33.3%" }}
-                >
-                  {Days.map((date, index) => (
-                    <Option key={index} value={date}>
-                      {date}
-                    </Option>
-                  ))}
-                </Select>
               </Form.Item>
               <Form.Item label="휴대폰번호">
                 <Input
