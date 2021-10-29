@@ -127,8 +127,29 @@ const ShopSignupModal = (props: ShopModalProps) => {
     if (!form.acAccHoldName || !(form.acAccHoldName === form.acPresident)) {
       throw new Error("주거래 은행 예금주는 대표자명과 동일해야합니다");
     }
+    if (form.acResRegNo.length === 8) {
+      const year = Number(form.acResRegNo.substring(0, 3));
+      const month = Number(form.acResRegNo.substring(4, 5));
+      let day = Number(form.acResRegNo.substring(6, 7));
+      console.log(year, month, day);
+
+      const monthOfDaySize = new Date(Number(year), Number(month), 0).getDate();
+      if (day > monthOfDaySize) {
+        throw new Error("overflow");
+      } else if (day < 1) {
+        throw new Error("");
+      } else if (!(1 <= month && month <= 12)) {
+      }
+    }
   };
 
+  const executeSignUp = () => {
+    if (isUpdate()) {
+      executeUpdateSignUp();
+    } else {
+      executeCreateSignUp();
+    }
+  };
   const executeCreateSignUp = async () => {
     try {
       ensureValidData();
@@ -149,6 +170,28 @@ const ShopSignupModal = (props: ShopModalProps) => {
     }
   };
 
+  const executeUpdateSignUp = async () => {
+    try {
+      ensureValidData();
+
+      await api({
+        method: "post",
+        url: "/agency/shop/execute-command/modify.php",
+        data: {
+          ucAreaNo: form.ucAreaNo,
+          ucDistribId: form.ucDistribId,
+          ucAgencyId: form.ucAgencyId,
+          ucMemCourId: form.ucMemCourId,
+        },
+      });
+
+      window.close();
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
+
   const getUpdateForm = async (memberId: MemberId) => {
     try {
       const response = await api({
@@ -158,7 +201,8 @@ const ShopSignupModal = (props: ShopModalProps) => {
       });
 
       setForm({
-        ...(response.data.shop as ShopSignUpRequest),
+        ...(response.data.stMember as ShopSignUpRequest),
+        ...memberId,
       });
     } catch (e) {
       const error = e as AxiosError;
@@ -194,46 +238,12 @@ const ShopSignupModal = (props: ShopModalProps) => {
     };
   };
 
-  const Days = [
-    "1일",
-    "2일",
-    "3일",
-    "4일",
-    "5일",
-    "6일",
-    "7일",
-    "8일",
-    "9일",
-    "10일",
-    "11일",
-    "12일",
-    "13일",
-    "14일",
-    "15일",
-    "16일",
-    "17일",
-    "18일",
-    "19일",
-    "20일",
-    "21일",
-    "22일",
-    "23일",
-    "24일",
-    "25일",
-    "26일",
-    "27일",
-    "28일",
-    "29일",
-    "30일",
-    "31일",
-  ];
-
   const cellNoValidationMesage = useMemo(() => {
     if (
       form.acCellNo.length >= 3 &&
       !["010", "016", "019", "018"].some(it => form.acCellNo.startsWith(it))
     ) {
-      return "휴대폰번호를 입력하세요";
+      return "휴대폰번호를 입력해주세요";
     } else {
       return "";
     }
@@ -283,7 +293,9 @@ const ShopSignupModal = (props: ShopModalProps) => {
             >
               <Form.Item label="회원번호">
                 {isUpdate() ? (
-                  <span>{`${form.ucAreaNo} - ${form.ucDistribId} - ${form.ucAgencyId} - ${form.ucMemCourId}`}</span>
+                  <span
+                    style={{ float: "left" }}
+                  >{`${form.ucAreaNo} - ${form.ucDistribId} - ${form.ucAgencyId} - ${form.ucMemCourId}`}</span>
                 ) : (
                   <></>
                 )}
@@ -413,37 +425,8 @@ const ShopSignupModal = (props: ShopModalProps) => {
                   name="acResRegNo"
                   value={form.acResRegNo}
                   onChange={e => setForm({ ...form, acResRegNo: e.target.value })}
-                  maxLength={4}
-                  suffix="년"
-                  style={{ width: "33.3%" }}
+                  maxLength={8}
                 />
-                <Select
-                  //onChange={e => setForm({ ...form, acResRegNo: String(e) })}
-                  style={{ width: "33.3%" }}
-                >
-                  <Option value="1">1월</Option>
-                  <Option value="2">2월</Option>
-                  <Option value="3">3월</Option>
-                  <Option value="4">4월</Option>
-                  <Option value="5">5월</Option>
-                  <Option value="6">6월</Option>
-                  <Option value="7">7월</Option>
-                  <Option value="8">8월</Option>
-                  <Option value="9">9월</Option>
-                  <Option value="10">10월</Option>
-                  <Option value="11">11월</Option>
-                  <Option value="12">12월</Option>
-                </Select>
-                <Select
-                  //onChange={e => setForm({ ...form, acResRegNo: String(e) })}
-                  style={{ width: "33.3%" }}
-                >
-                  {Days.map((date, index) => (
-                    <Option key={index} value={date}>
-                      {date}
-                    </Option>
-                  ))}
-                </Select>
               </Form.Item>
               <Form.Item label="휴대폰번호">
                 <Input
@@ -652,7 +635,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
                 title="상점을 등록하시겠습니까?"
                 okText="네"
                 cancelText="아니요"
-                onConfirm={executeCreateSignUp}
+                onConfirm={executeSignUp}
               >
                 <Button style={{ marginTop: "30px" }} type="primary">
                   {isUpdate() ? "수정" : "등록"}
