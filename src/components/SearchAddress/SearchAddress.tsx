@@ -32,8 +32,10 @@ export default function SearchAddress(props: ISearchAddressProps) {
 
     const kakao: KakaoAddress = kakaos[0];
 
+    console.log(data);
     onSuccess({
-      acOldAddress: data.jibunAddress,
+      acOldAddress:
+        data.jibunAddress && data.jibunAddress.length > 0 ? data.jibunAddress : data.address,
       acNewAddress: data.roadAddress,
       acAddressDesc: data.buildingName,
       ulLatiPos: kakao.ulLatiPos,
