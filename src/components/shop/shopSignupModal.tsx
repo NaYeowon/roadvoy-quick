@@ -178,6 +178,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
         method: "post",
         url: "/agency/shop/execute-command/modify.php",
         data: {
+          ...form,
           ucAreaNo: form.ucAreaNo,
           ucDistribId: form.ucDistribId,
           ucAgencyId: form.ucAgencyId,

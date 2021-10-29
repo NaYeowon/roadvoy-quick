@@ -160,10 +160,11 @@ const RiderRegister = (props: Props) => {
         method: "post",
         url: "/agency/rider/execute-command/modify.php",
         data: {
-          ucAreaNo: form.ucAreaNo,
-          ucDistribId: form.ucDistribId,
-          ucAgencyId: form.ucAgencyId,
-          ucMemCourId: form.ucMemCourId,
+          // ucAreaNo: form.ucAreaNo,
+          // ucDistribId: form.ucDistribId,
+          // ucAgencyId: form.ucAgencyId,
+          // ucMemCourId: form.ucMemCourId,
+          ...form,
           acCellNo: form.acCellNo?.replace("-", ""),
         },
       });
