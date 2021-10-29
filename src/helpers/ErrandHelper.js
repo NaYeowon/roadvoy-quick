@@ -32,7 +32,7 @@ class ErrandHelper {
             {stErrand.acOriginOldAddr} {stErrand.acOriginAddrDesc}
           </div>
           <div>
-            <Tag color="purple">경유지1</Tag>
+            <Tag color="blue">경유지1</Tag>
             {stErrand.acStop1OldAddr} {stErrand.acStop1OldAddr}
           </div>
           <div>
