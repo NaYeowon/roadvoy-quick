@@ -15,6 +15,7 @@ import { MemberId } from "src/domain/Member/model";
 import { SearchAddress } from "../SearchAddress";
 import { IAddress } from "../SearchAddress/SearchAddress";
 import { parseTwoDigitYear } from "moment";
+import { ManagerFlag } from "src/domain/Errand/model";
 
 const { Option } = Select;
 
@@ -53,7 +54,7 @@ const RiderRegister = (props: Props) => {
     lCourierDeposit: 0,
     lCallUnitPrice: 0,
     conCallLimit: 0,
-    cManagerFlag: 0,
+    cManagerFlag: "",
     cReClaimFlag: 0,
     acAllocRemark: "",
     acRemark: "",
@@ -73,7 +74,7 @@ const RiderRegister = (props: Props) => {
     const userId = /^[a-zA-Z0-9]{6,20}$/;
     const password =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{8,20}$/;
-    const name = /[a-zA-Zㄱ-ㅎ|ㅏ-ㅣ|가-힣]{2,}$/;
+    const name = /[a-zA-Zㄱ-ㅎ|ㅏ-ㅣ|가-힣]{2,50}$/;
     const bankAccount = /[(0-9)]{9,15}$/;
     const withdrawPassword =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{0,8}$/;
@@ -473,7 +474,13 @@ const RiderRegister = (props: Props) => {
                   style={{ float: "left" }}
                   name="cManagerFlag"
                   value={form.cManagerFlag}
-                  onChange={e => setForm({ ...form, cManagerFlag: e.target.value })}
+                  onChange={e =>
+                    setForm({
+                      ...form,
+                      cManagerFlag: e.target.checked ? ManagerFlag.YES : ManagerFlag.NO,
+                    })
+                  }
+                  checked={form.cManagerFlag === ManagerFlag.YES}
                 />
               </Form.Item>
               <Form.Item label="출금 가능여부">

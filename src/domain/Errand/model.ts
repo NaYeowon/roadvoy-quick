@@ -22,6 +22,10 @@ export enum ErrandAllocType {
   FORCE_DISPATCH = 2,
 }
 
+export enum ManagerFlag {
+  YES = "Y",
+  NO = "N",
+}
 export type ErrandId = number;
 export interface IErrandOrderRequest {
   ucAreaNo: number;
