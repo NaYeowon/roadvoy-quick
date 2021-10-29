@@ -269,10 +269,13 @@ export interface RiderSignUpRequest {
   lCourierDeposit: number;
   lCallUnitPrice: number;
   conCallLimit: number;
-  cManagerFlag: number;
+  cManagerFlag: string;
   cReClaimFlag: number;
   acAllocRemark: string;
   acRemark: string;
+  acTeamName: string;
+  ucCallRtrvTime: number;
+  ucManagerCallRtrvTime: number;
 }
 
 class RiderInfo1 {
