@@ -72,12 +72,7 @@ export default function Login() {
     // ===============================.
   }
   return (
-    <Row
-      type="flex"
-      justify="center"
-      align="middle"
-      style={{ height: "100%", paddingTop: "300px" }}
-    >
+    <Row justify="center" align="middle" style={{ height: "100%", paddingTop: "300px" }}>
       <Card style={{ width: "360px" }}>
         <Row style={{ marginBottom: "12px" }}>
           <Col span={24}>
