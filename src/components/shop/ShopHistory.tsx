@@ -3,9 +3,12 @@ import { message, PageHeader, Table } from "antd";
 import MemberHelper from "src/helpers/MemberHelper";
 import { costFormat } from "src/util/FormatUtil";
 import Header from "../Layout/Header";
-import { ShopInfo } from "./types";
+import { ShopDTO, ShopInfo } from "./types";
+import api from "src/config/axios";
+import LoginHelper from "src/pages/shared/LoginHelper";
+import { useEffect, useState } from "react";
 
-const columns: ColumnsType<ShopInfo> = [
+const columns: ColumnsType<ShopDTO> = [
   {
     title: "계정정보",
     children: [
@@ -13,7 +16,7 @@ const columns: ColumnsType<ShopInfo> = [
         title: "아이디",
         dataIndex: "ucMemCourId",
         width: 120,
-        render: (text: string, record: ShopInfo) => `${MemberHelper.formatMemberId(record)}`,
+        render: (text: string, record: ShopDTO) => `${MemberHelper.formatMemberId(record)}`,
       },
       {
         title: "가맹명",
@@ -55,14 +58,14 @@ const columns: ColumnsType<ShopInfo> = [
         key: "usDeliDoneCntSum",
         width: 80,
 
-        sorter: (a, b) => a.usDeliDoneCntSum - b.usDeliDoneCntSum,
+        //sorter: (a, b) => a.usDeliDoneCntSum - b.usDeliDoneCntSum,
       },
       {
         title: "당월",
         dataIndex: "usMonthDeliDoneCntSum",
         key: "usMonthDeliDoneCntSum",
         width: 80,
-        sorter: (a, b) => a.usMonthDeliDoneCntSum - b.usMonthDeliDoneCntSum,
+        //sorter: (a, b) => a.usMonthDeliDoneCntSum - b.usMonthDeliDoneCntSum,
       },
     ],
   },
@@ -78,7 +81,7 @@ const columns: ColumnsType<ShopInfo> = [
         //   let format = (data2.ulVirAccDeposit + data2.lVirAccBalance - data2.ulVirAccDeduct)
         //   return format.toLocaleString()+'원'
         // }
-        render: (string: any, record: ShopInfo) =>
+        render: (string: any, record: ShopDTO) =>
           costFormat(
             Number(record.ulVirAccDeposit) +
               Number(record.lVirAccBalance) -
@@ -101,7 +104,7 @@ const columns: ColumnsType<ShopInfo> = [
         dataIndex: "ucTimeExtraFareType",
         key: "ucTimeExtraFareType",
         className: "time-extra-fare-column",
-        render: (text: string, record: ShopInfo) => "",
+        render: (text: string, record: ShopDTO) => "",
         width: 30,
       },
       {
@@ -109,7 +112,7 @@ const columns: ColumnsType<ShopInfo> = [
         dataIndex: "ucNightExtraFareType",
         key: "ucNightExtraFareType",
         className: "night-extra-fare-column",
-        render: (text: string, record: ShopInfo) => "",
+        render: (text: string, record: ShopDTO) => "",
         width: 30,
       },
       {
@@ -117,17 +120,53 @@ const columns: ColumnsType<ShopInfo> = [
         dataIndex: "ucRainyExtraFareType",
         key: "ucRainyExtraFareType",
         className: "rainy-extra-fare-column",
-        render: (text: string, record: ShopInfo) => "",
+        render: (text: string, record: ShopDTO) => "",
         width: 30,
       },
     ],
   },
 ];
+
 const ShopHistory = () => {
+  const [astManageShop, setAstManageShop] = useState<ShopDTO[]>([]);
+  const fetchShopList = async () => {
+    try {
+      const response = await api({
+        method: "get",
+        url: "/agency/shop/process-query/get-leaves.php",
+        headers: {
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
+      });
+      setAstManageShop(response.data.astMemberHis);
+    } catch (e) {
+      message.error(e.message);
+    }
+  };
+
+  useEffect(() => {
+    const delay = window.setInterval(fetchShopList, 1000);
+    return () => clearInterval(delay);
+  }, []);
+
   return (
     <div>
-      <Header />
-      <Table columns={columns} bordered pagination={false} size="small" scroll={{ y: 650 }} />
+      <div>
+        <Header />
+      </div>
+      <PageHeader>
+        <span>
+          <b>{astManageShop?.length}</b>개의 가맹점이 등록 되어있습니다.
+        </span>
+      </PageHeader>
+      <Table
+        columns={columns}
+        dataSource={astManageShop}
+        bordered
+        pagination={false}
+        size="small"
+        scroll={{ y: 650 }}
+      />
     </div>
   );
 };

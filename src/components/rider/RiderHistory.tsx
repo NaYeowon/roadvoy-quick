@@ -1,19 +1,22 @@
 import { ColumnsType } from "antd/lib/table";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MemberHelper from "src/helpers/MemberHelper";
 import { costFormat } from "src/util/FormatUtil";
 import Header from "../Layout/Header";
-import { RiderInfo } from "../shop/types";
+import { RiderSignUpRequest } from "../shop/types";
 import { message, PageHeader, Table } from "antd";
+import LoginHelper from "src/pages/shared/LoginHelper";
+import api from "src/config/axios";
 
-const columns: ColumnsType<RiderInfo> = [
+const columns: ColumnsType<RiderSignUpRequest> = [
   {
     title: "계정정보",
     children: [
       {
         title: "아이디",
         dataIndex: "ucMemCourId",
-        render: (text: string, record: RiderInfo) => `${MemberHelper.formatMemberId(record)}`,
+        render: (text: string, record: RiderSignUpRequest) =>
+          `${MemberHelper.formatMemberId(record)}`,
         width: 120,
       },
       {
@@ -111,10 +114,38 @@ const columns: ColumnsType<RiderInfo> = [
   },
 ];
 const RiderHistory = () => {
+  const [astManageRider, setAstManageRider] = useState<RiderSignUpRequest[]>([]);
+  const fetchRiderList = async () => {
+    try {
+      const response = await api({
+        method: "get",
+        url: "/agency/rider/process-query/get-leaves.php",
+        headers: {
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
+      });
+
+      setAstManageRider(response.data.astMemberHis);
+    } catch (e) {
+      message.error(e.message);
+    }
+  };
+
+  useEffect(() => {
+    const delay = window.setInterval(fetchRiderList, 1000);
+    return () => clearInterval(delay);
+  }, []);
   return (
     <div>
       <Header />
-      <Table columns={columns} bordered pagination={false} size="small" scroll={{ y: 650 }} />
+      <Table
+        columns={columns}
+        dataSource={astManageRider}
+        bordered
+        pagination={false}
+        size="small"
+        scroll={{ y: 650 }}
+      />
     </div>
   );
 };
