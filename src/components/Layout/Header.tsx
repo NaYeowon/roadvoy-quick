@@ -1,6 +1,4 @@
 /* eslint-disable */
-import * as React from "react";
-import { useState, useCallback, FunctionComponent } from "react";
 import "./Header.css";
 import { NavLink } from "react-router-dom";
 import "antd/dist/antd.css";
@@ -150,17 +148,6 @@ const Header = () => {
     </Menu>
   );
 
-  const HeadOffice = (
-    <Menu>
-      <Menu.Item key="0">
-        <NavLink to="/DistributorApproval">총판승인</NavLink>
-      </Menu.Item>
-      <Menu.Item key="0">
-        <NavLink to="/HeadOffice">본사정산</NavLink>
-      </Menu.Item>
-    </Menu>
-  );
-
   return (
     <header className="header">
       <div className="menu">
@@ -200,12 +187,6 @@ const Header = () => {
             총판관리
           </a>
         </Dropdown>
-        <Dropdown overlay={HeadOffice} trigger={["hover"]}>
-          <a href="void:0" className="ant-dropdown-link item" onClick={e => e.preventDefault()}>
-            본사관리
-          </a>
-        </Dropdown>
-        {/* <NavLink to="#" className="item" activeClassName="active">총판관리</NavLink> */}
       </div>
       <div className="subMenu">
         <span className="item" style={{ color: "black" }}>
