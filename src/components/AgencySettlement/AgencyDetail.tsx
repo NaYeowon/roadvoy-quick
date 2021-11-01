@@ -33,7 +33,10 @@ const AgencyDetail = (props: AgnecyProps) => {
         method: "post",
         url: "/distrib/agency/execute-command/leave.php",
         data: {
-          //ulErrandSeqNo: ,
+          ucAreaNo: agency.ucAreaNo,
+          ucDistribId: agency.ucDistribId,
+          ucAgencyId: agency.ucAgencyId,
+          ucMemCourId: agency.ucMemCourId,
         },
       });
 
@@ -90,23 +93,20 @@ const AgencyDetail = (props: AgnecyProps) => {
           </div>
         </div>
         <div style={{ textAlign: "center" }}>
-          {/* <Button
+          <Button
             onClick={() => {
               window.open(
-                `/RiderRegister?ucAreaNo=${agency?.ucAreaNo}&
-            ucDistribId=${agency?.ucDistribId}&
-            ucAgencyId=${agency?.ucAgencyId}&
-            ucMemCourId=${agency?.ucMemCourId}`,
+                `/RiderRegister?ucAreaNo=${agency?.ucAreaNo}&ucDistribId=${agency?.ucDistribId}&ucAgencyId=${agency?.ucAgencyId}&ucMemCourId=${agency?.ucMemCourId}`,
                 "_blank",
                 "top=100, left=500, width=1200, height=800"
               );
             }}
           >
             기사 수정
-          </Button> */}
+          </Button>
           <Popconfirm
             title="탈퇴하시겠습니까?"
-            //onConfirm={handleClickCancelErrand}
+            onConfirm={handleClickCancelErrand}
             okText="네"
             cancelText="아니요"
           >
