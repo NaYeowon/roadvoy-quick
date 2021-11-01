@@ -15,7 +15,6 @@ import RiderRegister from "./components/rider/RiderRegister";
 import Agency from "./components/AgencySettlement/Agency";
 import AgencySettlement from "./components/AgencySettlement/AgencySettlement";
 import ShopSettlement from "./components/shop/ShopSettlement";
-import HeadOffice from "./components/HeadOffice/HeadOffice";
 import Distributor from "./components/Distributor/Distributor";
 import ShopSettlementList from "./components/shop/ShopSettlementList";
 import ShopHistory from "./components/shop/ShopHistory";
@@ -30,7 +29,6 @@ import DistributorRegister from "./components/Distributor/DistributorRegister";
 import AgencyRegister from "./components/AgencySettlement/AgencyRegister";
 import AgencyHistory from "./components/AgencySettlement/AgencyHistory";
 import DistributorSettlement from "./components/Distributor/DistributorSettlement";
-import DistributorApproval from "./components/HeadOffice/DistributorApproval";
 
 import { CallFee } from "./components/Distributor/CallFee";
 import { CallQuantity } from "./components/Distributor/CallQuantity";
@@ -60,7 +58,6 @@ class App extends Component {
           <Route path="/Agency" component={Agency} />
           <Route path="/AgencySettlement" component={AgencySettlement} />
           <Route path="/ShopSettlement" component={ShopSettlement} />
-          <Route path="/HeadOffice" component={HeadOffice} />
           <Route path="/Distributor" component={Distributor} />
           <Route path="/ShopSettlementList" component={ShopSettlementList} />
           <Route path="/RiderSettlement" component={RiderSettlement} />
@@ -76,7 +73,6 @@ class App extends Component {
           <Route path="/ProgramUsageFee" component={ProgramUsageFee} />
           <Route path="/AgencyRegister" component={AgencyRegister} />
           <Route path="/DistributorSettlement" component={DistributorSettlement} />
-          <Route path="/DistributorApproval" component={DistributorApproval} />
           <Route path="/RiderCallHistory" component={RiderCallHistory} />
           <Route path="/ShopCallHistory" component={ShopCallHistory} />
           <Route path="/AgencyHistory" component={AgencyHistory} />
