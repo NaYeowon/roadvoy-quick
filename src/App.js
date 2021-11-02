@@ -29,6 +29,7 @@ import DistributorRegister from "./components/Distributor/DistributorRegister";
 import AgencyRegister from "./components/AgencySettlement/AgencyRegister";
 import AgencyHistory from "./components/AgencySettlement/AgencyHistory";
 import DistributorSettlement from "./components/Distributor/DistributorSettlement";
+import DistributorHistoty from "./components/Distributor/DistributorHistory";
 
 import { CallFee } from "./components/Distributor/CallFee";
 import { CallQuantity } from "./components/Distributor/CallQuantity";
@@ -76,6 +77,7 @@ class App extends Component {
           <Route path="/RiderCallHistory" component={RiderCallHistory} />
           <Route path="/ShopCallHistory" component={ShopCallHistory} />
           <Route path="/AgencyHistory" component={AgencyHistory} />
+          <Route path="/DistributorHistoty" component={DistributorHistoty} />
           <Redirect from="/" to="/CallListComponent" />
         </Switch>
       </Router>

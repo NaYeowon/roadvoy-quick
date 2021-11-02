@@ -124,7 +124,7 @@ const Header = () => {
         </a>
       </Menu.Item>
       <Menu.Item key="3">
-        <NavLink to="/AgencyHistory">이력상세</NavLink>
+        <NavLink to="/AgencyHistory">대행이력</NavLink>
       </Menu.Item>
     </Menu>
   );
@@ -144,6 +144,9 @@ const Header = () => {
         <a href="void:0" onClick={onDistributorRegister}>
           총판등록
         </a>
+      </Menu.Item>
+      <Menu.Item key="4">
+        <NavLink to="/DistributorHistoty">총판이력</NavLink>
       </Menu.Item>
     </Menu>
   );
