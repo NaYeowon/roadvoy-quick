@@ -10,6 +10,8 @@ class MemberHelper {
       formattedDistribId = `F${distribId % 32}`;
     } else if (distribId >= 64 && distribId < 128) {
       formattedDistribId = `A${distribId % 64}`;
+    } else if (distribId >= 128 && distribId < 256) {
+      formattedDistribId = `D${distribId % 128}`;
     }
     return `${stMember.ucAreaNo}-${formattedDistribId}-${stMember.ucAgencyId}-${stMember.ucMemCourId}`;
   }
