@@ -53,7 +53,7 @@ const AgencyDetail = (props: AgnecyProps) => {
       <Modal title="대행상세" onCancel={handleCancel} onOk={handleOk} visible={visible}>
         <div>
           <div>
-            <CallDetailModalShopName>{agency?.acPresident}</CallDetailModalShopName>
+            <CallDetailModalShopName>{agency?.acCompany}</CallDetailModalShopName>
             <CallDetailShopTitle
               title="회원번호"
               value={`${MemberHelper.formatMemberId(agency ?? "")}`}
@@ -63,12 +63,21 @@ const AgencyDetail = (props: AgnecyProps) => {
               title="휴대폰번호"
               value={getCellNoFormat(agency?.acCellNo ?? "")}
             />
-            <CallDetailShopTitle title="대표자명" value={agency?.ucMemCourId ?? ""} />
-            <CallDetailShopTitle title="사업자 등록번호" value={agency?.acBizRegNo ?? ""} />
+            <CallDetailShopTitle title="대표자명" value={agency?.acPresident ?? ""} />
+            <CallDetailShopTitle
+              title="사업자 등록번호"
+              value={(agency?.acBizRegNo ?? "")
+                .replace(/[^0-9]/g, "")
+                .replace(/([0-9]{3})([0-9]{2})([0-9]{5})/, "$1-$2-$3")
+                .replace("--", "-")}
+            />
             <CallDetailShopTitle title="법인 등록번호" value={agency?.acCorpNo ?? ""} />
             <CallDetailShopTitle title="주소" value={agency?.acOldAddress ?? ""} />
             {agency && <AddressDaumMapComponent acAddress={agency.acOldAddress} />}
-            <CallDetailShopTitle title="휴대폰번호" value={agency?.acCellNo ?? ""} />
+            <CallDetailShopTitle
+              title="휴대폰번호"
+              value={getCellNoFormat(agency?.acCellNo ?? "")}
+            />
             <CallDetailShopTitle
               title="주거래은행 계좌번호"
               value={
@@ -93,7 +102,7 @@ const AgencyDetail = (props: AgnecyProps) => {
           </div>
         </div>
         <div style={{ textAlign: "center" }}>
-          <Button
+          {/* <Button
             onClick={() => {
               window.open(
                 `/RiderRegister?ucAreaNo=${agency?.ucAreaNo}&ucDistribId=${agency?.ucDistribId}&ucAgencyId=${agency?.ucAgencyId}&ucMemCourId=${agency?.ucMemCourId}`,
@@ -102,8 +111,8 @@ const AgencyDetail = (props: AgnecyProps) => {
               );
             }}
           >
-            기사 수정
-          </Button>
+            대행 수정
+          </Button> */}
           <Popconfirm
             title="탈퇴하시겠습니까?"
             onConfirm={handleClickCancelErrand}
