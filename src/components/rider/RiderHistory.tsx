@@ -7,6 +7,7 @@ import { RiderSignUpRequest } from "../shop/types";
 import { message, PageHeader, Table } from "antd";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import api from "src/config/axios";
+import RiderDetail from "./RiderDetail";
 
 const columns: ColumnsType<RiderSignUpRequest> = [
   {
@@ -115,6 +116,13 @@ const columns: ColumnsType<RiderSignUpRequest> = [
 ];
 const RiderHistory = () => {
   const [astManageRider, setAstManageRider] = useState<RiderSignUpRequest[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectRider, setSelectRider] = useState<RiderSignUpRequest | undefined>(undefined);
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
+
   const fetchRiderList = async () => {
     try {
       const response = await api({
@@ -145,6 +153,20 @@ const RiderHistory = () => {
         pagination={false}
         size="small"
         scroll={{ y: 650 }}
+        onRow={(riderInfo: RiderSignUpRequest) => {
+          return {
+            onClick: () => {
+              setIsModalVisible(true);
+              setSelectRider(riderInfo);
+            },
+          };
+        }}
+      />
+      <RiderDetail
+        onOk={handleCloseModal}
+        onCancel={handleCloseModal}
+        rider={selectRider}
+        visible={isModalVisible}
       />
     </div>
   );
