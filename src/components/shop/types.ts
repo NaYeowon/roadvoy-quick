@@ -278,6 +278,26 @@ export interface RiderSignUpRequest {
   ucManagerCallRtrvTime: number;
 }
 
+export interface DistributorDto {
+  ucMemCourId: string;
+  acCompany: string;
+  acBizRegNo: string;
+  acPresident: string;
+  acErrandDate: string;
+  ucTaxInvoType: number;
+  ucDistribId: number;
+  acPhoneNo: string;
+  acCellNo: string;
+  acOldAddress: string;
+  acAddressDesc: string;
+  acNewAddress: string;
+  ulLatiPos: number;
+  ulLongPos: number;
+  cDelayWarning: string;
+  cUseRight: string;
+  usVirtualBank: number;
+  acVirtualAccount: string;
+}
 class RiderInfo1 {
   asStatusMessage: string | undefined;
 
