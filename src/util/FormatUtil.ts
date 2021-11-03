@@ -5,6 +5,12 @@ export const getDateFormat = (date: string) => {
   return dateFormat[1];
 };
 
+export const DateFormat = (date: string) => {
+  const dateFormat = date.split(" ");
+
+  return dateFormat[0];
+};
+
 export const getCellNoFormat = phone => {
   if (!phone || phone.length === 0) {
     return "";
@@ -16,7 +22,7 @@ export const getCellNoFormat = phone => {
 };
 
 export const costFormat = (cost: number) => {
-  if(!cost) cost = 0
+  if (!cost) cost = 0;
   const format = Number(cost);
   return `${format.toLocaleString()} 원`;
 };
