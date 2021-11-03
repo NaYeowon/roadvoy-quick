@@ -49,6 +49,7 @@ function ShopModal(props: ShopModalProps) {
       message.error(error.message);
     }
   };
+
   return (
     <>
       <Modal title="상점상세" onCancel={handleCancel} onOk={handleOk} visible={visible}>
@@ -60,7 +61,13 @@ function ShopModal(props: ShopModalProps) {
               value={`${MemberHelper.formatMemberId(shop ?? "")}`}
             />
             <CallDetailShopTitle title="회원 ID" value={shop?.acUserId ?? ""} />
-            <CallDetailShopTitle title="사업자 등록번호" value={shop?.acBizRegNo ?? ""} />
+            <CallDetailShopTitle
+              title="사업자 등록번호"
+              value={(shop?.acBizRegNo ?? "")
+                .replace(/[^0-9]/g, "")
+                .replace(/([0-9]{3})([0-9]{2})([0-9]{5})/, "$1-$2-$3")
+                .replace("--", "-")}
+            />
             <CallDetailShopTitle title="법인 등록번호" value={shop?.acCorpNo ?? ""} />
             <CallDetailShopTitle title="E-mail 주소" value={shop?.acEmailAddress ?? ""} />
             <CallDetailShopTitle title="업태/업종" value={shop?.acBizType ?? ""} />
