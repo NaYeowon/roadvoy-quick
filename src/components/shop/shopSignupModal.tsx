@@ -1,19 +1,17 @@
 /* eslint-disable */
-import React, { Component, useEffect, useMemo, useState } from "react";
-import { Modal, Input, Button, Row, Col, message, Select, Checkbox, Form, Popconfirm } from "antd";
-import axios, { AxiosError } from "axios";
+import React, { useEffect, useMemo, useState } from "react";
+import { Input, Button, Row, Col, message, Select, Checkbox, Form, Popconfirm } from "antd";
+import { AxiosError } from "axios";
 import { PhoneOutlined } from "@ant-design/icons";
-import DaumPostCode, { DaumPostcode } from "react-daum-postcode";
 import "./shopSign.css";
 import { ShopInfo, ShopSignUpRequest } from "./types";
 import api from "src/config/axios";
 import { SearchAddress } from "../SearchAddress";
 import { IAddress } from "../SearchAddress/SearchAddress";
-import LoginHelper from "src/pages/shared/LoginHelper";
 import { formItemLayout, TitleCol } from "../Order/Popup/styles";
 import { MemberId } from "src/domain/Member/model";
 import "../Order/Popup/_styles.css";
-import queryString, { ParsedQuery } from "query-string";
+import queryString from "query-string";
 import { RouteComponentProps } from "react-router";
 
 const { Option } = Select;
@@ -178,11 +176,13 @@ const ShopSignupModal = (props: ShopModalProps) => {
         method: "post",
         url: "/agency/shop/execute-command/modify.php",
         data: {
+          // ucAreaNo: form.ucAreaNo,
+          // ucDistribId: form.ucDistribId,
+          // ucAgencyId: form.ucAgencyId,
+          // ucMemCourId: form.ucMemCourId,
           ...form,
-          ucAreaNo: form.ucAreaNo,
-          ucDistribId: form.ucDistribId,
-          ucAgencyId: form.ucAgencyId,
-          ucMemCourId: form.ucMemCourId,
+          acCellNo: form.acCellNo?.replaceAll("-", ""),
+          acPhoneNo: form.acPhoneNo?.replaceAll("-", ""),
         },
       });
 
@@ -204,6 +204,8 @@ const ShopSignupModal = (props: ShopModalProps) => {
       setForm({
         ...(response.data.stMember as ShopSignUpRequest),
         ...memberId,
+        ulLatiPos: form.ulLatiPos,
+        ulLongPos: form.ulLongPos,
       });
     } catch (e) {
       const error = e as AxiosError;
