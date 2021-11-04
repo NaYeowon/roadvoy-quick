@@ -280,14 +280,24 @@ export interface RiderSignUpRequest {
 
 export interface DistributorDto {
   ucMemCourId: string;
+  acUserId: string;
+  acPassword: string;
   acCompany: string;
   acBizRegNo: string;
+  acCorpNo: string;
   acPresident: string;
   acErrandDate: string;
   ucTaxInvoType: number;
   ucDistribId: number;
   acPhoneNo: string;
   acCellNo: string;
+  acEmailAddress: string;
+  acBizCondition: string;
+  acBizType: string;
+  acResRegNo: string;
+  usBankCode: number;
+  acBankAccount: string;
+  acAccHoldName: string;
   acOldAddress: string;
   acAddressDesc: string;
   acNewAddress: string;
@@ -297,6 +307,18 @@ export interface DistributorDto {
   cUseRight: string;
   usVirtualBank: number;
   acVirtualAccount: string;
+  cAreaShareFlag: string;
+  cTotalCallShareFlag: string;
+  ulBaseDist: number;
+  ulBaseFare: number;
+  ulExtraDist: number;
+  ulExtraFare: number;
+  acAllocRemark: string;
+  acRemark: string;
+  acCpPresident: string;
+  acCpCellNo: string;
+  acWithdrawPassword: string;
+  cManagerFlag: string;
 }
 class RiderInfo1 {
   asStatusMessage: string | undefined;
