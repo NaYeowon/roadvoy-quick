@@ -7,6 +7,7 @@ import { ShopDTO, ShopInfo } from "./types";
 import api from "src/config/axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import { useEffect, useState } from "react";
+import ShopModal from "./ShopModal";
 
 const columns: ColumnsType<ShopDTO> = [
   {
@@ -129,6 +130,12 @@ const columns: ColumnsType<ShopDTO> = [
 
 const ShopHistory = () => {
   const [astManageShop, setAstManageShop] = useState<ShopDTO[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalShop, setModalShop] = useState<ShopDTO | undefined>(undefined);
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
   const fetchShopList = async () => {
     try {
       const response = await api({
@@ -156,7 +163,7 @@ const ShopHistory = () => {
       </div>
       <PageHeader>
         <span>
-          <b>{astManageShop?.length}</b>개의 가맹점이 등록 되어있습니다.
+          <b>{astManageShop?.length}</b>개의 가맹점이 탈퇴 되었습니다.
         </span>
       </PageHeader>
       <Table
@@ -166,6 +173,21 @@ const ShopHistory = () => {
         pagination={false}
         size="small"
         scroll={{ y: 650 }}
+        onRow={(shop: ShopDTO) => {
+          return {
+            onClick: () => {
+              setIsModalVisible(true);
+              setModalShop(shop);
+              console.log(setModalShop(shop));
+            },
+          };
+        }}
+      />
+      <ShopModal
+        onOk={handleCloseModal}
+        onCancel={handleCloseModal}
+        shop={modalShop}
+        visible={isModalVisible}
       />
     </div>
   );
