@@ -13,7 +13,7 @@ import api from "src/config/axios";
 import { MemberGroupSelector } from "../Member";
 import AgencyDetail from "./AgencyDetail";
 import MemberHelper from "src/helpers/MemberHelper";
-import { DateFormat, getCellNoFormat } from "src/util/FormatUtil";
+import { bankAccount, bankCode, DateFormat, getCellNoFormat } from "src/util/FormatUtil";
 const columns = [
   {
     title: "계정정보",
@@ -47,14 +47,14 @@ const columns = [
         width: 50,
       },
       {
-        title: "세금계산서발행",
+        title: "세금계산서발행여부",
         dataIndex: "ucTaxInvoType",
         render: (value: number, record: AgencyDTO) => {
           switch (Number(value)) {
             case 0:
-              return "미발행";
+              return "N";
             case 1:
-              return "발행";
+              return "Y";
           }
         },
         width: 80,
@@ -112,51 +112,13 @@ const columns = [
       {
         title: "거래은행",
         dataIndex: "usVirtualBank",
-        render: (value: number, record: AgencyDTO) => {
-          switch (Number(value)) {
-            case 88:
-              return "신한은행";
-            case 4:
-              return "국민은행";
-            case 3:
-              return "기업은행";
-            case 20:
-              return "우리은행";
-            case 90:
-              return "카카오뱅크";
-            case 89:
-              return "케이뱅크";
-            case 11:
-              return "농협중앙회";
-            case 2:
-              return "산업은행";
-            case 23:
-              return "SC제일은행";
-            case 81:
-              return "KEB하나은행";
-            case 27:
-              return "씨티뱅크";
-            case 7:
-              return "수협은행";
-            case 31:
-              return "대구은행";
-            case 32:
-              return "부산은행";
-            case 34:
-              return "광주은행";
-            case 35:
-              return "제주은행";
-            case 37:
-              return "전북은행";
-            case 39:
-              return "경남은행";
-          }
-        },
+        render: (bankcode: number) => bankCode(bankcode),
         width: 50,
       },
       {
         title: "계좌번호",
         dataIndex: "acVirtualAccount",
+        render: (bank: string) => bankAccount(bank),
         width: 100,
       },
     ],
