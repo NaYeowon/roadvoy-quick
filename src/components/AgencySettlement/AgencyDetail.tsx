@@ -58,7 +58,7 @@ const AgencyDetail = (props: AgnecyProps) => {
               title="회원번호"
               value={`${MemberHelper.formatMemberId(agency ?? "")}`}
             />
-            <CallDetailShopTitle title="회원 ID" value={agency?.ucMemCourId ?? ""} />
+            <CallDetailShopTitle title="회원 ID" value={agency?.acUserId ?? ""} />
             <CallDetailShopTitle
               title="휴대폰번호"
               value={getCellNoFormat(agency?.acCellNo ?? "")}
@@ -71,7 +71,13 @@ const AgencyDetail = (props: AgnecyProps) => {
                 .replace(/([0-9]{3})([0-9]{2})([0-9]{5})/, "$1-$2-$3")
                 .replace("--", "-")}
             />
-            <CallDetailShopTitle title="법인 등록번호" value={agency?.acCorpNo ?? ""} />
+            <CallDetailShopTitle
+              title="법인 등록번호"
+              value={(agency?.acCorpNo ?? "")
+                .replace(/[^0-9]/g, "")
+                .replace(/([0-9]{6})([0-9]{7})/, "$1-$2")
+                .replace("--", "-")}
+            />
             <CallDetailShopTitle title="주소" value={agency?.acOldAddress ?? ""} />
             {agency && <AddressDaumMapComponent acAddress={agency.acOldAddress} />}
             <CallDetailShopTitle
@@ -102,17 +108,17 @@ const AgencyDetail = (props: AgnecyProps) => {
           </div>
         </div>
         <div style={{ textAlign: "center" }}>
-          {/* <Button
+          <Button
             onClick={() => {
               window.open(
-                `/RiderRegister?ucAreaNo=${agency?.ucAreaNo}&ucDistribId=${agency?.ucDistribId}&ucAgencyId=${agency?.ucAgencyId}&ucMemCourId=${agency?.ucMemCourId}`,
+                `/AgencyRegister?ucAreaNo=${agency?.ucAreaNo}&ucDistribId=${agency?.ucDistribId}&ucAgencyId=${agency?.ucAgencyId}&ucMemCourId=${agency?.ucMemCourId}`,
                 "_blank",
                 "top=100, left=500, width=1200, height=800"
               );
             }}
           >
             대행 수정
-          </Button> */}
+          </Button>
           <Popconfirm
             title="탈퇴하시겠습니까?"
             onConfirm={handleClickCancelErrand}
