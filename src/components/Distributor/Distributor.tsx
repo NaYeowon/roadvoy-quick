@@ -6,6 +6,7 @@ import MemberHelper from "src/helpers/MemberHelper";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import { bankAccount, bankCode, DateFormat, getCellNoFormat } from "src/util/FormatUtil";
 import Header from "../Layout/Header";
+import { MemberGroupSelector } from "../Member";
 import { DistributorDto } from "../shop/types";
 import DistributorDetail from "./DistributorDetail";
 
@@ -162,6 +163,9 @@ const Distributor = () => {
       <PageHeader>
         <span>
           <b>{astManageDistributor?.length}</b>개의 총판이 등록 되어있습니다.
+        </span>
+        <span style={{ float: "right" }}>
+          <MemberGroupSelector />
         </span>
       </PageHeader>
       <Table
