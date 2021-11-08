@@ -10,6 +10,7 @@ import { CallDetailShopTitle } from "../CallList/Modal/CallDetailShopTitle";
 import { CallDetailModalShopName } from "../CallList/Modal/styles";
 import { RiderSignUpRequest } from "../shop/types";
 import { AxiosError } from "axios";
+import ManagerStatus from "./ManagerStatus";
 
 interface RiderModalProps {
   onOk: () => void;
@@ -55,7 +56,10 @@ function riderDetail(props: RiderModalProps) {
       <Modal title="기사상세" onCancel={handleCancel} onOk={handleOk} visible={visible}>
         <div>
           <div>
-            <CallDetailModalShopName>{rider?.acPresident}</CallDetailModalShopName>
+            <CallDetailModalShopName>
+              {rider?.acPresident}&nbsp;
+              <ManagerStatus cManagerFlag={rider?.cManagerFlag ?? ""} />
+            </CallDetailModalShopName>
             <CallDetailShopTitle
               title="회원번호"
               value={`${MemberHelper.formatMemberId(rider ?? "")}`}
