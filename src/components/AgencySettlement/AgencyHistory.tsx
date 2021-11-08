@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import api from "src/config/axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import Header from "../Layout/Header";
+import { MemberGroupSelector } from "../Member";
 import { AgencyDTO } from "../shop/types";
 
 const columns = [
@@ -132,6 +133,9 @@ const AgencyHistory = () => {
       <PageHeader>
         <span>
           <b>{astManagerAgency?.length}</b>개의 대행이 탈퇴 되어있습니다.
+        </span>
+        <span style={{ float: "right" }}>
+          <MemberGroupSelector />
         </span>
       </PageHeader>
       <Table
