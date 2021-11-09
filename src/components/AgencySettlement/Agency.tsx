@@ -13,7 +13,7 @@ import api from "src/config/axios";
 import { MemberGroupSelector } from "../Member";
 import AgencyDetail from "./AgencyDetail";
 import MemberHelper from "src/helpers/MemberHelper";
-import { bankAccount, bankCode, DateFormat, getCellNoFormat } from "src/util/FormatUtil";
+import { bankAccount, bankCode, bizNumber, DateFormat, getCellNoFormat } from "src/util/FormatUtil";
 const columns = [
   {
     title: "계정정보",
@@ -32,6 +32,7 @@ const columns = [
       {
         title: "사업자등록번호",
         dataIndex: "acBizRegNo",
+        render: data => bizNumber(data),
         width: 70,
       },
       {
@@ -49,6 +50,7 @@ const columns = [
       {
         title: "세금계산서발행여부",
         dataIndex: "ucTaxInvoType",
+        align: "center",
         render: (value: number, record: AgencyDTO) => {
           switch (Number(value)) {
             case 0:
@@ -96,11 +98,13 @@ const columns = [
     children: [
       {
         title: "경고",
+        align: "center",
         dataIndex: "cDelayWarning",
         width: 30,
       },
       {
         title: "제한",
+        align: "center",
         dataIndex: "cUseRight",
         width: 30,
       },

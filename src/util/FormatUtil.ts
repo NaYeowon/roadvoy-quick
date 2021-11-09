@@ -23,6 +23,16 @@ export const getCellNoFormat = phone => {
     .replace("--", "-");
 };
 
+export const bizNumber = data => {
+  if (!data || data.length === 0) {
+    return "";
+  }
+  return data
+    .replace(/[^0-9]/g, "")
+    .replace(/([0-9]{3})([0-9]{2})([0-9]{5})/, "$1-$2-$3")
+    .replace("--", "-");
+};
+
 export const costFormat = (cost: number) => {
   if (!cost) cost = 0;
   const format = Number(cost);
