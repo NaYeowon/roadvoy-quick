@@ -8,6 +8,7 @@ import api from "src/config/axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import { useEffect, useState } from "react";
 import ShopModal from "./ShopModal";
+import { MemberGroupSelector } from "../Member";
 
 const columns: ColumnsType<ShopDTO> = [
   {
@@ -164,6 +165,9 @@ const ShopHistory = () => {
       <PageHeader>
         <span>
           <b>{astManageShop?.length}</b>개의 가맹점이 탈퇴 되었습니다.
+        </span>
+        <span style={{ float: "right" }}>
+          <MemberGroupSelector />
         </span>
       </PageHeader>
       <Table
