@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import { Col, Descriptions, Table, Button } from "antd";
 import { callFormat, costFormat } from "../../util/FormatUtil";
 import { ShopInfo } from "./types";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import { CircularProgress } from "@material-ui/core";
 import ShopDaily from "src/dto/ShopDaily";
@@ -166,8 +166,8 @@ const ShopSettlementList: FC<Props> = ({ shopInfo, acStartDate, acEndDate }) => 
 
       setAstShopDaily(data.lstFranchiseDaily);
       setStShopDailyTotal(data.stFranchiseDailyTotal);
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      const error = e as AxiosError;
       if (error.response && error.response.data && error.response.data.msg) {
         throw new Error(error.response.data.msg);
       } else {
@@ -224,7 +224,7 @@ const ShopSettlementList: FC<Props> = ({ shopInfo, acStartDate, acEndDate }) => 
           bordered
           pagination={false}
           size="small"
-          scroll={{ y: 580 }}
+          scroll={{ y: "calc(100vh - 300px)" }}
         />
         ,
       </Col>

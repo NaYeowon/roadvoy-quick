@@ -204,7 +204,7 @@ const Shop = () => {
         bordered
         pagination={false}
         size="small"
-        scroll={{ y: 650 }}
+        scroll={{ y: "calc(100vh - 203px)" }}
         rowClassName={(record: ShopDTO) => {
           const className: any = [];
           if (record.ucTimeExtraFareType === 1) {

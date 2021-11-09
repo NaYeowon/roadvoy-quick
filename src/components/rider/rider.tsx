@@ -182,7 +182,7 @@ const Rider = () => {
         bordered
         pagination={false}
         size="small"
-        scroll={{ y: 650 }}
+        scroll={{ y: "calc(100vh - 203px)" }}
         onRow={(riderInfo: RiderSignUpRequest) => {
           return {
             onClick: () => {

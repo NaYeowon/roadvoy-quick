@@ -17,19 +17,19 @@ import moment from "moment";
 const columns: ColumnsType<ShopInfo> = [
   {
     title: "가맹",
-    dataIndex: "acCompany"
+    dataIndex: "acCompany",
   },
   {
     title: "콜수",
     dataIndex: "usMonthDeliDoneCntSum",
     width: 100,
-    render: (call: number) => callFormat(call)
+    render: (call: number) => callFormat(call),
   },
   {
     title: "가상계좌",
     dataIndex: "ulPaygoRoadvoyCardFee",
-    render: (cost: number) => costFormat(cost)
-  }
+    render: (cost: number) => costFormat(cost),
+  },
 ];
 
 const { RangePicker } = DatePicker;
@@ -51,8 +51,8 @@ const ShopSettlement = (props: ShopInfo) => {
         method: "get",
         url: "https://api.roadvoy.net/agency/shop/manage/list.php",
         headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`
-        }
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
       });
 
       setAstManageShop(response.data.astManageShop);
@@ -70,7 +70,7 @@ const ShopSettlement = (props: ShopInfo) => {
       dataSheet[i] = {
         이름: astManageShop[i].acCompany,
         아이디: `${astManageShop[i].ucAreaNo}-${astManageShop[i].ucDistribId}-${astManageShop[i].ucAgencyId}-${astManageShop[i].ucMemCourId}`,
-        배달콜수: astManageShop[i].usMonthDeliDoneCntSum
+        배달콜수: astManageShop[i].usMonthDeliDoneCntSum,
       };
     }
 
@@ -140,12 +140,12 @@ const ShopSettlement = (props: ShopInfo) => {
               return {
                 onClick: () => {
                   setSelectedShop(record);
-                }
+                },
               };
             }}
             size="small"
             pagination={false}
-            scroll={{ y: 650 }}
+            scroll={{ y: "calc(100vh - 250px)" }}
           />
         </Col>
       </Row>

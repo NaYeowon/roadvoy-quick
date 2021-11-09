@@ -1,5 +1,5 @@
 /* eslint-disable */
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
 import { message, PageHeader, Table, Row, Col, DatePicker, Space, Button } from "antd";
 
@@ -51,7 +51,8 @@ const RiderSettlement = (props: RiderInfo) => {
 
       setAstManageRider(response.data.astManageRider);
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError;
+      message.error(error.message);
     }
   };
 
@@ -150,7 +151,7 @@ const RiderSettlement = (props: RiderInfo) => {
             }}
             size="small"
             pagination={false}
-            scroll={{ y: 650 }}
+            scroll={{ y: "calc(100vh - 250px)" }}
           />
         </Col>
       </Row>

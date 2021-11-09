@@ -446,7 +446,7 @@ const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) =
           bordered
           pagination={false}
           size="small"
-          scroll={{ y: 560 }}
+          scroll={{ y: "calc(100vh - 340px)" }}
         />
         ,
       </Col>
