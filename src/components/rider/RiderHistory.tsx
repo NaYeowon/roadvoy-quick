@@ -8,6 +8,7 @@ import { message, PageHeader, Table } from "antd";
 import LoginHelper from "src/pages/shared/LoginHelper";
 import api from "src/config/axios";
 import RiderDetail from "./RiderDetail";
+import { MemberGroupSelector } from "../Member";
 
 const columns: ColumnsType<RiderSignUpRequest> = [
   {
@@ -145,7 +146,18 @@ const RiderHistory = () => {
   }, []);
   return (
     <div>
-      <Header />
+      <div>
+        <Header />
+      </div>
+      <PageHeader>
+        <span>
+          <b>{astManageRider?.length}</b>개의 기사가 탈퇴되었습니다.
+        </span>
+
+        <span style={{ float: "right" }}>
+          <MemberGroupSelector />
+        </span>
+      </PageHeader>
       <Table
         columns={columns}
         dataSource={astManageRider}
