@@ -177,7 +177,7 @@ const Agency = () => {
         bordered
         pagination={false}
         size="small"
-        scroll={{ y: 650 }}
+        scroll={{ y: "calc(100vh - 203px)" }}
         onRow={(agency: AgencyDTO) => {
           return {
             onClick: () => {

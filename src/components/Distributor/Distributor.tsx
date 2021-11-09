@@ -50,6 +50,7 @@ const columns: ColumnsType<DistributorDto> = [
       {
         title: "세금계산서발행여부",
         dataIndex: "ucTaxInvoType",
+        align: "center",
         render: (value: number, record: DistributorDto) => {
           switch (Number(value)) {
             case 0:
@@ -98,11 +99,15 @@ const columns: ColumnsType<DistributorDto> = [
       {
         title: "경고",
         dataIndex: "cDelayWarning",
+        align: "center",
+
         width: 30,
       },
       {
         title: "제한",
         dataIndex: "cUseRight",
+        align: "center",
+
         width: 30,
       },
     ],
@@ -174,7 +179,7 @@ const Distributor = () => {
         bordered
         pagination={false}
         size="small"
-        scroll={{ y: 650 }}
+        scroll={{ y: "calc(100vh - 203px)" }}
         onRow={(distributor: DistributorDto) => {
           return {
             onClick: () => {
