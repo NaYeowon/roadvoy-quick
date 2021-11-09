@@ -1,73 +1,74 @@
 /* eslint-disable */
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { message, PageHeader, Table, Row, Col, DatePicker, Space, Button } from "antd";
 
 import Header from "../Layout/Header";
 import LoginHelper from "../../pages/shared/LoginHelper";
-import { RiderInfo } from "../shop/types";
-import XLSX from "xlsx";
+import { AgencyDTO } from "../shop/types";
 import styled from "styled-components";
 import AgencySettlementList from "./AgencySettlementList";
+import moment from "moment";
+import api from "src/config/axios";
 
 const columns = [
   {
     title: "대행이름",
-    dataIndex: "name"
+    dataIndex: "name",
   },
   {
     title: "콜수",
     dataIndex: "call",
-    width: 80
-  }
-];
-const data = [
-  {
-    key: 1,
-    name: "대행이름",
-    call: "0"
+    width: 80,
   },
-  {
-    key: 2,
-    name: "대행이름",
-    call: "0"
-  }
 ];
+
 const { RangePicker } = DatePicker;
 
 const AgencySettlement = props => {
-  const [selectedAgency, setSelectedAgency] = useState(false);
-  const [riderInfoData, setRiderInfoData] = useState("");
-  //   const fetchRiderList = async () => {
-  //     try {
-  //       const response = await axios({
-  //         method: "get",
-  //         url: "",
-  //         headers: {
-  //           Authorization: `Bearer ${LoginHelper.getToken()}`
-  //         }
-  //       });
+  const [astManagerAgency, setAstManagerAgency] = useState<AgencyDTO[]>([]);
+  const [selectedAgency, setSelectedAgency] = useState<AgencyDTO | undefined>(undefined);
+  const [acStartDate, setAcStartDate] = useState<moment.Moment>(moment().startOf("month"));
+  const [acEndDate, setAcEndDate] = useState<moment.Moment>(moment());
 
-  //       setAstManageRider(response.data.astManageRider);
-  //     } catch (e) {
-  //       message.error(e.message);
-  //     }
-  //   };
+  const handleChangeDateRange = val => {
+    setAcStartDate(val[0]);
+    setAcEndDate(val[1]);
+  };
 
-  //   useEffect(() => {
-  //     // const delay = window.setInterval(fetchRiderList, 1000);
-  //     // return () => clearInterval(delay);
-  //     fetchRiderList();
-  //   }, []);
+  const fetchAgencyList = async () => {
+    try {
+      const response = await api({
+        method: "get",
+        url: "/hq/member/process-query/get-agencies.php",
+        headers: {
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
+      });
+
+      setAstManagerAgency(response.data.lstMember);
+    } catch (e) {
+      const error = e as Error;
+      message.error(error.message);
+    }
+  };
+  useEffect(() => {
+    // const delay = window.setInterval(fetchAgencyList, 1000);
+    // return () => clearInterval(delay);
+    fetchAgencyList();
+  }, []);
 
   const SettlementList = (record: any) => {
     let content;
-    let agencyInfo = new Array();
-    console.log(agencyInfo);
-    if (selectedAgency === false) {
+    if (!selectedAgency) {
       content = <Content>대행을 선택하세요.</Content>;
     } else {
-      content = <AgencySettlementList />;
+      content = (
+        <AgencySettlementList
+          agency={selectedAgency}
+          acStartDate={acStartDate}
+          acEndDate={acEndDate}
+        />
+      );
     }
 
     return (
@@ -86,26 +87,29 @@ const AgencySettlement = props => {
       <Header />
       <PageHeader />
       <Row>
-        {SettlementList(data)}
+        {SettlementList(astManagerAgency)}
         <Col span={4} pull={20}>
           <Space direction="vertical" size={12} style={{ paddingBottom: "10px", width: "100%" }}>
             <div style={{ textAlign: "center" }}>
               <b>조회기간</b>
             </div>
-            <RangePicker style={{ width: "100%" }} />
+            <RangePicker
+              style={{ width: "100%" }}
+              value={[acStartDate, acEndDate]}
+              onChange={handleChangeDateRange}
+            />
             <Button style={{ width: "100%" }}>다운로드</Button>
           </Space>
           <Table
             columns={columns}
             style={{ width: "100%", height: "100%", cursor: "pointer" }}
-            dataSource={data}
+            dataSource={astManagerAgency}
             bordered
-            onRow={record => {
+            onRow={(record: AgencyDTO) => {
               return {
                 onClick: () => {
-                  setSelectedAgency(true);
-                  <AgencySettlementList />;
-                }
+                  setSelectedAgency(record);
+                },
               };
             }}
             size="small"
