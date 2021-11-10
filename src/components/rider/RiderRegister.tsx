@@ -6,15 +6,14 @@ import { PhoneOutlined } from "@ant-design/icons";
 import { AxiosError } from "axios";
 import "./RiderSettlementList.css";
 import Checkbox from "antd/lib/checkbox/Checkbox";
-import { RiderInfo, RiderSignUpRequest } from "../shop/types";
+import { RiderSignUpRequest } from "../shop/types";
 import api from "src/config/axios";
 import { formItemLayout, TitleCol } from "../Order/Popup/styles";
 import { RouteComponentProps } from "react-router";
-import queryString, { ParsedQuery } from "query-string";
+import queryString from "query-string";
 import { MemberId } from "src/domain/Member/model";
 import { SearchAddress } from "../SearchAddress";
 import { IAddress } from "../SearchAddress/SearchAddress";
-import { parseTwoDigitYear } from "moment";
 import { ManagerFlag } from "src/domain/Errand/model";
 
 const { Option } = Select;
@@ -54,7 +53,7 @@ const RiderRegister = (props: Props) => {
     lCourierDeposit: 0,
     lCallUnitPrice: 0,
     conCallLimit: 0,
-    cManagerFlag: "",
+    cManagerFlag: "N",
     cReClaimFlag: 0,
     acAllocRemark: "",
     acRemark: "",
@@ -127,12 +126,47 @@ const RiderRegister = (props: Props) => {
 
   const executeSignUp = () => {
     if (isUpdate()) {
-      executeUpdateSignUp();
+      executeUpdate();
     } else {
       executeCreateSignUp();
     }
   };
 
+  const executeUpdate = async () => {
+    try {
+      const results = await Promise.all([
+        api({
+          method: "post",
+          url: "/agency/rider/execute-command/modify.php",
+          data: {
+            ...form,
+            acCellNo: form.acCellNo?.replace("-", ""),
+          },
+        }),
+        api({
+          method: "put",
+          url: "/shared/member/bankAccount/index.php",
+          data: {
+            ...form,
+            acBankAccount: form.acBankAccount,
+          },
+        }),
+        api({
+          method: "post",
+          url: "/agency/member/execute-command/change-password.php",
+          data: {
+            ...form,
+            acPassword: form.acPassword,
+          },
+        }),
+      ]);
+      console.log(results[0], results[1], results[2]);
+      window.close();
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
   const executeCreateSignUp = async () => {
     try {
       ensureValidData();
@@ -145,30 +179,6 @@ const RiderRegister = (props: Props) => {
         },
       });
       console.log(response);
-      window.close();
-    } catch (e) {
-      const error = e as AxiosError;
-      message.error(error.message);
-    }
-  };
-
-  const executeUpdateSignUp = async () => {
-    try {
-      ensureValidData();
-
-      await api({
-        method: "post",
-        url: "/agency/rider/execute-command/modify.php",
-        data: {
-          // ucAreaNo: form.ucAreaNo,
-          // ucDistribId: form.ucDistribId,
-          // ucAgencyId: form.ucAgencyId,
-          // ucMemCourId: form.ucMemCourId,
-          ...form,
-          acCellNo: form.acCellNo?.replace("-", ""),
-        },
-      });
-
       window.close();
     } catch (e) {
       const error = e as AxiosError;

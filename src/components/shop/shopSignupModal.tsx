@@ -143,7 +143,7 @@ const ShopSignupModal = (props: ShopModalProps) => {
 
   const executeSignUp = () => {
     if (isUpdate()) {
-      executeUpdateSignUp();
+      executeUpdate();
     } else {
       executeCreateSignUp();
     }
@@ -168,25 +168,37 @@ const ShopSignupModal = (props: ShopModalProps) => {
     }
   };
 
-  const executeUpdateSignUp = async () => {
+  const executeUpdate = async () => {
     try {
-      ensureValidData();
-
-      await api({
-        method: "post",
-        url: "/agency/shop/execute-command/modify.php",
-        data: {
-          // ucAreaNo: form.ucAreaNo,
-          // ucDistribId: form.ucDistribId,
-          // ucAgencyId: form.ucAgencyId,
-          // ucMemCourId: form.ucMemCourId,
-          ...form,
-          acCellNo: form.acCellNo?.replaceAll("-", ""),
-          acPhoneNo: form.acPhoneNo?.replaceAll("-", ""),
-        },
-      });
-
+      const results = await Promise.all([
+        api({
+          method: "post",
+          url: "/agency/shop/execute-command/modify.php",
+          data: {
+            ...form,
+            acCellNo: form.acCellNo?.replaceAll("-", ""),
+            acPhoneNo: form.acPhoneNo?.replaceAll("-", ""),
+          },
+        }),
+        api({
+          method: "put",
+          url: "/shared/member/bankAccount/index.php",
+          data: {
+            ...form,
+            acBankAccount: form.acBankAccount,
+          },
+        }),
+        api({
+          method: "post",
+          url: "/agency/member/execute-command/change-password.php",
+          data: {
+            ...form,
+            acPassword: form.acPassword,
+          },
+        }),
+      ]);
       window.close();
+      console.log(results[0], results[1], results[2]);
     } catch (e) {
       const error = e as AxiosError;
       message.error(error.message);
