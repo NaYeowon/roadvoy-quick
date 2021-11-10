@@ -9,15 +9,18 @@ import styled from "styled-components";
 import AgencySettlementList from "./AgencySettlementList";
 import moment from "moment";
 import api from "src/config/axios";
+import { callFormat } from "src/util/FormatUtil";
 
 const columns = [
   {
     title: "대행이름",
-    dataIndex: "name",
+    dataIndex: "acCompany",
+    width: 120,
   },
   {
     title: "콜수",
-    dataIndex: "call",
+    dataIndex: "usDayDoneErrandSum",
+    render: (call: number) => callFormat(call),
     width: 80,
   },
 ];
@@ -114,7 +117,7 @@ const AgencySettlement = props => {
             }}
             size="small"
             pagination={false}
-            scroll={{ y: 650 }}
+            scroll={{ y: "calc(100vh - 250px)" }}
           />
         </Col>
       </Row>
