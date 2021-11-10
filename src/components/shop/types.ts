@@ -279,7 +279,11 @@ export interface RiderSignUpRequest {
 }
 
 export interface DistributorDto {
+  ucAreaNo: string;
+  ucDistribId: string;
+  ucAgencyId: string;
   ucMemCourId: string;
+
   acUserId: string;
   acPassword: string;
   acCompany: string;
@@ -288,7 +292,6 @@ export interface DistributorDto {
   acPresident: string;
   acErrandDate: string;
   ucTaxInvoType: number;
-  ucDistribId: number;
   acPhoneNo: string;
   acCellNo: string;
   acEmailAddress: string;
