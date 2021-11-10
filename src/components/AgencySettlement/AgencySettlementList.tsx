@@ -161,7 +161,7 @@ const AgencySettlementList: FC<Props> = ({ agency, acStartDate, acEndDate }) => 
         bordered
         pagination={false}
         size="small"
-        scroll={{ y: 560 }}
+        scroll={{ y: "calc(100vh - 200px)" }}
       />
     </>
   );
