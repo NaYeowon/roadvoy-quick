@@ -8,6 +8,7 @@ import LoginHelper from "src/pages/shared/LoginHelper";
 import api from "src/config/axios";
 import axios, { AxiosError } from "axios";
 import { CircularProgress } from "@material-ui/core";
+import { callFormat, costFormat } from "src/util/FormatUtil";
 
 interface Props {
   agency: AgencyDTO;
@@ -18,37 +19,37 @@ interface Props {
 const columns = [
   {
     title: "가맹콜수",
-    dataIndex: "",
+    dataIndex: "usDayDoneCallSum",
     width: 80,
   },
   {
     title: "기사 수행콜수",
-    dataIndex: "",
+    dataIndex: "usDayDoneCallSum",
     width: 80,
   },
   {
     title: "콜수수료",
-    dataIndex: "",
+    dataIndex: "lDayDeliCost",
     width: 50,
   },
   {
     title: "심부름 접수 대행수수료",
-    dataIndex: "",
+    dataIndex: "lDayErrandFeeAgency",
     width: 100,
   },
   {
     title: "관리비",
-    dataIndex: "",
+    dataIndex: "lDayReChargeAmount",
     width: 80,
   },
   {
     title: "콜 당 수수료",
-    dataIndex: "",
+    dataIndex: "ulDayCallCntFee",
     width: 100,
   },
   {
     title: "기사 일차감 총액",
-    dataIndex: "",
+    dataIndex: "lDayCycleLeaseCost",
     width: 100,
   },
   {
@@ -58,52 +59,52 @@ const columns = [
   },
   {
     title: "탈퇴 가맹 환불액",
-    dataIndex: "",
+    dataIndex: "lDayRefundAmount",
     width: 100,
   },
   {
     title: "탈퇴 기사 환불액",
-    dataIndex: "",
+    dataIndex: "lDayRefundAmtCour",
     width: 100,
   },
   {
     title: "기사→대행 캐시송금",
-    dataIndex: "",
+    dataIndex: "ulSubstituteDeposit",
     width: 100,
   },
   {
     title: "가상계좌 입금",
-    dataIndex: "",
+    dataIndex: "ulVirBankDeposit",
     width: 100,
   },
   {
     title: "가상계좌 수수료",
-    dataIndex: "",
+    dataIndex: "ulVirBankFee",
     width: 100,
   },
   {
     title: "프로그램 사용료",
-    dataIndex: "",
+    dataIndex: "ulDayBizProfitAmt",
     width: 100,
   },
   {
     title: "본사직권 출금",
-    dataIndex: "",
+    dataIndex: "ulCreditAmount",
     width: 100,
   },
   {
     title: "출금",
-    dataIndex: "",
+    dataIndex: "ulReClaimAmount",
     width: 100,
   },
   {
     title: "출금수수료",
-    dataIndex: "",
+    dataIndex: "ulReClaimComm",
     width: 100,
   },
   {
     title: "관리자가 회수한 캐시",
-    dataIndex: "",
+    dataIndex: "ulSubstituteCashMinusByManager",
     width: 100,
   },
 ];
