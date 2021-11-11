@@ -24,7 +24,7 @@ class ErrandHelper {
           {stErrand.acDestOldAddr} {stErrand.acDestOldAddr}
         </div>
       );
-    } else if (parseInt(stErrand.ucErrandType) === 3) {
+    } else if (stErrand.acStop1Company && !stErrand.acStop2Company) {
       return (
         <div>
           <div>
@@ -42,7 +42,7 @@ class ErrandHelper {
           </div>
         </div>
       );
-    } else {
+    } else if (stErrand.acStop1Company && stErrand.acStop2Company) {
       return (
         <div>
           <div>
@@ -50,11 +50,11 @@ class ErrandHelper {
             {stErrand.acOriginOldAddr} {stErrand.acOriginAddrDesc}
           </div>
           <div>
-            <Tag color="purple">경유지1</Tag>
+            <Tag color="blue">경유지1</Tag>
             {stErrand.acStop1OldAddr} {stErrand.acStop1AddrDesc}
           </div>
           <div>
-            <Tag color="purple">경유지2</Tag>
+            <Tag color="blue">경유지2</Tag>
             {stErrand.acStop2OldAddr} {stErrand.acStop2AddrDesc}
           </div>
           <div>

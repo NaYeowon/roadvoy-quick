@@ -6,7 +6,7 @@ import PaymentModeAndAmount from "src/util/PaymentModeAndAmount";
 import FlatFixedRateSystem from "src/util/FlatFixedRateSystem";
 import { CallDetailModalShopName } from "./styles";
 import { CallDetailShopTitle } from "./CallDetailShopTitle";
-import { ErrandDto, ErrandFeeType } from "../../../domain/Errand/model";
+import { ErrandDto, ErrandFeeType, ErrandType } from "../../../domain/Errand/model";
 import CallTimeLine from "../CallTimeLine";
 import { AddressDaumMapComponent } from "../../../util/AddressDaumMapComponent";
 import api from "../../../config/axios";
@@ -83,6 +83,13 @@ function CallModal(props: CallModalProps) {
   // 배달기사 수수료
   const riderFee = errand.ulErrandCharge - calcErrandFeeAgency;
 
+  const isStop1 = () => {
+    return props.errand?.acStop1Company ? true : false;
+  };
+  const isStop2 = () => {
+    return props.errand?.acStop2Company ? true : false;
+  };
+
   return (
     <>
       <Modal title="콜 상세" visible={true} onCancel={handleCancel} onOk={handleOk}>
@@ -145,6 +152,34 @@ function CallModal(props: CallModalProps) {
               title="픽업지주소"
               value={`${errand.acOriginOldAddr} ${errand.acOriginAddrDesc}`}
             />
+          </div>
+          <div>
+            {isStop1() ? (
+              <>
+                <CallDetailShopTitle title="경유지업체명1" value={errand.acStop1Company} />
+                <CallDetailShopTitle title="경유지요청사항1" value={errand.acStop1Memo} />
+                <CallDetailShopTitle
+                  title="경유지주소1"
+                  value={`${errand.acStop1OldAddr} ${errand.acStop1AddrDesc}`}
+                />
+              </>
+            ) : (
+              ""
+            )}
+          </div>
+          <div>
+            {isStop2() ? (
+              <>
+                <CallDetailShopTitle title="경유지업체명2" value={errand.acStop2Company} />
+                <CallDetailShopTitle title="경유지요청사항2" value={errand.acStop2Memo} />
+                <CallDetailShopTitle
+                  title="경유지주소2"
+                  value={`${errand.acStop2OldAddr} ${errand.acStop2AddrDesc}`}
+                />
+              </>
+            ) : (
+              ""
+            )}
           </div>
           <div style={{ backgroundColor: "#fff280" }}>
             <CallDetailShopTitle
