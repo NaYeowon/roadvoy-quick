@@ -230,7 +230,7 @@ const CallListComponent = () => {
   const [isCheckedAlloc, setIsCheckedAlloc] = useState(true);
   const [isCheckedPkup, setIsCheckedPkup] = useState(true);
   const [isCheckedDone, setIsCheckedDone] = useState(true);
-  const [isCheckedCancel, setIsCheckedCancel] = useState(true);
+  const [isCheckedCancel, setIsCheckedCancel] = useState(false);
 
   const [modalErrand, setModalErrand] = useState<ErrandDto | undefined>(undefined);
 
@@ -383,7 +383,7 @@ const CallListComponent = () => {
       </PageHeader>
       <Checkbox.Group
         style={{ width: "100%", display: "flex" }}
-        defaultValue={["대기", "배차", "픽업", "완료", "취소"]}
+        defaultValue={["대기", "배차", "픽업", "완료"]}
       >
         <CustomCheckbox
           value="대기"
