@@ -112,10 +112,9 @@ const columns: ColumnsType<ErrandDto> = [
   {
     title: "상점명",
     dataIndex: "acOriginCompany",
-    key: "acOriginCompany",
     className: "deli-status",
     width: 120,
-    render: (text: string, record: ErrandDto) => record.acOriginCompany,
+    render: (text: string, record: ErrandDto) => record.acDestCompany,
   },
   {
     title: "접수",
