@@ -432,7 +432,7 @@ const CallListComponent = () => {
         bordered
         pagination={false}
         size="small"
-        scroll={{ y: 650 }}
+        scroll={{ y: "calc(100vh - 197px)" }}
         rowClassName={TableList}
         onRow={(errand: ErrandDto) => {
           return {
