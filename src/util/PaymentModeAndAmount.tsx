@@ -26,6 +26,10 @@ const PaymentModeAndAmount = (props: Props) => {
       paymentModeText = "선결";
       paymentColor = "#f50";
       break;
+    case 5:
+      paymentModeText = "분할";
+      paymentColor = "#f50";
+      break;
   }
 
   return (

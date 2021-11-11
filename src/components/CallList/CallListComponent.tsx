@@ -176,7 +176,14 @@ const columns: ColumnsType<ErrandDto> = [
           return (
             <>
               <Tag color="#f50">선결</Tag>
-              <span>{charge.toLocaleString()}원</span>
+              <span>{charge}원</span>
+            </>
+          );
+        case 5:
+          return (
+            <>
+              <Tag color="#f50">분할</Tag>
+              <span>{charge}원</span>
             </>
           );
       }
