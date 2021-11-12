@@ -1,7 +1,7 @@
 import { ColumnsType } from "antd/lib/table";
 import { message, PageHeader, Table } from "antd";
 import MemberHelper from "src/helpers/MemberHelper";
-import { costFormat } from "src/util/FormatUtil";
+import { bankAccount, callFormat, costFormat } from "src/util/FormatUtil";
 import Header from "../Layout/Header";
 import { ShopDTO, ShopInfo } from "./types";
 import api from "src/config/axios";
@@ -9,6 +9,7 @@ import LoginHelper from "src/pages/shared/LoginHelper";
 import { useEffect, useState } from "react";
 import ShopModal from "./ShopModal";
 import { MemberGroupSelector } from "../Member";
+import { AxiosError } from "axios";
 
 const columns: ColumnsType<ShopDTO> = [
   {
@@ -35,6 +36,7 @@ const columns: ColumnsType<ShopDTO> = [
         dataIndex: "ulCustCallCnt",
         key: "ulCustCallCnt",
         width: 100,
+        render: (call: number) => callFormat(call),
       },
       {
         title: "관리비",
@@ -59,14 +61,14 @@ const columns: ColumnsType<ShopDTO> = [
         dataIndex: "usDeliDoneCntSum",
         key: "usDeliDoneCntSum",
         width: 80,
-
-        //sorter: (a, b) => a.usDeliDoneCntSum - b.usDeliDoneCntSum,
+        render: (call: number) => callFormat(call),
       },
       {
         title: "당월",
         dataIndex: "usMonthDeliDoneCntSum",
         key: "usMonthDeliDoneCntSum",
         width: 80,
+        render: (call: number) => callFormat(call),
         //sorter: (a, b) => a.usMonthDeliDoneCntSum - b.usMonthDeliDoneCntSum,
       },
     ],
@@ -94,6 +96,7 @@ const columns: ColumnsType<ShopDTO> = [
         title: "가상계좌(우리은행)",
         dataIndex: "acVirtualAccount",
         key: "acVirtualAccount",
+        render: (bank: string) => bankAccount(bank),
         width: 200,
       },
     ],
@@ -148,7 +151,8 @@ const ShopHistory = () => {
       });
       setAstManageShop(response.data.astMemberHis);
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError;
+      message.error(error.message);
     }
   };
 
@@ -176,7 +180,7 @@ const ShopHistory = () => {
         bordered
         pagination={false}
         size="small"
-        scroll={{ y: 650 }}
+        scroll={{ y: "calc(100vh - 203px)" }}
         onRow={(shop: ShopDTO) => {
           return {
             onClick: () => {
