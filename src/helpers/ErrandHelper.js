@@ -21,7 +21,7 @@ class ErrandHelper {
       return (
         <div>
           <Tag color="purple">목적지</Tag>
-          {stErrand.acDestOldAddr} {stErrand.acDestOldAddr}
+          {stErrand.acDestOldAddr} {stErrand.acDestAddrDesc}
         </div>
       );
     } else if (stErrand.acStop1Company && !stErrand.acStop2Company) {
