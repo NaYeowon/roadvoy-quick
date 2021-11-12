@@ -7,12 +7,12 @@ import Header from "../Layout/Header";
 import { message, PageHeader, Table } from "antd";
 
 import "antd/dist/antd.css";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { ColumnsType } from "antd/lib/table";
 import MemberHelper from "src/helpers/MemberHelper";
 
 import LoginHelper from "../../pages/shared/LoginHelper";
-import { callFormat, costFormat } from "../../util/FormatUtil";
+import { bankAccount, callFormat, costFormat } from "../../util/FormatUtil";
 import { ShopDTO, ShopSignUpRequest } from "./types";
 import ShopModal from "./ShopModal";
 import { MemberGroupSelector } from "../Member";
@@ -106,6 +106,7 @@ const columns: ColumnsType<ShopDTO> = [
         title: "가상계좌(우리은행)",
         dataIndex: "acVirtualAccount",
         key: "acVirtualAccount",
+        render: (bank: string) => bankAccount(bank),
         width: 200,
       },
     ],
@@ -168,7 +169,8 @@ const Shop = () => {
 
       setAstManageShop(response.data.astManageShop);
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError;
+      message.error(error.message);
     }
   };
   // 이 부분이 1초마다 호출되는 Routine
