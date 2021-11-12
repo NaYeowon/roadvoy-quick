@@ -11,20 +11,23 @@ import { IAddress } from "../SearchAddress/SearchAddress";
 import { DistributorDto } from "../shop/types";
 import { AxiosError } from "axios";
 import api from "src/config/axios";
+import queryString from "query-string";
+import { MemberId } from "src/domain/Member/model";
 
 const { Option } = Select;
 
 interface DistributorProps {
   onOk: () => void;
   onCancel: () => void;
+  distributor?: DistributorDto;
   location: RouteComponentProps;
 }
 const DistributorRegister = (props: DistributorProps) => {
   const [form, setForm] = useState<DistributorDto>({
-    ucAreaNo: "",
-    ucDistribId: "",
-    ucAgencyId: "",
-    ucMemCourId: "",
+    ucAreaNo: 0,
+    ucDistribId: 0,
+    ucAgencyId: 0,
+    ucMemCourId: 0,
 
     acUserId: "",
     acPassword: "",
@@ -63,7 +66,6 @@ const DistributorRegister = (props: DistributorProps) => {
     acCpPresident: "",
     acCpCellNo: "",
     acWithdrawPassword: "",
-    cManagerFlag: "N",
   });
   const [searchAddress, setSearchAddress] = useState(false);
 
@@ -71,9 +73,48 @@ const DistributorRegister = (props: DistributorProps) => {
     setSearchAddress(bool);
     setSearchAddress(!searchAddress);
   };
-
   const executeSignUp = () => {
-    executeCreateSignUp();
+    if (isUpdate()) {
+      executeUpdate();
+    } else {
+      executeCreateSignUp();
+    }
+  };
+
+  const executeUpdate = async () => {
+    try {
+      const results = await Promise.all([
+        api({
+          method: "post",
+          url: "/hq/member/distrib/execute-command/update.php",
+          data: {
+            ...form,
+            acCellNo: form.acCellNo?.replace("-", ""),
+          },
+        }),
+        api({
+          method: "put",
+          url: "/shared/member/bankAccount/index.php",
+          data: {
+            ...form,
+            acBankAccount: form.acBankAccount,
+          },
+        }),
+        api({
+          method: "post",
+          url: "/agency/member/execute-command/change-password.php",
+          data: {
+            ...form,
+            acPassword: form.acPassword,
+          },
+        }),
+      ]);
+      console.log(results[0], results[1], results[2]);
+      window.close();
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
   };
 
   const executeCreateSignUp = async () => {
@@ -94,9 +135,56 @@ const DistributorRegister = (props: DistributorProps) => {
     }
   };
 
+  const getUpdateForm = async (memberId: MemberId) => {
+    try {
+      const response = await api({
+        method: "get",
+        url: "/hq/member/process-query/find-member-by-id.php",
+        params: memberId,
+      });
+      console.log(response.data);
+
+      setForm({
+        ...(response.data.stMember as DistributorDto),
+        ...memberId,
+      });
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
+
+  React.useEffect(() => {
+    if (isUpdate()) {
+      getUpdateForm(getUpdateMemberId());
+    }
+  }, []);
+
+  const isUpdate = () => {
+    if (!props.location.search) return;
+
+    const params = queryString.parse(props.location.search);
+    return ["ucAreaNo", "ucDistribId", "ucAgencyId", "ucMemCourId"]
+      .map(it => it in params)
+      .every(it => it === true)
+      ? true
+      : false;
+  };
+
+  const getUpdateMemberId = (): MemberId => {
+    const params = queryString.parse(props.location.search);
+
+    return {
+      ucAreaNo: Number(params.ucAreaNo),
+      ucDistribId: Number(params.ucDistribId),
+      ucAgencyId: Number(params.ucAgencyId),
+      ucMemCourId: Number(params.ucMemCourId),
+    };
+  };
+
   return (
     <>
-      <TitleCol>총판등록</TitleCol>
+      <TitleCol>총판{isUpdate() ? "수정" : "등록"}</TitleCol>
       <div style={{ textAlign: "left", margin: "0 auto" }}>
         <Row>
           <Col span={12}>
@@ -108,7 +196,15 @@ const DistributorRegister = (props: DistributorProps) => {
                 rate: 3.5,
               }}
             >
-              <Form.Item label="회원번호"></Form.Item>
+              <Form.Item label="회원번호">
+                {isUpdate() ? (
+                  <span
+                    style={{ float: "left" }}
+                  >{`${form.ucAreaNo} - ${form.ucDistribId} - ${form.ucAgencyId} - ${form.ucMemCourId}`}</span>
+                ) : (
+                  <></>
+                )}
+              </Form.Item>
               <Form.Item label="회원 ID">
                 <Input
                   name="acUserId"
@@ -296,32 +392,52 @@ const DistributorRegister = (props: DistributorProps) => {
               </Form.Item>
               <Form.Item label="주거래은행">
                 <Select
-                  defaultValue={form.usBankCode}
-                  onChange={e =>
-                    setForm({
-                      ...form,
-                      usBankCode: Number(e),
-                    })
-                  }
+                  value={form.usBankCode}
+                  onChange={e => setForm({ ...form, usBankCode: Number(e) })}
                 >
-                  <Option value="88">신한은행</Option>
-                  <Option value="4">국민은행</Option>
-                  <Option value="3">기업은행</Option>
-                  <Option value="20">우리은행</Option>
-                  <Option value="90">카카오뱅크</Option>
-                  <Option value="89">케이뱅크</Option>
-                  <Option value="11">농협중앙회</Option>
-                  <Option value="2">산업은행</Option>
-                  <Option value="23">SC제일은행</Option>
-                  <Option value="81">KEB하나은행</Option>
-                  <Option value="27">씨티뱅크</Option>
-                  <Option value="7">수협은행</Option>
-                  <Option value="31">대구은행</Option>
-                  <Option value="32">부산은행</Option>
-                  <Option value="34">광주은행</Option>
-                  <Option value="35">제주은행</Option>
-                  <Option value="37">전북은행</Option>
-                  <Option value="39">경남은행</Option>
+                  {isUpdate() ? (
+                    <>
+                      <Option value="88">신한은행</Option>
+                      <Option value="4">국민은행</Option>
+                      <Option value="3">기업은행</Option>
+                      <Option value="20">우리은행</Option>
+                      <Option value="90">카카오뱅크</Option>
+                      <Option value="89">케이뱅크</Option>
+                      <Option value="11">농협중앙회</Option>
+                      <Option value="2">산업은행</Option>
+                      <Option value="23">SC제일은행</Option>
+                      <Option value="81">KEB하나은행</Option>
+                      <Option value="27">씨티뱅크</Option>
+                      <Option value="7">수협은행</Option>
+                      <Option value="31">대구은행</Option>
+                      <Option value="32">부산은행</Option>
+                      <Option value="34">광주은행</Option>
+                      <Option value="35">제주은행</Option>
+                      <Option value="37">전북은행</Option>
+                      <Option value="39">경남은행</Option>
+                    </>
+                  ) : (
+                    <>
+                      <Option value={88}>신한은행</Option>
+                      <Option value={4}>국민은행</Option>
+                      <Option value={3}>기업은행</Option>
+                      <Option value={20}>우리은행</Option>
+                      <Option value={90}>카카오뱅크</Option>
+                      <Option value={89}>케이뱅크</Option>
+                      <Option value={11}>농협중앙회</Option>
+                      <Option value={2}>산업은행</Option>
+                      <Option value={23}>SC제일은행</Option>
+                      <Option value={81}>KEB하나은행</Option>
+                      <Option value={27}>씨티뱅크</Option>
+                      <Option value={7}>수협은행</Option>
+                      <Option value={31}>대구은행</Option>
+                      <Option value={32}>부산은행</Option>
+                      <Option value={34}>광주은행</Option>
+                      <Option value={35}>제주은행</Option>
+                      <Option value={37}>전북은행</Option>
+                      <Option value={39}>경남은행</Option>
+                    </>
+                  )}
                 </Select>
               </Form.Item>
               <Form.Item label="주거래 계좌번호">
@@ -367,11 +483,7 @@ const DistributorRegister = (props: DistributorProps) => {
                 />
               </Form.Item>
               <Form.Item label="주문 콜 전체공유">
-                <Checkbox
-                  style={{ float: "left" }}
-                  name="cManagerFlag"
-                  value={e => setForm({ ...form, cManagerFlag: e.target.checked })}
-                />
+                <Checkbox style={{ float: "left" }} />
               </Form.Item>
               <Form.Item label="기본료">
                 <span>
@@ -461,7 +573,7 @@ const DistributorRegister = (props: DistributorProps) => {
                 onConfirm={executeSignUp}
               >
                 <Button style={{ marginTop: "30px" }} type="primary">
-                  등록
+                  {isUpdate() ? "수정" : "등록"}
                 </Button>
               </Popconfirm>
             </Form>
