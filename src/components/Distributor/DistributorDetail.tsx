@@ -33,7 +33,7 @@ function DistributorDetail(props: Props) {
               title="회원번호"
               value={`${MemberHelper.formatMemberId(distributor ?? "")}`}
             />
-            <CallDetailShopTitle title="회원 ID" value={distributor?.ucMemCourId ?? ""} />
+            <CallDetailShopTitle title="회원 ID" value={distributor?.acUserId ?? ""} />
             <CallDetailShopTitle title="대표자명" value={distributor?.acPresident ?? ""} />
             <CallDetailShopTitle
               title="휴대폰번호"
@@ -83,7 +83,17 @@ function DistributorDetail(props: Props) {
           </div>
         </div>
         <div style={{ textAlign: "center" }}>
-          <Button>총판 수정</Button>
+          <Button
+            onClick={() => {
+              window.open(
+                `/distributorRegister?ucAreaNo=${distributor?.ucAreaNo}&ucDistribId=${distributor?.ucDistribId}&ucAgencyId=${distributor?.ucAgencyId}&ucMemCourId=${distributor?.ucMemCourId}`,
+                "_blank",
+                "top=100, left=500, width=1200, height=800"
+              );
+            }}
+          >
+            총판 수정
+          </Button>
           <Popconfirm
             title="탈퇴하시겠습니까?"
             //onConfirm={handleClickCancelErrand}
