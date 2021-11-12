@@ -252,9 +252,13 @@ const CallListComponent = () => {
       });
       const astErrand = response.data.astErrand as ErrandDto[];
       setErrandList(
-        astErrand.sort((a, b) => {
-          return b.ulErrandSeqNo - a.ulErrandSeqNo;
-        })
+        astErrand
+          .sort((a, b) => {
+            return b.ulErrandSeqNo - a.ulErrandSeqNo;
+          })
+          .sort((a, b) => {
+            return a.ucDeliStatus - b.ucDeliStatus;
+          })
       );
 
       const _deliStatusCount = {
