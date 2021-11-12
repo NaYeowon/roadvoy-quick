@@ -2,6 +2,7 @@
 import { Tag } from "antd";
 import { RiderSignUpRequest } from "src/components/shop/types";
 import styled from "styled-components";
+import { bankAccount } from "./FormatUtil";
 
 interface BankCodeProps {
   ucBankCode: number;
@@ -162,7 +163,7 @@ export const VirtualBankCode = (props: Props) => {
   return (
     <>
       <BankCodeTag color={virtualBankColor}>{virtualBankText}</BankCodeTag>
-      <span>{acVirtualAccount}</span>
+      <span>{bankAccount(acVirtualAccount)}</span>
     </>
   );
 };
