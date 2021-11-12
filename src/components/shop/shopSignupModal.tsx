@@ -506,32 +506,27 @@ const ShopSignupModal = (props: ShopModalProps) => {
               </Form.Item>
               <Form.Item label="주거래은행">
                 <Select
-                  defaultValue={form.ucBankCode}
-                  onChange={e =>
-                    setForm({
-                      ...form,
-                      ucBankCode: Number(e),
-                    })
-                  }
+                  value={form.ucBankCode}
+                  onChange={e => setForm({ ...form, ucBankCode: Number(e) })}
                 >
-                  <Option value="88">신한은행</Option>
-                  <Option value="4">국민은행</Option>
-                  <Option value="3">기업은행</Option>
-                  <Option value="20">우리은행</Option>
-                  <Option value="90">카카오뱅크</Option>
-                  <Option value="89">케이뱅크</Option>
-                  <Option value="11">농협중앙회</Option>
-                  <Option value="2">산업은행</Option>
-                  <Option value="23">SC제일은행</Option>
-                  <Option value="81">KEB하나은행</Option>
-                  <Option value="27">씨티뱅크</Option>
-                  <Option value="7">수협은행</Option>
-                  <Option value="31">대구은행</Option>
-                  <Option value="32">부산은행</Option>
-                  <Option value="34">광주은행</Option>
-                  <Option value="35">제주은행</Option>
-                  <Option value="37">전북은행</Option>
-                  <Option value="39">경남은행</Option>
+                  <Option value={88}>신한은행</Option>
+                  <Option value={4}>국민은행</Option>
+                  <Option value={3}>기업은행</Option>
+                  <Option value={20}>우리은행</Option>
+                  <Option value={90}>카카오뱅크</Option>
+                  <Option value={89}>케이뱅크</Option>
+                  <Option value={11}>농협중앙회</Option>
+                  <Option value={2}>산업은행</Option>
+                  <Option value={23}>SC제일은행</Option>
+                  <Option value={81}>KEB하나은행</Option>
+                  <Option value={27}>씨티뱅크</Option>
+                  <Option value={7}>수협은행</Option>
+                  <Option value={31}>대구은행</Option>
+                  <Option value={32}>부산은행</Option>
+                  <Option value={34}>광주은행</Option>
+                  <Option value={35}>제주은행</Option>
+                  <Option value={37}>전북은행</Option>
+                  <Option value={39}>경남은행</Option>
                 </Select>
               </Form.Item>
               <Form.Item label="주거래 계좌번호">
