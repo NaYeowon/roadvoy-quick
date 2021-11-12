@@ -279,10 +279,10 @@ export interface RiderSignUpRequest {
 }
 
 export interface DistributorDto {
-  ucAreaNo: string;
-  ucDistribId: string;
-  ucAgencyId: string;
-  ucMemCourId: string;
+  ucAreaNo: number;
+  ucDistribId: number;
+  ucAgencyId: number;
+  ucMemCourId: number;
 
   acUserId: string;
   acPassword: string;
@@ -321,7 +321,6 @@ export interface DistributorDto {
   acCpPresident: string;
   acCpCellNo: string;
   acWithdrawPassword: string;
-  cManagerFlag: string;
 }
 class RiderInfo1 {
   asStatusMessage: string | undefined;
