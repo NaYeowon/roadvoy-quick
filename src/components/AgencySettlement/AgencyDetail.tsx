@@ -3,8 +3,8 @@ import { AxiosError } from "axios";
 import api from "src/config/axios";
 import MemberHelper from "src/helpers/MemberHelper";
 import { AddressDaumMapComponent } from "src/util/AddressDaumMapComponent";
-import { BankCode } from "src/util/BankCode";
-import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
+import { BankCode, VirtualBankCode } from "src/util/BankCode";
+import { getCellNoFormat } from "src/util/FormatUtil";
 import { CallDetailShopTitle } from "../CallList/Modal/CallDetailShopTitle";
 import { CallDetailModalShopName } from "../CallList/Modal/styles";
 import { AgencyDTO } from "../shop/types";
@@ -96,10 +96,9 @@ const AgencyDetail = (props: AgnecyProps) => {
             <CallDetailShopTitle
               title="가상계좌번호"
               value={
-                <BankCode
-                  //usBankCode={Number(rider?.usVirtualBank)}
-                  ucBankCode={20}
-                  acBankAccount={agency?.acVirtualAccount ?? ""}
+                <VirtualBankCode
+                  usVirtualBank={Number(agency?.usVirtualBank)}
+                  acVirtualAccount={agency?.acVirtualAccount ?? ""}
                 />
               }
             />
