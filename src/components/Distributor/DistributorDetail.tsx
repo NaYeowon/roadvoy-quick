@@ -1,7 +1,9 @@
-import { Button, Modal, Popconfirm } from "antd";
+import { Button, message, Modal, Popconfirm } from "antd";
+import { AxiosError } from "axios";
+import api from "src/config/axios";
 import MemberHelper from "src/helpers/MemberHelper";
 import { AddressDaumMapComponent } from "src/util/AddressDaumMapComponent";
-import { BankCode } from "src/util/BankCode";
+import { BankCode, VirtualBankCode } from "src/util/BankCode";
 import { getCellNoFormat } from "src/util/FormatUtil";
 import { CallDetailShopTitle } from "../CallList/Modal/CallDetailShopTitle";
 import { CallDetailModalShopName } from "../CallList/Modal/styles";
@@ -23,6 +25,30 @@ function DistributorDetail(props: Props) {
   const handleOk = () => {
     onOk();
   };
+
+  const handleClickCancelErrand = async () => {
+    try {
+      if (!distributor) return;
+
+      await api({
+        method: "post",
+        url: "/hq/member/distrib/execute-command/leave.php",
+        data: {
+          ucAreaNo: distributor.ucAreaNo,
+          ucDistribId: distributor.ucDistribId,
+          ucAgencyId: distributor.ucAgencyId,
+          ucMemCourId: distributor.ucMemCourId,
+        },
+      });
+
+      message.success("탈퇴되었습니다.");
+      onOk();
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
+
   return (
     <>
       <Modal title="총판상세" onCancel={handleCancel} onOk={handleOk} visible={visible}>
@@ -71,10 +97,9 @@ function DistributorDetail(props: Props) {
             <CallDetailShopTitle
               title="가상계좌번호"
               value={
-                <BankCode
-                  //usBankCode={Number(rider?.usVirtualBank)}
-                  ucBankCode={20}
-                  acBankAccount={distributor?.acVirtualAccount ?? ""}
+                <VirtualBankCode
+                  usVirtualBank={Number(distributor?.usVirtualBank)}
+                  acVirtualAccount={distributor?.acVirtualAccount ?? ""}
                 />
               }
             />
@@ -96,7 +121,7 @@ function DistributorDetail(props: Props) {
           </Button>
           <Popconfirm
             title="탈퇴하시겠습니까?"
-            //onConfirm={handleClickCancelErrand}
+            onConfirm={handleClickCancelErrand}
             okText="네"
             cancelText="아니요"
           >
