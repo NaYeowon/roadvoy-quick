@@ -11,6 +11,7 @@ import { CallDetailModalShopName } from "../CallList/Modal/styles";
 import { RiderSignUpRequest } from "../shop/types";
 import { AxiosError } from "axios";
 import ManagerStatus from "./ManagerStatus";
+import { ManagerFlag } from "src/domain/Errand/model";
 
 interface RiderModalProps {
   onOk: () => void;
@@ -51,6 +52,11 @@ function riderDetail(props: RiderModalProps) {
       message.error(error.message);
     }
   };
+
+  const managerflag = () => {
+    return props.rider?.cManagerFlag === ManagerFlag.YES ? true : false;
+  };
+
   return (
     <>
       <Modal title="기사상세" onCancel={handleCancel} onOk={handleOk} visible={visible}>
@@ -58,7 +64,7 @@ function riderDetail(props: RiderModalProps) {
           <div>
             <CallDetailModalShopName>
               {rider?.acPresident}&nbsp;
-              <ManagerStatus cManagerFlag={rider?.cManagerFlag ?? ""} />
+              {managerflag() ? <ManagerStatus cManagerFlag={rider?.cManagerFlag ?? ""} /> : ""}
             </CallDetailModalShopName>
             <CallDetailShopTitle
               title="회원번호"
