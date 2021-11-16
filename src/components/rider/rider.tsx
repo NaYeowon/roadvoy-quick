@@ -5,7 +5,7 @@ import Header from "../Layout/Header";
 
 import { message, PageHeader, Table } from "antd";
 import "antd/dist/antd.css";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { ColumnsType } from "antd/lib/table";
 import MemberHelper from "src/helpers/MemberHelper";
 
@@ -142,20 +142,10 @@ const Rider = () => {
 
       setAstManageRider(response.data.astManageRider);
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError;
+      message.error(error.message);
     }
   };
-
-  //   const [value,setVale] = useState(1);
-  // const [isIncrease,setIsIncrease] = useState(false);
-  // useEffect(()=>{
-  //   const tick = () => {
-  //        return setTimeOut(()=>setValue(value+1),1000);
-  //     }
-  //   if(!isIncrease) return undefined;
-  //   tick();
-  //   return ()=>clearTimeiout(tick);
-  // },[value,isIncrease])
 
   useEffect(() => {
     const delay = window.setInterval(fetchRiderList, 1000);
