@@ -9,6 +9,7 @@ import LoginHelper from "src/pages/shared/LoginHelper";
 import api from "src/config/axios";
 import RiderDetail from "./RiderDetail";
 import { MemberGroupSelector } from "../Member";
+import { AxiosError } from "axios";
 
 const columns: ColumnsType<RiderSignUpRequest> = [
   {
@@ -136,7 +137,8 @@ const RiderHistory = () => {
 
       setAstManageRider(response.data.astMemberHis);
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError;
+      message.error(error.message);
     }
   };
 
