@@ -1,5 +1,6 @@
 import { message, PageHeader, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
+import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import api from "src/config/axios";
 import MemberHelper from "src/helpers/MemberHelper";
@@ -151,7 +152,8 @@ const Distributor = () => {
 
       setAstManageDistributor(response.data.lstMember);
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError;
+      message.error(error.message);
     }
   };
 
