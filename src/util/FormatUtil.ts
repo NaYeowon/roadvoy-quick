@@ -1,6 +1,3 @@
-import { AgencyDTO } from "src/components/shop/types";
-
-/* eslint-disable */
 export const getDateFormat = (date: string) => {
   const dateFormat = date.split(" ");
 
@@ -40,6 +37,7 @@ export const costFormat = (cost: number) => {
 };
 
 export const callFormat = (call: number) => {
+  if (!call) call = 0;
   const format = Number(call);
   return `${format.toLocaleString()} 콜`;
 };
