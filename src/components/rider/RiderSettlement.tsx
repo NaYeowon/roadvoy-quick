@@ -11,6 +11,7 @@ import XLSX from "xlsx";
 import styled from "styled-components";
 import moment from "moment";
 import { callFormat } from "src/util/FormatUtil";
+import { MemberGroupSelector } from "../Member";
 
 const columns = [
   {
@@ -120,7 +121,11 @@ const RiderSettlement = (props: RiderInfo) => {
   return (
     <>
       <Header />
-      <PageHeader />
+      <PageHeader style={{ paddingBottom: " 5vh" }}>
+        <span style={{ float: "right" }}>
+          <MemberGroupSelector />
+        </span>
+      </PageHeader>
       <Row>
         {SettlementList(astManageRider)}
         <Col span={4} pull={20}>

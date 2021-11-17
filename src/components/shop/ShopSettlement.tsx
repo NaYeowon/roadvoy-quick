@@ -13,6 +13,7 @@ import XLSX from "xlsx";
 import { ShopInfo } from "./types";
 import styled from "styled-components";
 import moment from "moment";
+import { MemberGroupSelector } from "../Member";
 
 const columns: ColumnsType<ShopInfo> = [
   {
@@ -114,7 +115,11 @@ const ShopSettlement = (props: ShopInfo) => {
   return (
     <>
       <Header />
-      <PageHeader />
+      <PageHeader style={{ paddingBottom: " 5vh" }}>
+        <span style={{ float: "right" }}>
+          <MemberGroupSelector />
+        </span>
+      </PageHeader>
       <Row>
         {SettlementList(astManageShop)}
         <Col span={6} pull={18}>

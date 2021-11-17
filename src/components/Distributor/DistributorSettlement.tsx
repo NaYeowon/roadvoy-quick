@@ -8,17 +8,18 @@ import LoginHelper from "../../pages/shared/LoginHelper";
 import { RiderInfo } from "../shop/types";
 import XLSX from "xlsx";
 import styled from "styled-components";
+import { MemberGroupSelector } from "../Member";
 
 const columns = [
   {
     title: "이름",
-    dataIndex: ""
+    dataIndex: "",
   },
   {
     title: "콜수",
     dataIndex: "",
-    width: 80
-  }
+    width: 80,
+  },
 ];
 
 const { RangePicker } = DatePicker;
@@ -87,7 +88,11 @@ const RiderSettlement = props => {
   return (
     <>
       <Header />
-      <PageHeader />
+      <PageHeader style={{ paddingBottom: " 5vh" }}>
+        <span style={{ float: "right" }}>
+          <MemberGroupSelector />
+        </span>
+      </PageHeader>
       <Row>
         {SettlementList(astManageRider)}
         <Col span={4} pull={20}>
@@ -110,7 +115,7 @@ const RiderSettlement = props => {
                 onClick: () => {
                   setSelectedRider(true);
                   setRiderInfoData(JSON.stringify(record));
-                }
+                },
               };
             }}
             size="small"
