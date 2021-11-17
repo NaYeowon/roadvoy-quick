@@ -205,6 +205,13 @@ const DistributorRegister = (props: DistributorProps) => {
                   <></>
                 )}
               </Form.Item>
+              <Form.Item label="지역번호">
+                <Input
+                  name="ucAreaNo"
+                  value={form.ucAreaNo}
+                  onChange={e => setForm({ ...form, ucAreaNo: Number(e.target.value) })}
+                />
+              </Form.Item>
               <Form.Item label="회원 ID">
                 <Input
                   name="acUserId"
