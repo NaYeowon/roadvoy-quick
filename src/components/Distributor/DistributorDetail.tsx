@@ -14,6 +14,7 @@ interface Props {
   onCancel: () => void;
   distributor: DistributorDto | undefined;
   visible: boolean | undefined;
+  distributorHistory: boolean;
 }
 function DistributorDetail(props: Props) {
   const { onOk, onCancel, distributor, visible } = props;
@@ -47,6 +48,10 @@ function DistributorDetail(props: Props) {
       const error = e as AxiosError;
       message.error(error.message);
     }
+  };
+
+  const isDistributorHistory = () => {
+    return props.distributorHistory ? false : true;
   };
 
   return (
@@ -107,29 +112,33 @@ function DistributorDetail(props: Props) {
             <CallDetailShopTitle title="총판 추가특이사항" value={distributor?.acRemark ?? ""} />
           </div>
         </div>
-        <div style={{ textAlign: "center" }}>
-          <Button
-            onClick={() => {
-              window.open(
-                `/distributorRegister?ucAreaNo=${distributor?.ucAreaNo}&ucDistribId=${distributor?.ucDistribId}&ucAgencyId=${distributor?.ucAgencyId}&ucMemCourId=${distributor?.ucMemCourId}`,
-                "_blank",
-                "top=100, left=500, width=1200, height=800"
-              );
-            }}
-          >
-            총판 수정
-          </Button>
-          <Popconfirm
-            title="탈퇴하시겠습니까?"
-            onConfirm={handleClickCancelErrand}
-            okText="네"
-            cancelText="아니요"
-          >
-            <Button type="primary" danger>
-              총판 탈퇴
+        {isDistributorHistory() ? (
+          <div style={{ textAlign: "center" }}>
+            <Button
+              onClick={() => {
+                window.open(
+                  `/distributorRegister?ucAreaNo=${distributor?.ucAreaNo}&ucDistribId=${distributor?.ucDistribId}&ucAgencyId=${distributor?.ucAgencyId}&ucMemCourId=${distributor?.ucMemCourId}`,
+                  "_blank",
+                  "top=100, left=500, width=1200, height=800"
+                );
+              }}
+            >
+              총판 수정
             </Button>
-          </Popconfirm>
-        </div>
+            <Popconfirm
+              title="탈퇴하시겠습니까?"
+              onConfirm={handleClickCancelErrand}
+              okText="네"
+              cancelText="아니요"
+            >
+              <Button type="primary" danger>
+                총판 탈퇴
+              </Button>
+            </Popconfirm>
+          </div>
+        ) : (
+          <></>
+        )}
       </Modal>
     </>
   );

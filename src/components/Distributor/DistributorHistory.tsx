@@ -1,7 +1,7 @@
 import { ColumnsType } from "antd/lib/table";
 import { message, PageHeader, Table } from "antd";
 import MemberHelper from "src/helpers/MemberHelper";
-import { costFormat, getCellNoFormat } from "src/util/FormatUtil";
+import { bizNumber, getCellNoFormat } from "src/util/FormatUtil";
 import Header from "../Layout/Header";
 import api from "src/config/axios";
 import LoginHelper from "src/pages/shared/LoginHelper";
@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { DistributorDto } from "../shop/types";
 import DistributorDetail from "./DistributorDetail";
 import { MemberGroupSelector } from "../Member";
+import { AxiosError } from "axios";
 
 const columns: ColumnsType<DistributorDto> = [
   {
@@ -28,12 +29,7 @@ const columns: ColumnsType<DistributorDto> = [
       {
         title: "사업자등록번호",
         dataIndex: "acBizRegNo",
-        render: (text: string, record: DistributorDto) => {
-          return record.acBizRegNo
-            .replace(/[^0-9]/g, "")
-            .replace(/([0-9]{3})([0-9]{2})([0-9]{5})/, "$1-$2-$3")
-            .replace("--", "-");
-        },
+        render: (acBizRegNo: string) => bizNumber(acBizRegNo),
         width: 70,
       },
       {
@@ -185,7 +181,8 @@ const Distributor = () => {
       });
       setAstManageDistributor(response.data.astMemberHis);
     } catch (e) {
-      message.error(e.message);
+      const error = e as AxiosError;
+      message.error(error.message);
     }
   };
 
@@ -229,6 +226,7 @@ const Distributor = () => {
         onCancel={handleCloseModal}
         distributor={modalDistributor}
         visible={isModalVisible}
+        distributorHistory={true}
       />
     </div>
   );

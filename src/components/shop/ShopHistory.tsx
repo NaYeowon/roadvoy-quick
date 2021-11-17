@@ -196,6 +196,7 @@ const ShopHistory = () => {
         onCancel={handleCloseModal}
         shop={modalShop}
         visible={isModalVisible}
+        shopHistory={true}
       />
     </div>
   );

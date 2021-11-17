@@ -196,6 +196,7 @@ const Distributor = () => {
         onCancel={handleCloseModal}
         distributor={selectDistributor}
         visible={isModalVisible}
+        distributorHistory={false}
       />
     </>
   );

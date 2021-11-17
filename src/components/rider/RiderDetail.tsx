@@ -18,6 +18,7 @@ interface RiderModalProps {
   onCancel: () => void;
   rider: RiderSignUpRequest | undefined;
   visible: boolean | undefined;
+  riderHistory: boolean;
 }
 function riderDetail(props: RiderModalProps) {
   const { onOk, onCancel, rider, visible } = props;
@@ -51,6 +52,10 @@ function riderDetail(props: RiderModalProps) {
       const error = e as AxiosError;
       message.error(error.message);
     }
+  };
+
+  const isRiderHistory = () => {
+    return props.riderHistory ? false : true;
   };
 
   const managerflag = () => {
@@ -112,29 +117,33 @@ function riderDetail(props: RiderModalProps) {
             <CallDetailShopTitle title="기사 특이사항" value={rider?.acAllocRemark ?? ""} />
           </div>
         </div>
-        <div style={{ textAlign: "center" }}>
-          <Button
-            onClick={() => {
-              window.open(
-                `/RiderRegister?ucAreaNo=${rider?.ucAreaNo}&ucDistribId=${rider?.ucDistribId}&ucAgencyId=${rider?.ucAgencyId}&ucMemCourId=${rider?.ucMemCourId}`,
-                "_blank",
-                "top=100, left=500, width=1200, height=800"
-              );
-            }}
-          >
-            기사 수정
-          </Button>
-          <Popconfirm
-            title="탈퇴하시겠습니까?"
-            onConfirm={handleClickCancelErrand}
-            okText="네"
-            cancelText="아니요"
-          >
-            <Button type="primary" danger>
-              기사 탈퇴
+        {isRiderHistory() ? (
+          <div style={{ textAlign: "center" }}>
+            <Button
+              onClick={() => {
+                window.open(
+                  `/RiderRegister?ucAreaNo=${rider?.ucAreaNo}&ucDistribId=${rider?.ucDistribId}&ucAgencyId=${rider?.ucAgencyId}&ucMemCourId=${rider?.ucMemCourId}`,
+                  "_blank",
+                  "top=100, left=500, width=1200, height=800"
+                );
+              }}
+            >
+              기사 수정
             </Button>
-          </Popconfirm>
-        </div>
+            <Popconfirm
+              title="탈퇴하시겠습니까?"
+              onConfirm={handleClickCancelErrand}
+              okText="네"
+              cancelText="아니요"
+            >
+              <Button type="primary" danger>
+                기사 탈퇴
+              </Button>
+            </Popconfirm>
+          </div>
+        ) : (
+          <></>
+        )}
       </Modal>
     </>
   );

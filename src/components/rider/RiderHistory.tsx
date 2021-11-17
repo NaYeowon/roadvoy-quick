@@ -181,6 +181,7 @@ const RiderHistory = () => {
         onCancel={handleCloseModal}
         rider={selectRider}
         visible={isModalVisible}
+        riderHistory={true}
       />
     </div>
   );
