@@ -1,10 +1,10 @@
 import { message, PageHeader, Table } from "antd";
 import { useEffect, useState } from "react";
 import api from "src/config/axios";
-import LoginHelper from "src/pages/shared/LoginHelper";
 import Header from "../Layout/Header";
 import { MemberGroupSelector } from "../Member";
 import { AgencyDTO } from "../shop/types";
+import AgencyDetail from "./AgencyDetail";
 
 const columns = [
   {
@@ -102,18 +102,21 @@ const columns = [
 
 const AgencyHistory = () => {
   const [astManagerAgency, setAstManagerAgency] = useState<AgencyDTO[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalAgency, setModalAgency] = useState<AgencyDTO | undefined>(undefined);
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
 
   const fetchAgencyList = async () => {
     try {
       const response = await api({
         method: "get",
-        url: "/distrib/agency/execute-command/get-leaves.php",
-        headers: {
-          Authorization: `Bearer ${LoginHelper.getToken()}`,
-        },
+        url: "/distrib/agency/process-query/get-leaves.php",
       });
 
-      setAstManagerAgency(response.data.astManagerAgency);
+      setAstManagerAgency(response.data.astMemberHis);
     } catch (e) {
       const error = e as Error;
       message.error(error.message);
@@ -144,7 +147,21 @@ const AgencyHistory = () => {
         bordered
         pagination={false}
         size="small"
-        scroll={{ y: 650 }}
+        scroll={{ y: "calc(100vh - 203px)" }}
+        onRow={(agency: AgencyDTO) => {
+          return {
+            onClick: () => {
+              setIsModalVisible(true);
+              setModalAgency(agency);
+            },
+          };
+        }}
+      />
+      <AgencyDetail
+        onOk={handleCloseModal}
+        onCancel={handleCloseModal}
+        agency={modalAgency}
+        visible={isModalVisible}
       />
     </div>
   );
