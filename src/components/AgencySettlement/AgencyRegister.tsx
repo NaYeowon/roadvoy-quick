@@ -10,6 +10,8 @@ import { IAddress } from "../SearchAddress/SearchAddress";
 import { AgencyDTO } from "../shop/types";
 import api from "src/config/axios";
 import { AxiosError } from "axios";
+import queryString from "query-string";
+import { MemberId } from "src/domain/Member/model";
 
 const { Option } = Select;
 
@@ -22,10 +24,10 @@ interface AgencyProps {
 const AgencyRegister = (props: AgencyProps) => {
   const [searchAddress, setSearchAddress] = useState(false);
   const [form, setForm] = useState<AgencyDTO>({
-    ucAreaNo: "",
-    ucDistribId: "",
-    ucAgencyId: "",
-    ucMemCourId: "",
+    ucAreaNo: 0,
+    ucDistribId: 0,
+    ucAgencyId: 0,
+    ucMemCourId: 0,
 
     acUserId: "",
     acPassword: "",
@@ -84,7 +86,7 @@ const AgencyRegister = (props: AgencyProps) => {
     if (!form) {
       throw new Error("데이터를 찾지 못했습니다.");
     }
-    if (!userId.test(form.ucMemCourId)) {
+    if (!userId.test(String(form.ucMemCourId))) {
       throw new Error(
         "회원ID를 6~20자리의 영문자, 숫자 형태로 입력해주세요(첫글자는 반드시 영문자로 입력)"
       );
@@ -137,6 +139,52 @@ const AgencyRegister = (props: AgencyProps) => {
       }
     }
   };
+
+  const executeSignUp = () => {
+    if (isUpdate()) {
+      executeUpdate();
+    } else {
+      executeCreateSignUp();
+    }
+  };
+
+  const executeUpdate = async () => {
+    try {
+      const results = await Promise.all([
+        api({
+          method: "post",
+          url: "/distrib/agency/execute-command/modify.php",
+          data: {
+            ...form,
+            acCellNo: form.acCellNo?.replace("-", ""),
+            acPhoneNo: form.acPhoneNo?.replace("-", ""),
+          },
+        }),
+        api({
+          method: "put",
+          url: "/shared/member/bankAccount/index.php",
+          data: {
+            ...form,
+            acBankAccount: form.acBankAccount,
+          },
+        }),
+        api({
+          method: "post",
+          url: "/agency/member/execute-command/change-password.php",
+          data: {
+            ...form,
+            acPassword: form.acPassword,
+          },
+        }),
+      ]);
+      console.log(results[0], results[1], results[2]);
+      window.close();
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
+
   const executeCreateSignUp = async () => {
     try {
       ensureValidData();
@@ -157,6 +205,54 @@ const AgencyRegister = (props: AgencyProps) => {
       const error = e as AxiosError;
       message.error(error.message);
     }
+  };
+
+  const getUpdateForm = async (memberId: MemberId) => {
+    try {
+      const response = await api({
+        method: "get",
+        url: "/hq/member/process-query/find-member-by-id.php",
+        params: memberId,
+      });
+      console.log(response.data);
+
+      setForm({
+        ...form,
+        ...(response.data.stMember as AgencyDTO),
+        ...memberId,
+      });
+    } catch (e) {
+      const error = e as AxiosError;
+      message.error(error.message);
+    }
+  };
+
+  React.useEffect(() => {
+    if (isUpdate()) {
+      getUpdateForm(getUpdateMemberId());
+    }
+  }, []);
+
+  const getUpdateMemberId = (): MemberId => {
+    const params = queryString.parse(props.location.search);
+
+    return {
+      ucAreaNo: Number(params.ucAreaNo),
+      ucDistribId: Number(params.ucDistribId),
+      ucAgencyId: Number(params.ucAgencyId),
+      ucMemCourId: Number(params.ucMemCourId),
+    };
+  };
+
+  const isUpdate = () => {
+    if (!props.location.search) return;
+
+    const params = queryString.parse(props.location.search);
+    return ["ucAreaNo", "ucDistribId", "ucAgencyId", "ucMemCourId"]
+      .map(it => it in params)
+      .every(it => it === true)
+      ? true
+      : false;
   };
 
   const cellNoValidationMesage = useMemo(() => {
@@ -201,7 +297,7 @@ const AgencyRegister = (props: AgencyProps) => {
   return (
     <>
       <Row style={{ borderBottom: "1px solid #f5f5f5" }}>
-        <TitleCol>대행등록</TitleCol>
+        <TitleCol>대행{isUpdate() ? "수정" : "등록"}</TitleCol>
       </Row>
       <Row>
         <Col span={12}>
@@ -218,7 +314,7 @@ const AgencyRegister = (props: AgencyProps) => {
               <Input
                 name="ucMemCourId"
                 value={form.ucMemCourId}
-                onChange={e => setForm({ ...form, ucMemCourId: e.target.value })}
+                onChange={e => setForm({ ...form, ucMemCourId: Number(e.target.value) })}
               />
             </Form.Item>
             <Form.Item label="비밀번호">
@@ -494,6 +590,7 @@ const AgencyRegister = (props: AgencyProps) => {
                 <Input
                   style={{ width: "50%" }}
                   addonAfter="원"
+                  type="number"
                   name="ulExtraDist"
                   value={form.ulExtraDist}
                   onChange={e => setForm({ ...form, ulExtraDist: parseInt(e.target.value) })}
@@ -504,6 +601,7 @@ const AgencyRegister = (props: AgencyProps) => {
                   style={{ width: "50%" }}
                   addonAfter="원"
                   name="ulExtraFare"
+                  type="number"
                   value={form.ulExtraFare}
                   onChange={e => setForm({ ...form, ulExtraFare: parseInt(e.target.value) })}
                 />
@@ -559,10 +657,10 @@ const AgencyRegister = (props: AgencyProps) => {
               title="대행을 등록하시겠습니까?"
               okText="네"
               cancelText="아니요"
-              onConfirm={executeCreateSignUp}
+              onConfirm={executeSignUp}
             >
               <Button style={{ marginTop: "30px" }} type="primary">
-                등록
+                {isUpdate() ? "수정" : "등록"}
               </Button>
             </Popconfirm>
           </Form>
