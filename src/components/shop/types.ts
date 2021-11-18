@@ -322,6 +322,23 @@ export interface DistributorDto {
   acCpCellNo: string;
   acWithdrawPassword: string;
 }
+
+export interface CallQuantityDto {
+  acCompany: string;
+  ulYearTotalCallCount: number;
+  ulMonth1CallCount: number;
+  ulMonth2CallCount: number;
+  ulMonth3CallCount: number;
+  ulMonth4CallCount: number;
+  ulMonth5CallCount: number;
+  ulMonth6CallCount: number;
+  ulMonth7CallCount: number;
+  ulMonth8CallCount: number;
+  ulMonth9CallCount: number;
+  ulMonth10CallCount: number;
+  ulMonth11CallCount: number;
+  ulMonth12CallCount: number;
+}
 class RiderInfo1 {
   asStatusMessage: string | undefined;
 
