@@ -5,13 +5,11 @@ import { Link } from "react-router-dom";
 import { MemberGroupSelector } from "../Member";
 
 const DistributorStatistics = () => {
-  function onChange(date, dateString) {
-    console.log(date, dateString);
-  }
-
   return (
     <>
-      <Header />
+      <div>
+        <Header />
+      </div>
       <PageHeader>
         <span style={{ float: "right" }}>
           <MemberGroupSelector />
@@ -26,9 +24,6 @@ const DistributorStatistics = () => {
           <Button key="1">
             <Link to="/ProgramUsageFee">프로그램사용료 통계</Link>
           </Button>
-        </span>
-        <span style={{ width: "400px", paddingLeft: "10px" }}>
-          년도 : <DatePicker onChange={onChange} picker="year" />
         </span>
       </PageHeader>
     </>
