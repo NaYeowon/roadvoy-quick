@@ -147,10 +147,10 @@ export interface ShopDTO {
 }
 
 export interface AgencyDTO {
-  ucAreaNo: string;
-  ucDistribId: string;
-  ucAgencyId: string;
-  ucMemCourId: string;
+  ucAreaNo: number;
+  ucDistribId: number;
+  ucAgencyId: number;
+  ucMemCourId: number;
 
   acUserId: string;
   acPassword: string;
