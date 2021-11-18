@@ -76,6 +76,18 @@ export const BankCode = (props: BankCodeProps) => {
       bankcodeText = "케이뱅크";
       bankCodeColor = "blue";
       break;
+    case 90:
+      bankcodeText = "카카오뱅크";
+      bankCodeColor = "blue";
+      break;
+    case 7:
+      bankcodeText = "수협은행";
+      bankCodeColor = "blue";
+      break;
+    case 48:
+      bankcodeText = "신협은행";
+      bankCodeColor = "blue";
+      break;
   }
 
   return (
