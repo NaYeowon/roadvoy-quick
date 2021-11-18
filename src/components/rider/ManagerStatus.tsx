@@ -1,5 +1,4 @@
 import { Tag } from "antd";
-import { ManagerFlag } from "src/domain/Errand/model";
 import { RiderSignUpRequest } from "../shop/types";
 
 interface Props {
