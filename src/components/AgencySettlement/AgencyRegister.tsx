@@ -86,10 +86,8 @@ const AgencyRegister = (props: AgencyProps) => {
     if (!form) {
       throw new Error("데이터를 찾지 못했습니다.");
     }
-    if (!userId.test(String(form.ucMemCourId))) {
-      throw new Error(
-        "회원ID를 6~20자리의 영문자, 숫자 형태로 입력해주세요(첫글자는 반드시 영문자로 입력)"
-      );
+    if (!form.acUserId || !userId.test(form.acUserId)) {
+      throw new Error("회원ID를 6~20자리의 숫자, 영문자 형태로 입력해주세요");
     }
     if (!form.acPassword || !password.test(form.acPassword)) {
       throw new Error("비밀번호를 8~20자리의 숫자,특수문자,영문 형태로 입력해주세요");
@@ -313,9 +311,9 @@ const AgencyRegister = (props: AgencyProps) => {
             <Form.Item label="회원번호"></Form.Item>
             <Form.Item label="회원 ID">
               <Input
-                name="ucMemCourId"
-                value={form.ucMemCourId}
-                onChange={e => setForm({ ...form, ucMemCourId: Number(e.target.value) })}
+                name="acUserId"
+                value={form.acUserId}
+                onChange={e => setForm({ ...form, acUserId: e.target.value })}
               />
             </Form.Item>
             <Form.Item label="비밀번호">
