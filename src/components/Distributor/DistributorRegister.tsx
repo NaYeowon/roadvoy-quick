@@ -222,7 +222,6 @@ const DistributorRegister = (props: DistributorProps) => {
               <Form.Item label="비밀번호">
                 <Input
                   name="acPassword"
-                  value={form.acPassword}
                   onChange={e => setForm({ ...form, acPassword: e.target.value })}
                   type="password"
                 />{" "}
@@ -441,7 +440,6 @@ const DistributorRegister = (props: DistributorProps) => {
                 <Input
                   name="acWithdrawPassword"
                   type="password"
-                  value={form.acWithdrawPassword}
                   onChange={e => setForm({ ...form, acWithdrawPassword: e.target.value })}
                   maxLength={8}
                 />

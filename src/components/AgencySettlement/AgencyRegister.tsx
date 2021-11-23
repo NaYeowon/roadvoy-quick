@@ -201,6 +201,7 @@ const AgencyRegister = (props: AgencyProps) => {
         },
       });
       console.log(respons);
+      window.close();
     } catch (e) {
       const error = e as AxiosError;
       message.error(error.message);
@@ -321,7 +322,6 @@ const AgencyRegister = (props: AgencyProps) => {
               <Input
                 name="acPassword"
                 type="password"
-                value={form.acPassword}
                 onChange={e => setForm({ ...form, acPassword: e.target.value })}
               />
             </Form.Item>
