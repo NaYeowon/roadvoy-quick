@@ -1,126 +1,70 @@
 /* eslint-disable */
-import { Col, DatePicker, Descriptions, message, PageHeader, Row, Table } from "antd";
-import { AxiosError } from "axios";
+import { Col, DatePicker, message, Row, Space, Table } from "antd";
+import styled from "styled-components";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import api from "src/config/axios";
-import { callFormat } from "src/util/FormatUtil";
+import LoginHelper from "src/pages/shared/LoginHelper";
 import { CallQuantityDto } from "../shop/types";
+import CallQuantityList from "./CallQuantityList";
 import DistributorStatistics from "./DistributorStatistics";
 
 const columns = [
   {
     title: "대행명",
     dataIndex: "acCompany",
-    width: 150,
-  },
-  {
-    title: "연도합계",
-    dataIndex: "ulYearTotalCallCount",
-    width: 150,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "1월",
-    dataIndex: "ulMonth1CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "2월",
-    dataIndex: "ulMonth2CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "3월",
-    dataIndex: "ulMonth3CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "4월",
-    dataIndex: "ulMonth4CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "5월",
-    dataIndex: "ulMonth5CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "6월",
-    dataIndex: "ulMonth6CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "7월",
-    dataIndex: "ulMonth7CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "8월",
-    dataIndex: "ulMonth8CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "9월",
-    dataIndex: "ulMonth9CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "10월",
-    dataIndex: "ulMonth10CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "11월",
-    dataIndex: "ulMonth11CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
-  },
-  {
-    title: "12월",
-    dataIndex: "ulMonth12CallCount",
-    width: 100,
-    render: (call: number) => callFormat(call),
+    key: "acCompany",
   },
 ];
-export const CallQuantity = () => {
-  const [astManageCallQuantity, setAstManageCallQuantity] = useState<CallQuantityDto[]>([]);
-  const [selectCallQuantity, setSelectCallQuantity] = useState<CallQuantityDto | undefined>(
-    undefined
-  );
+
+export const CallQuantity = (props: CallQuantityDto) => {
+  const [astManagerAgency, setAstManagerAgency] = useState<CallQuantityDto[]>([]);
+  const [selected, setSelected] = useState<CallQuantityDto | undefined>(undefined);
   const [year, setYear] = useState<moment.Moment>(moment());
 
   const handleChangeYearRange = val => {
-    setYear(val[0]);
+    setYear(val);
   };
 
-  const CallQuantityList = async () => {
+  const fetchAgencyList = async () => {
     try {
       const response = await api({
         method: "get",
-        url: "/hq/member/distrib/process-query/settlement.php",
+        url: "/hq/member/process-query/get-agencies.php",
+        headers: {
+          Authorization: `Bearer ${LoginHelper.getToken()}`,
+        },
       });
-      setAstManageCallQuantity(response.data.lstCallStatistics);
+
+      setAstManagerAgency(response.data.lstMember);
     } catch (e) {
-      const error = e as AxiosError;
+      const error = e as Error;
       message.error(error.message);
     }
   };
 
   useEffect(() => {
-    const delay = window.setInterval(CallQuantityList, 1000);
+    const delay = window.setInterval(fetchAgencyList, 1000);
     return () => clearInterval(delay);
   }, []);
+
+  const SettlementList = (record: any) => {
+    let content;
+    if (!selected) {
+      content = <Content>대행을 선택하세요.</Content>;
+    } else {
+      content = <CallQuantityList callQuantity={selected} acYear={year} />;
+    }
+    return (
+      <Col
+        span={20}
+        push={4}
+        style={{ paddingLeft: "20px", paddingRight: "20px", textAlign: "center" }}
+      >
+        {content}
+      </Col>
+    );
+  };
 
   return (
     <>
@@ -129,16 +73,42 @@ export const CallQuantity = () => {
       </span>
       <div style={{ paddingTop: "30px" }}>
         <Row>
-          <Col span={4} pull={1}>
-            <span style={{ width: "400px", paddingLeft: "10px" }}>
-              년도 : <DatePicker picker="year" value={year} onChange={handleChangeYearRange} />
-            </span>
-          </Col>
-          <Col span={20}>
-            <Table columns={columns} bordered dataSource={astManageCallQuantity} />
+          {SettlementList(astManagerAgency)}
+          <Col span={4} pull={20}>
+            <Space direction="vertical" size={12} style={{ paddingBottom: "10px", width: "100%" }}>
+              <div style={{ textAlign: "center" }}>
+                <b>연도선택</b>
+              </div>
+              <DatePicker
+                style={{ width: "100%" }}
+                picker="year"
+                value={year}
+                onChange={handleChangeYearRange}
+              />
+            </Space>
+            <Table
+              columns={columns}
+              style={{ width: "100%", height: "100%", cursor: "pointer" }}
+              dataSource={astManagerAgency}
+              bordered
+              onRow={(record: CallQuantityDto) => {
+                return {
+                  onClick: () => {
+                    setSelected(record);
+                  },
+                };
+              }}
+              size="small"
+              pagination={false}
+              scroll={{ y: "calc(100vh - 250px)" }}
+            />
           </Col>
         </Row>
       </div>
     </>
   );
 };
+const Content = styled.span`
+  font-size: 20pt;
+  color: grey;
+`;
