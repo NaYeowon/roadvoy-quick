@@ -226,7 +226,6 @@ const ShopSettlementList: FC<Props> = ({ shopInfo, acStartDate, acEndDate }) => 
           size="small"
           scroll={{ y: "calc(100vh - 300px)" }}
         />
-        ,
       </Col>
     </div>
   );

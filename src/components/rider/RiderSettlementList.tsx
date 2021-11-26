@@ -448,7 +448,6 @@ const RiderSettlementList: FC<Props> = ({ riderInfo, acStartDate, acEndDate }) =
           size="small"
           scroll={{ y: "calc(100vh - 340px)" }}
         />
-        ,
       </Col>
     </div>
   );
