@@ -324,6 +324,12 @@ export interface DistributorDto {
 }
 
 export interface CallQuantityDto {
+  ucAreaNo: string;
+  ucDistribId: string;
+  ucAgencyId: string;
+  ucMemCourId: string;
+  acYear: Date;
+
   acCompany: string;
   ulYearTotalCallCount: number;
   ulMonth1CallCount: number;
