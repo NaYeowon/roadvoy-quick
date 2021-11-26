@@ -10,6 +10,7 @@ import AgencySettlementList from "./AgencySettlementList";
 import moment from "moment";
 import api from "src/config/axios";
 import { callFormat } from "src/util/FormatUtil";
+import { MemberGroupSelector } from "../Member";
 
 const columns = [
   {
@@ -88,7 +89,11 @@ const AgencySettlement = props => {
   return (
     <>
       <Header />
-      <PageHeader />
+      <PageHeader style={{ paddingBottom: " 5vh" }}>
+        <span style={{ float: "right" }}>
+          <MemberGroupSelector />
+        </span>
+      </PageHeader>
       <Row>
         {SettlementList(astManagerAgency)}
         <Col span={4} pull={20}>
