@@ -16,7 +16,7 @@ interface MemberIdProps {
 export default function MemberIdSelector(props: MemberIdProps) {
   const { memberType, memberIds, onChange } = props;
 
-  const [select, setSelect] = useState<string>("선택하세요");
+  const [select, setSelect] = useState<string>("전체");
   const [loginId, setLoginId] = useLocalStorage<LoginForm | undefined>("loginId", undefined);
 
   useEffect(() => {
