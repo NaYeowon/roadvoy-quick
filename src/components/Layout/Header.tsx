@@ -95,7 +95,7 @@ const Header = () => {
         <NavLink to="/rider">기사조회</NavLink>
       </Menu.Item>
       <Menu.Item key="1">
-        <NavLink to="/RiderSettlement">기사별정산</NavLink>
+        <NavLink to="/RiderSettlement">기사정산</NavLink>
       </Menu.Item>
       <Menu.Item key="2">
         <a href="void:0" onClick={onRiderRegister}>
