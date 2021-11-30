@@ -1,4 +1,4 @@
-import { Button, DatePicker, Input, message, Table, Tag } from "antd";
+import { Button, DatePicker, Input, message, PageHeader, Table, Tag } from "antd";
 import moment from "moment";
 import locale from "antd/lib/date-picker/locale/ko_KR";
 import React, { useEffect, useState } from "react";
@@ -11,6 +11,7 @@ import api from "src/config/axios";
 import { ErrandDto } from "src/domain/Errand/model";
 import { CallModal } from "./Modal";
 import ErrandHelper from "src/helpers/ErrandHelper";
+import { MemberGroupSelector } from "../Member";
 
 const Search = Input.Search;
 const { RangePicker } = DatePicker;
@@ -267,6 +268,11 @@ const CallHistory = (props: Props) => {
   return (
     <>
       <Header />
+      <PageHeader>
+        <span style={{ float: "right" }}>
+          <MemberGroupSelector />
+        </span>
+      </PageHeader>
       <div className="page-body-wrapper">
         <div className="errand-page-header">
           <RangePicker
