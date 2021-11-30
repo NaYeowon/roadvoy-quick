@@ -69,6 +69,69 @@ const DistributorRegister = (props: DistributorProps) => {
   });
   const [searchAddress, setSearchAddress] = useState(false);
 
+  const ensureValidData = () => {
+    const userId = /^[a-zA-Z0-9]{6,20}$/;
+    const password =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{8,20}$/;
+    const name = /[a-zA-Zㄱ-ㅎ|ㅏ-ㅣ|가-힣]{2,50}$/;
+    const mail =
+      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    const bizRegNo = /[(0-9)|-]{12,}$/;
+    const withdrawPassword =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+|<>?:{}])[A-Za-z\d$@$!%*#?&]{0,8}$/;
+
+    if (!form) {
+      throw new Error("데이터를 찾지 못했습니다.");
+    }
+    if (!form.acUserId || !userId.test(form.acUserId)) {
+      throw new Error("회원ID를 6~20자리의 숫자, 영문자 형태로 입력해주세요");
+    }
+    if (!form.acPassword || !password.test(form.acPassword)) {
+      throw new Error("비밀번호를 8~20자리의 숫자,특수문자,영문 형태로 입력해주세요");
+    }
+    if (!form.acPresident || !name.test(form.acPresident)) {
+      throw new Error("대표자명을 2글자 이상 입력해주세요");
+    }
+    if (!form.acCellNo) {
+      throw new Error("휴대폰번호를 입력해주세요");
+    }
+    if (!form.acBizRegNo || !bizRegNo.test(form.acBizRegNo)) {
+      throw new Error("사업자등록번호(10자리)를 입력하세요");
+    }
+    if (!form.acEmailAddress || !mail.test(form.acEmailAddress)) {
+      throw new Error("이메일 형식을 확인해주세요");
+    }
+    if (!form.acBizCondition && !form.acBizType) {
+      throw new Error("업태 또는 업종을 입력하세요");
+    }
+    if (!form.acOldAddress) {
+      throw new Error("주소를 입력해주세요");
+    }
+    if (!form.usBankCode) {
+      throw new Error("주거래은행 계좌번호를 선택해주세요");
+    }
+    if (!form.acWithdrawPassword || !withdrawPassword.test(form.acWithdrawPassword)) {
+      throw new Error("출금비밀번호를 8자리 이내의 숫자,특수문자,영문 형태로 입력해주세요");
+    }
+    if (form.acAccHoldName !== form.acPresident) {
+      throw new Error("주거래은행 예금주가 대표자명과 다릅니다");
+    }
+    if (form.acResRegNo.length === 8) {
+      const year = Number(form.acResRegNo.substring(0, 3));
+      const month = Number(form.acResRegNo.substring(4, 5));
+      let day = Number(form.acResRegNo.substring(6, 7));
+      console.log(year, month, day);
+
+      const monthOfDaySize = new Date(Number(year), Number(month), 0).getDate();
+      if (day > monthOfDaySize) {
+        throw new Error("overflow");
+      } else if (day < 1) {
+        throw new Error("");
+      } else if (!(1 <= month && month <= 12)) {
+      }
+    }
+  };
+
   const switchSearchAddress = (bool: boolean) => {
     setSearchAddress(bool);
     setSearchAddress(!searchAddress);
@@ -119,12 +182,15 @@ const DistributorRegister = (props: DistributorProps) => {
 
   const executeCreateSignUp = async () => {
     try {
+      ensureValidData();
       const response = await api({
         method: "post",
         url: "/hq/member/distrib/execute-command/signup.php",
         data: {
           ...form,
           acCellNo: form.acCellNo?.replace("-", ""),
+          acPhoneNo: form.acPhoneNo?.replace("-", ""),
+          acResRegNo: form.acResRegNo?.replace("-", ""),
         },
       });
       console.log(response);
@@ -210,6 +276,7 @@ const DistributorRegister = (props: DistributorProps) => {
                   name="ucAreaNo"
                   value={form.ucAreaNo}
                   onChange={e => setForm({ ...form, ucAreaNo: Number(e.target.value) })}
+                  maxLength={3}
                 />
               </Form.Item>
               <Form.Item label="회원 ID">
@@ -246,7 +313,7 @@ const DistributorRegister = (props: DistributorProps) => {
                         .replace("--", "-"),
                     });
                   }}
-                  maxLength={12}
+                  maxLength={13}
                 />
               </Form.Item>
               <Form.Item label="법인 등록번호">
@@ -334,7 +401,15 @@ const DistributorRegister = (props: DistributorProps) => {
                 <Input
                   name="acResRegNo"
                   value={form.acResRegNo}
-                  onChange={e => setForm({ ...form, acResRegNo: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setForm({
+                      ...form,
+                      acResRegNo: e.target.value
+                        .replace(/[^0-9]/g, "")
+                        .replace(/([0-9]{4})([0-9]{2})([0-9]{2})/, "$1-$2-$3")
+                        .replace("--", "-"),
+                    });
+                  }}
                   maxLength={8}
                 />
               </Form.Item>
@@ -355,6 +430,7 @@ const DistributorRegister = (props: DistributorProps) => {
                         .replace("--", "-"),
                     });
                   }}
+                  maxLength={13}
                 />
               </Form.Item>
             </Form>
@@ -395,6 +471,7 @@ const DistributorRegister = (props: DistributorProps) => {
                   value={form.ucTaxInvoType}
                   onChange={e => setForm({ ...form, ucTaxInvoType: Number(e.target.value) })}
                 />
+                <span style={{ color: "red" }}>발행시 체크하세요</span>
               </Form.Item>
               <Form.Item label="주거래은행">
                 <Select
@@ -427,6 +504,7 @@ const DistributorRegister = (props: DistributorProps) => {
                   value={form.acBankAccount}
                   onChange={e => setForm({ ...form, acBankAccount: e.target.value })}
                   maxLength={15}
+                  type="number"
                 />
               </Form.Item>
               <Form.Item label="주거래 예금주">
