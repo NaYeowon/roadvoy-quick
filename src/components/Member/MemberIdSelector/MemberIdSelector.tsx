@@ -46,20 +46,25 @@ export default function MemberIdSelector(props: MemberIdProps) {
         onChange(sut);
       }
     } else {
-      setSelect("ddddd");
+      setSelect("X");
     }
   }, [memberIds]);
 
   return (
     <Select
-      defaultValue={"선택하세요"}
+      defaultValue={"전체"}
       onChange={(value: string) => {
-        const it = JSON.parse(value);
-        setSelect(it.acCompany || it.acPresident || it.ucAreaNo);
-        onChange(it);
+        if (value === "0") {
+          setSelect("전체");
+        } else {
+          const it = JSON.parse(value);
+          setSelect(it.acCompany || it.acPresident || it.ucAreaNo);
+          onChange(it);
+        }
       }}
       value={select}
     >
+      <Option value={"0"}>전체</Option>
       {memberIds.map(it => (
         <Option key={JSON.stringify(it)} value={JSON.stringify(it)}>
           {it.acCompany || it.acPresident || it.ucAreaNo}
