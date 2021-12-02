@@ -37,7 +37,7 @@ const Header = () => {
   };
 
   const Logout = () => {
-    if (window.confirm("로그아웃 하시겠습니까?") === true) {
+    if (window.confirm("로그아웃 하시겠습니까?")) {
       LoginHelper.deleteToken();
       document.location.href = "/";
     } else {
@@ -205,7 +205,7 @@ const Header = () => {
           파일관리
         </NavLink>
         {/* <a href="void:0" className="item" onClick={OnCallRegister} >콜등록(F2)</a> */}
-        <NavLink to="/" className="item" onClick={Logout}>
+        <NavLink className="item" onClick={Logout} to={document.location}>
           로그아웃
         </NavLink>
       </div>
