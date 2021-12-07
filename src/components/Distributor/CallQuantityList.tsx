@@ -5,7 +5,7 @@ import moment from "moment";
 import { FC, useEffect, useState } from "react";
 import api from "src/config/axios";
 import { callFormat } from "src/util/FormatUtil";
-import { CallQuantityDto } from "../shop/types";
+import { CallQuantityDto, CallQuantityYear } from "../shop/types";
 
 interface Props {
   callQuantity: CallQuantityDto;
@@ -80,7 +80,7 @@ const columns = [
 ];
 
 const CallQuantityList: FC<Props> = ({ callQuantity, ulYear }) => {
-  const [astCallQuantity, setAstCallQuantity] = useState<CallQuantityDto[]>([]);
+  const [astCallQuantity, setAstCallQuantity] = useState<CallQuantityYear[]>([]);
 
   useEffect(() => {
     if (callQuantity && ulYear) {
@@ -96,11 +96,13 @@ const CallQuantityList: FC<Props> = ({ callQuantity, ulYear }) => {
         params: {
           ucAreaNo: callQuantity.ucAreaNo,
           ucDistribID: callQuantity.ucDistribId,
+          ucAgencyId: callQuantity.ucAgencyId,
           ulYear: ulYear.format("YYYY"),
         },
       });
 
       const { data } = response;
+      setAstCallQuantity(data.lstCallStatistics);
     } catch (e) {
       const error = e as AxiosError;
       if (error.response && error.response.data && error.response.data.msg) {
