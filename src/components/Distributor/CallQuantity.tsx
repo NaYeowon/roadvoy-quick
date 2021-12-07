@@ -53,7 +53,7 @@ export const CallQuantity = (props: CallQuantityDto) => {
     if (!selected) {
       content = <Content>대행을 선택하세요.</Content>;
     } else {
-      content = <CallQuantityList callQuantity={selected} acYear={year} />;
+      content = <CallQuantityList callQuantity={selected} ulYear={year} />;
     }
     return (
       <Col

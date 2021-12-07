@@ -9,7 +9,7 @@ import { CallQuantityDto } from "../shop/types";
 
 interface Props {
   callQuantity: CallQuantityDto;
-  acYear: moment.Moment;
+  ulYear: moment.Moment;
 }
 const columns = [
   {
@@ -79,14 +79,14 @@ const columns = [
   },
 ];
 
-const CallQuantityList: FC<Props> = ({ callQuantity, acYear }) => {
+const CallQuantityList: FC<Props> = ({ callQuantity, ulYear }) => {
   const [astCallQuantity, setAstCallQuantity] = useState<CallQuantityDto[]>([]);
 
   useEffect(() => {
-    if (callQuantity && acYear) {
+    if (callQuantity && ulYear) {
       getCallQuantityDetail();
     }
-  }, [callQuantity, acYear]);
+  }, [callQuantity, ulYear]);
 
   const getCallQuantityDetail = async () => {
     try {
@@ -96,7 +96,7 @@ const CallQuantityList: FC<Props> = ({ callQuantity, acYear }) => {
         params: {
           ucAreaNo: callQuantity.ucAreaNo,
           ucDistribID: callQuantity.ucDistribId,
-          acYear: acYear.format("YYYY"),
+          ulYear: ulYear.format("YYYY"),
         },
       });
 
